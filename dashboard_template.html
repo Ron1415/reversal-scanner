@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reversal Scanner</title>
+<style>
+  :root{--bg:#f7f7f5;--card:#fff;--ink:#1c1c1a;--mute:#6b6b66;--line:#e4e4df;--bear:#c2410c;--bull:#15803d;--bearbg:#fdf0e8;--bullbg:#e9f6ee;--accent:#1d4ed8;
+        --green:#16a34a;--amber:#d97706;--red:#dc2626;--grey:#9ca3af}
+  @media (prefers-color-scheme:dark){:root{--bg:#141413;--card:#1d1d1b;--ink:#ecece8;--mute:#9a9a93;--line:#2f2f2c;--bear:#fb923c;--bull:#4ade80;--bearbg:#2d1d12;--bullbg:#13281a;--accent:#93b4ff;
+        --green:#22c55e;--amber:#f59e0b;--red:#f87171;--grey:#6b7280}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+  header{padding:20px 16px 8px;max-width:1200px;margin:auto;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-end}
+  h1{margin:0;font-size:22px}
+  .sub{color:var(--mute);font-size:13px}
+  .clock{font-variant-numeric:tabular-nums;font-weight:600}
+  .refresh{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+  .refresh .row{display:flex;gap:6px}
+  .primary{background:var(--ink);color:var(--bg);border:0;padding:8px 14px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
+  .primary:disabled,.ghost:disabled{opacity:.5;cursor:wait}
+  .ghost{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:8px 12px;border-radius:8px;font:inherit;cursor:pointer}
+  #rstatus{font-size:12px;color:var(--mute);min-height:16px;text-align:right}
+  details.settings{font-size:12px;color:var(--mute)} details.settings input{width:260px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 16px;max-width:1200px;margin:auto}
+  .seg button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer;font:inherit}
+  .seg button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  input[type=search],select{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+  label{color:var(--mute);font-size:13px}
+  a{color:var(--accent)}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mute);max-width:1200px;margin:auto;padding:0 16px}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:baseline}
+  main{max-width:1200px;margin:auto;padding:8px 16px 40px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--st);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+  .card.grey{opacity:.6}
+  .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .tk{font-weight:700;font-size:17px;text-decoration:none;color:var(--ink)}
+  .px{color:var(--mute);font-variant-numeric:tabular-nums}
+  .pill{font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px}
+  .bearish .pill{background:var(--bearbg);color:var(--bear)} .bullish .pill{background:var(--bullbg);color:var(--bull)}
+  .score{font-variant-numeric:tabular-nums;font-weight:700}
+  .conf{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--st)}
+  .meter{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+  .meter i{display:block;height:100%;background:var(--st)}
+  .checks{font-size:12px;margin:0;padding:0;list-style:none} .checks li{display:flex;gap:6px} .checks .d{color:var(--mute)}
+  details summary{cursor:pointer;font-size:12px;color:var(--mute)}
+  svg{width:100%;height:120px;display:block}
+  ul.f{margin:0;padding-left:18px;font-size:13px}
+  .meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--mute);font-size:12px;font-variant-numeric:tabular-nums}
+  .empty{color:var(--mute);padding:40px 0;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Reversal Scanner</h1>
+    <div class="sub"><span id="stamp"></span> · <span class="clock" id="clock"></span></div>
+  </div>
+  <div class="refresh">
+    <div class="row">
+      <button class="primary" id="btnQuick" title="Re-check today's candidates with the latest prices">Refresh candidates</button>
+      <button class="ghost" id="btnFull" title="Rescan the whole universe">Full rescan</button>
+    </div>
+    <div id="rstatus"></div>
+    <details class="settings" id="ghSettings" hidden>
+      <summary>GitHub refresh settings</summary>
+      <div>Fine-grained token with "Actions: read and write" on this repository. Stored only in this browser.</div>
+      <input type="password" id="ghToken" placeholder="github_pat_..."> <button class="ghost" id="ghSave">Save</button>
+    </details>
+  </div>
+</header>
+<div class="bar">
+  <div class="seg" id="tabs"></div>
+  <div class="seg" id="dir"></div>
+  <select id="stf" aria-label="Confirmation filter">
+    <option value="all">All signals</option>
+    <option value="green">Green only</option>
+    <option value="ga">Green and amber</option>
+  </select>
+  <select id="sort" aria-label="Sort">
+    <option value="confirm">Sort: confirmation</option>
+    <option value="score">Sort: score</option>
+  </select>
+  <label>Min score <input type="range" id="min" min="3" max="10" step="0.5" value="3"> <span id="minv">3</span></label>
+  <input type="search" id="q" placeholder="Filter ticker">
+  <a href="reversal_signals.xlsx">Download Excel</a>
+</div>
+<div class="legend">
+  <span><i class="dot" style="background:var(--green)"></i>Likely to confirm by the close</span>
+  <span><i class="dot" style="background:var(--amber)"></i>Developing</span>
+  <span><i class="dot" style="background:var(--red)"></i>At risk of failing</span>
+  <span><i class="dot" style="background:var(--grey)"></i>Signal faded</span>
+</div>
+<main><div class="grid" id="grid"></div></main>
+<script>
+const DATA = /*__DATA__*/null;
+const CFG = /*__CFG__*/null || {};
+const state = {tf: "daily", dir: "all", min: 3, q: "", stf: "all", sort: "confirm"};
+const RANK = {green: 3, amber: 2, red: 1, grey: 0};
+let backend = "none";   // "local" | "github" | "none"
+const $ = id => document.getElementById(id);
+const store = {get: k => { try { return localStorage.getItem(k); } catch(e) { return null; } },
+               set: (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} }};
+
+function seg(el, items, key){
+  el.innerHTML = "";
+  items.forEach(([v, label]) => {
+    const b = document.createElement("button");
+    b.textContent = label; b.className = state[key] === v ? "on" : "";
+    b.onclick = () => { state[key] = v; render(); };
+    el.appendChild(b);
+  });
+}
+
+function chart(bars, levels, dir, inv){
+  const W = 320, H = 120, n = bars.length, pad = 4;
+  const all = [...levels, inv].filter(x => x != null);
+  const hi = Math.max(...bars.map(b => b[1]), ...all), lo = Math.min(...bars.map(b => b[2]), ...all);
+  const y = v => pad + (hi - v) / ((hi - lo) || 1) * (H - 2 * pad), cw = W / n;
+  let s = "";
+  levels.forEach(l => { s += `<line x1="0" x2="${W}" y1="${y(l)}" y2="${y(l)}" stroke="var(--accent)" stroke-dasharray="3 3"/>`; });
+  if (inv != null) s += `<line x1="${W*0.6}" x2="${W}" y1="${y(inv)}" y2="${y(inv)}" stroke="var(--st)" stroke-width="1.5"/>`;
+  bars.forEach((b, i) => {
+    const [o, h, l, c] = b, x = i * cw + cw / 2, up = c >= o;
+    const col = i === n - 1 ? (dir === "bearish" ? "var(--bear)" : "var(--bull)") : (up ? "var(--mute)" : "var(--ink)");
+    s += `<line x1="${x}" x2="${x}" y1="${y(h)}" y2="${y(l)}" stroke="${col}"/>`;
+    s += `<rect x="${x - cw*0.35}" y="${y(Math.max(o, c))}" width="${cw*0.7}" height="${Math.max(1, Math.abs(y(o) - y(c)))}" fill="${up ? "var(--card)" : col}" stroke="${col}"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Recent price bars; solid line marks the invalidation price">${s}</svg>`;
+}
+
+function card(r){
+  const c = r.confirm || {status: "grey", label: "n/a", hold_odds: 0, checks: []};
+  const pct = Math.round(c.hold_odds * 100);
+  return `
+  <div class="card ${r.direction} ${c.status}" style="--st:var(--${c.status})">
+    <div class="top">
+      <a class="tk" href="https://www.tradingview.com/chart/?symbol=${r.ticker}" target="_blank" rel="noopener">${r.ticker}</a>
+      <span class="px">${r.close.toFixed(2)} (${r.change_pct > 0 ? "+" : ""}${r.change_pct}%)</span>
+      <span class="pill">${r.direction}</span>
+      <span class="score" title="Weighted confluence score">${r.score}</span>
+    </div>
+    <div class="conf"><span>● ${c.label}</span><div class="meter"><i style="width:${pct}%"></i></div><span>${pct}%</span></div>
+    ${chart(r.bars, r.levels, r.direction, c.invalidation)}
+    <ul class="f">${r.factors.map(f => `<li>${f}</li>`).join("")}</ul>
+    <details><summary>Confirmation checks (${c.passed ?? 0}/${c.total ?? 0})</summary>
+      <ul class="checks">${c.checks.map(k => `<li>${k.ok ? "✓" : "✗"} ${k.name} <span class="d">${k.detail}</span></li>`).join("")}</ul>
+    </details>
+    <div class="meta"><span>TD ${r.td}</span><span>Streak ${r.streak}</span><span>RSI ${r.rsi}</span><span>${r.n_factors} factors</span><span>Bar ${r.bar_date}</span></div>
+  </div>`;
+}
+
+function render(){
+  seg($("tabs"), [["daily","Daily"],["weekly","Weekly"],["monthly","Monthly"]], "tf");
+  seg($("dir"), [["all","All"],["bearish","Bearish"],["bullish","Bullish"]], "dir");
+  const d = (DATA && DATA[state.tf]) || {rows: []};
+  $("stamp").textContent = d.generated ? `Last ${d.mode === "quick" ? "refresh" : "scan"}: ${d.generated}` : "No scan yet for this timeframe";
+  const okStatus = s => state.stf === "all" || (state.stf === "green" ? s === "green" : (s === "green" || s === "amber"));
+  let rows = d.rows.filter(r => (state.dir === "all" || r.direction === state.dir) && r.score >= state.min &&
+                               r.ticker.includes(state.q.toUpperCase()) && okStatus(r.confirm?.status));
+  rows.sort(state.sort === "score" ? (a, b) => b.score - a.score
+    : (a, b) => (RANK[b.confirm?.status] - RANK[a.confirm?.status]) || (b.confirm?.hold_odds - a.confirm?.hold_odds) || (b.score - a.score));
+  $("grid").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">No candidates match these filters.</div>`;
+}
+
+/* ---- Market clock (Eastern Time) ---- */
+function tick(){
+  const et = new Date(new Date().toLocaleString("en-US", {timeZone: "America/New_York"}));
+  const day = et.getDay(), mins = et.getHours() * 60 + et.getMinutes();
+  let txt;
+  if (day === 0 || day === 6) txt = "Market closed (weekend)";
+  else if (mins < 570) txt = "Pre-market";
+  else if (mins >= 960) txt = "Market closed";
+  else { const left = 960 - mins; txt = `${left} min to close` + (left <= 55 ? " · confirmation window" : ""); }
+  $("clock").textContent = txt;
+}
+
+/* ---- Refresh ---- */
+function busy(on, msg){ $("btnQuick").disabled = $("btnFull").disabled = on; $("rstatus").textContent = msg || ""; }
+
+async function detectBackend(){
+  if (location.protocol.startsWith("http")) {
+    try { const r = await fetch("api/ping", {cache: "no-store"}); if (r.ok) { backend = "local"; return; } } catch(e) {}
+    if (CFG.repo) { backend = "github"; $("ghSettings").hidden = false; return; }
+  }
+  backend = "none";
+}
+
+async function waitForNewData(prev, timeoutMs){
+  const t0 = Date.now();
+  while (Date.now() - t0 < timeoutMs) {
+    await new Promise(r => setTimeout(r, 20000));
+    try {
+      const j = await (await fetch(`data/${state.tf}.json?t=${Date.now()}`, {cache: "no-store"})).json();
+      if (j.generated_iso !== prev) return true;
+    } catch(e) {}
+    $("rstatus").textContent = `Waiting for results… ${Math.round((Date.now() - t0) / 1000)} s`;
+  }
+  return false;
+}
+
+async function refresh(mode){
+  const prev = DATA?.[state.tf]?.generated_iso;
+  if (backend === "local") {
+    busy(true, mode === "quick" ? "Re-checking candidates…" : "Rescanning the full list… (1–3 min)");
+    try {
+      const r = await fetch(`api/refresh?mode=${mode}`, {method: "POST"});
+      const j = await r.json();
+      if (j.ok) { location.reload(); return; }
+      busy(false, j.error || "Scan failed; see the server window.");
+    } catch(e) { busy(false, "Could not reach the local server."); }
+    return;
+  }
+  if (backend === "github") {
+    const tok = store.get("gh_token");
+    if (!tok) { $("ghSettings").open = true; $("rstatus").textContent = "Add a GitHub token to enable refresh."; return; }
+    busy(true, "Starting GitHub scan…");
+    const r = await fetch(`https://api.github.com/repos/${CFG.repo}/actions/workflows/${CFG.workflow || "scan.yml"}/dispatches`, {
+      method: "POST",
+      headers: {Authorization: `Bearer ${tok}`, Accept: "application/vnd.github+json"},
+      body: JSON.stringify({ref: CFG.branch || "main", inputs: {mode}})
+    });
+    if (r.status !== 204) { busy(false, `GitHub refused the request (${r.status}). Check the token.`); return; }
+    busy(true, "Scan queued on GitHub; results usually arrive in 2–4 minutes.");
+    if (await waitForNewData(prev, 8 * 60 * 1000)) location.reload();
+    else busy(false, "Still waiting; check the Actions tab.");
+    return;
+  }
+  $("rstatus").textContent = "Refresh works on the published GitHub page.";
+}
+
+/* ---- Auto-update when a scheduled scan lands ---- */
+async function poll(){
+  if (backend === "none" || $("btnQuick").disabled) return;
+  try {
+    const j = await (await fetch(`data/${state.tf}.json?t=${Date.now()}`, {cache: "no-store"})).json();
+    if (j.generated_iso && j.generated_iso !== DATA?.[state.tf]?.generated_iso) location.reload();
+  } catch(e) {}
+}
+
+$("btnQuick").onclick = () => refresh("quick");
+$("btnFull").onclick = () => refresh("full");
+$("ghSave").onclick = () => { store.set("gh_token", $("ghToken").value.trim()); $("rstatus").textContent = "Token saved in this browser."; };
+$("min").oninput = e => { state.min = +e.target.value; $("minv").textContent = e.target.value; render(); };
+$("q").oninput = e => { state.q = e.target.value; render(); };
+$("stf").onchange = e => { state.stf = e.target.value; render(); };
+$("sort").onchange = e => { state.sort = e.target.value; render(); };
+render(); tick(); setInterval(tick, 30000);
+detectBackend().then(() => setInterval(poll, 60000));
+</script>
+</body>
+</html>

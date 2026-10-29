@@ -1,0 +1,19 @@
+# Fallback / custom universe: one ticker per line. Set UNIVERSE = "watchlist.txt" in config.py to use only these.
+SPY
+QQQ
+IWM
+AAPL
+MSFT
+NVDA
+AMZN
+GOOGL
+META
+TSLA
+AMD
+AVGO
+NFLX
+JPM
+XOM
+UNH
+LLY
+COST

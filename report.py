@@ -1,0 +1,87 @@
+"""Writes scan results to CSV, Excel and the web dashboard (site/index.html)."""
+from __future__ import annotations
+
+import datetime as dt
+import json
+import os
+from pathlib import Path
+
+import pandas as pd
+from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.utils import get_column_letter
+
+TFS = ("daily", "weekly", "monthly")
+COLS = ["ticker", "direction", "confirmation", "hold_odds", "score", "n_factors", "close", "change_pct",
+        "td", "streak", "rsi", "factors", "bar_date", "chart"]
+
+
+def _table(rows: list[dict]) -> pd.DataFrame:
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return pd.DataFrame(columns=COLS)
+    df["factors"] = df["factors"].apply(" | ".join)
+    df["confirmation"] = df["confirm"].apply(lambda c: c["label"])
+    df["hold_odds"] = df["confirm"].apply(lambda c: c["hold_odds"])
+    df["chart"] = "https://www.tradingview.com/chart/?symbol=" + df["ticker"]
+    return df[COLS]
+
+
+def _write_xlsx(path: Path, sheets: dict[str, pd.DataFrame]) -> None:
+    red, green = PatternFill("solid", fgColor="FBE3E1"), PatternFill("solid", fgColor="E2F3E6")
+    status_fill = {"Likely to confirm": "16A34A", "Confirmed at close": "16A34A", "Developing": "F59E0B",
+                   "At risk": "DC2626", "Failed at close": "DC2626", "Signal faded": "9CA3AF"}
+    head = PatternFill("solid", fgColor="1F2937")
+    widths = dict(ticker=9, direction=10, confirmation=18, hold_odds=10, score=7, n_factors=9, close=10, change_pct=10,
+                  td=6, streak=7, rsi=6, factors=90, bar_date=11, chart=12)
+    with pd.ExcelWriter(path, engine="openpyxl") as xw:
+        for name, df in sheets.items():
+            df.to_excel(xw, sheet_name=name.capitalize(), index=False)
+            ws = xw.sheets[name.capitalize()]
+            ws.freeze_panes = "B2"
+            for j, col in enumerate(df.columns, 1):
+                cell = ws.cell(row=1, column=j)
+                cell.font, cell.fill = Font(bold=True, color="FFFFFF"), head
+                ws.column_dimensions[get_column_letter(j)].width = widths.get(col, 12)
+            for i, r in enumerate(df.itertuples(index=False), 2):
+                fill = red if r.direction == "bearish" else green
+                for j in range(1, len(df.columns) + 1):
+                    ws.cell(row=i, column=j).fill = fill
+                st = ws.cell(row=i, column=COLS.index("confirmation") + 1)
+                st.fill = PatternFill("solid", fgColor=status_fill.get(r.confirmation, "9CA3AF"))
+                st.font = Font(bold=True, color="FFFFFF")
+                ws.cell(row=i, column=COLS.index("hold_odds") + 1).number_format = "0%"
+                ws.cell(row=i, column=COLS.index("factors") + 1).alignment = Alignment(wrap_text=True)
+                link = ws.cell(row=i, column=COLS.index("chart") + 1)
+                link.hyperlink, link.value, link.font = r.chart, "Open chart", Font(color="1D4ED8", underline="single")
+            ws.auto_filter.ref = ws.dimensions
+
+
+def write_outputs(tf: str, rows: list[dict], now: dt.datetime, root: Path, mode: str = "full") -> None:
+    stamp = now.strftime("%Y-%m-%d")
+    hist = root / "history" / tf
+    hist.mkdir(parents=True, exist_ok=True)
+    data_dir = root / "site" / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1) History archive (one CSV per run)
+    _table(rows).to_csv(hist / f"{stamp}_{now.strftime('%H%M')}.csv", index=False)
+
+    # 2) Latest JSON for this timeframe
+    payload = dict(timeframe=tf, generated=now.strftime("%Y-%m-%d %H:%M %Z"),
+                   generated_iso=now.isoformat(), mode=mode, rows=rows)
+    (data_dir / f"{tf}.json").write_text(json.dumps(payload))
+
+    # 3) Rebuild the combined workbook and dashboard from all latest JSON files
+    latest = {}
+    for name in TFS:
+        f = data_dir / f"{name}.json"
+        latest[name] = json.loads(f.read_text()) if f.exists() else dict(timeframe=name, generated=None, rows=[])
+    _write_xlsx(root / "site" / "reversal_signals.xlsx", {k: _table(v["rows"]) for k, v in latest.items()})
+
+    tpl = (root / "dashboard_template.html").read_text()
+    # e.g. GITHUB_WORKFLOW_REF = "user/repo/.github/workflows/scan.yml@refs/heads/main"
+    wf = os.environ.get("GITHUB_WORKFLOW_REF", "").split("@")[0].rsplit("/", 1)[-1] or "scan.yml"
+    cfg = dict(repo=os.environ.get("GITHUB_REPOSITORY", ""), branch=os.environ.get("GITHUB_REF_NAME", "main"),
+               workflow=wf)
+    html = tpl.replace("/*__DATA__*/null", json.dumps(latest)).replace("/*__CFG__*/null", json.dumps(cfg))
+    (root / "site" / "index.html").write_text(html)
