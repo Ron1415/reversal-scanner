@@ -53,6 +53,11 @@ jobs:
           DAY: ${{ inputs.check_date }}
         run: |
           python scanner.py --explain --tickers $TICKERS ${DAY:+--asof $DAY}
+          git config user.name "reversal-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add checks
+          git diff --cached --quiet || git commit -q -m "Check $TICKERS ${DAY:-today}"
+          for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
 
       - name: Scan
         if: ${{ !inputs.check_tickers }}

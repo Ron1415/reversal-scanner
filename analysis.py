@@ -30,11 +30,18 @@ SOLID = 15             # trades needed before a finding is called reliable
 TARGETS = (5.0, 10.0)  # profit targets of interest (%)
 
 KEY_NAMES = {
-    "candle": "Reversal candle (tail / engulfing)", "candle_doji": "Doji",
-    "count": "Time count 7+", "fib": "Fibonacci level", "sr_major": "Major pivot zone",
-    "sr": "Minor pivot", "hvn": "High-volume node", "trendline": "Trend line",
-    "rsi": "RSI extreme / divergence", "bollinger": "Bollinger band tag",
-    "extension": "Extended from 20 EMA", "volume": "Volume spike", "carried": "Entered a day or two after the signal",
+    "stage_forming": "Entered while the tail was forming", "stage_day2": "Entered 1-2 days after the tail",
+    "stage_watch": "Entered on a WATCH (before any tail)",
+    "count": "Time count 7-8", "count_9": "Time count 9+", "sweep": "Level was swept (traded through, closed back)",
+    "liq_equal_highs": "Double top", "liq_equal_lows": "Double bottom",
+    "liq_major_swing_high": "Major swing high", "liq_major_swing_low": "Major swing low",
+    "liq_prior_swing_high": "Prior swing high", "liq_prior_swing_low": "Prior swing low",
+    "liq_prior_week's_high": "Prior week's high", "liq_prior_week's_low": "Prior week's low",
+    "liq_prior_month's_high": "Prior month's high", "liq_prior_month's_low": "Prior month's low",
+    "liq_trendline": "Trend line", "liq_major_pivot_zone": "Volume-backed zone",
+    "liq_high-volume_node": "High-volume price", "liq_volume_poc": "Highest-volume price",
+    # older trades (before the setup engine)
+    "candle": "Reversal candle (old rules)", "carried": "Entered a day or two after the signal (old rules)",
 }
 
 
@@ -107,6 +114,8 @@ def analyse(trades: list[dict], prices: dict[str, pd.DataFrame], now: dt.datetim
 
     for key, label in KEY_NAMES.items():
         add(f"With: {label}", d["keys"].apply(lambda k: key in k))
+    fib = d["keys"].apply(lambda k: any(x.startswith("liq_fib") for x in k))
+    add("With: Fibonacci level", fib)
     for lo, hi, lab in ((0, 4, "Score under 4"), (4, 5.5, "Score 4 to 5.5"), (5.5, 99, "Score 5.5+")):
         add(lab, (d.score >= lo) & (d.score < hi))
     for lo, hi, lab in ((0, 7, "Count under 7"), (7, 9, "Count 7-8"), (9, 99, "Count 9+")):

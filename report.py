@@ -11,8 +11,9 @@ from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
 TFS = ("daily", "weekly", "monthly")
-COLS = ["ticker", "direction", "confirmation", "hold_odds", "score", "n_factors", "close", "change_pct",
-        "td", "streak", "rsi", "factors", "bar_date", "chart"]
+COLS = ["ticker", "direction", "stage", "idea", "score", "count", "close", "change_pct", "entry", "stop",
+        "risk_pct", "moved_pct", "rsi", "factors", "bar_date", "chart"]
+STAGE_NAMES = {"forming": "Tail forming now", "day2": "Tail 1-2 days ago", "watch": "Watch: into a level"}
 
 
 def _table(rows: list[dict]) -> pd.DataFrame:
@@ -20,19 +21,22 @@ def _table(rows: list[dict]) -> pd.DataFrame:
     if df.empty:
         return pd.DataFrame(columns=COLS)
     df["factors"] = df["factors"].apply(" | ".join)
-    df["confirmation"] = df["confirm"].apply(lambda c: c["label"])
-    df["hold_odds"] = df["confirm"].apply(lambda c: c["hold_odds"])
+    df["stage"] = [STAGE_NAMES.get(s, "No longer valid") if q else "No longer valid"
+                   for s, q in zip(df["stage"], df["qualifies"])]
+    for col in COLS:
+        if col not in df:
+            df[col] = None
     df["chart"] = "https://www.tradingview.com/chart/?symbol=" + df["ticker"]
     return df[COLS]
 
 
 def _write_xlsx(path: Path, sheets: dict[str, pd.DataFrame]) -> None:
     red, green = PatternFill("solid", fgColor="FBE3E1"), PatternFill("solid", fgColor="E2F3E6")
-    status_fill = {"Likely to confirm": "16A34A", "Confirmed at close": "16A34A", "Developing": "F59E0B",
-                   "At risk": "DC2626", "Failed at close": "DC2626", "Signal faded": "9CA3AF"}
+    status_fill = {"Tail forming now": "16A34A", "Tail 1-2 days ago": "1D4ED8", "Watch: into a level": "F59E0B",
+                   "No longer valid": "9CA3AF"}
     head = PatternFill("solid", fgColor="1F2937")
-    widths = dict(ticker=9, direction=10, confirmation=18, hold_odds=10, score=7, n_factors=9, close=10, change_pct=10,
-                  td=6, streak=7, rsi=6, factors=90, bar_date=11, chart=12)
+    widths = dict(ticker=9, direction=10, stage=20, idea=70, score=7, count=7, close=10, change_pct=10, entry=10,
+                  stop=10, risk_pct=9, moved_pct=10, rsi=6, factors=90, bar_date=11, chart=12)
     with pd.ExcelWriter(path, engine="openpyxl") as xw:
         for name, df in sheets.items():
             df.to_excel(xw, sheet_name=name.capitalize(), index=False)
@@ -46,10 +50,10 @@ def _write_xlsx(path: Path, sheets: dict[str, pd.DataFrame]) -> None:
                 fill = red if r.direction == "bearish" else green
                 for j in range(1, len(df.columns) + 1):
                     ws.cell(row=i, column=j).fill = fill
-                st = ws.cell(row=i, column=COLS.index("confirmation") + 1)
-                st.fill = PatternFill("solid", fgColor=status_fill.get(r.confirmation, "9CA3AF"))
+                st = ws.cell(row=i, column=COLS.index("stage") + 1)
+                st.fill = PatternFill("solid", fgColor=status_fill.get(r.stage, "9CA3AF"))
                 st.font = Font(bold=True, color="FFFFFF")
-                ws.cell(row=i, column=COLS.index("hold_odds") + 1).number_format = "0%"
+                ws.cell(row=i, column=COLS.index("idea") + 1).alignment = Alignment(wrap_text=True)
                 ws.cell(row=i, column=COLS.index("factors") + 1).alignment = Alignment(wrap_text=True)
                 link = ws.cell(row=i, column=COLS.index("chart") + 1)
                 link.hyperlink, link.value, link.font = r.chart, "Open chart", Font(color="1D4ED8", underline="single")

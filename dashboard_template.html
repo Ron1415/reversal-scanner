@@ -41,6 +41,7 @@
   .bearish .pill{background:var(--bearbg);color:var(--bear)} .bullish .pill{background:var(--bullbg);color:var(--bull)}
   .score{font-variant-numeric:tabular-nums;font-weight:700}
   .conf{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--st)}
+  .idea{font-size:13px;font-weight:600;line-height:1.35}
   .meter{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
   .meter i{display:block;height:100%;background:var(--st)}
   .checks{font-size:12px;margin:0;padding:0;list-style:none} .checks li{display:flex;gap:6px} .checks .d{color:var(--mute)}
@@ -55,6 +56,14 @@
   .taken{font-weight:600;color:var(--accent)}
   .small{padding:4px 10px;font-size:13px}
   nav a{font-weight:600}
+  .check{max-width:1200px;margin:8px auto 0;padding:0 16px}
+  .check details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+  .check summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--ink)}
+  .check .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .check input{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+  #ckOut{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;margin-top:12px}
+  .verdict{font-weight:700;color:var(--st)}
+  .why{font-size:12px;color:var(--mute)}
 </style>
 </head>
 <body>
@@ -75,25 +84,40 @@
 <div class="bar">
   <div class="seg" id="tabs"></div>
   <div class="seg" id="dir"></div>
-  <select id="stf" aria-label="Confirmation filter">
-    <option value="all">All signals</option>
-    <option value="green">Green only</option>
-    <option value="ga">Green and amber</option>
+  <select id="stf" aria-label="Stage filter">
+    <option value="all">All stages</option>
+    <option value="forming">Tail forming now</option>
+    <option value="day2">Tail 1-2 days ago</option>
+    <option value="watch">Watch: into a level</option>
   </select>
   <select id="sort" aria-label="Sort">
-    <option value="confirm">Sort: confirmation</option>
+    <option value="stage">Sort: stage, then score</option>
     <option value="score">Sort: score</option>
   </select>
-  <label>Min score <input type="range" id="min" min="3" max="10" step="0.5" value="3"> <span id="minv">3</span></label>
+  <label>Min score <input type="range" id="min" min="0" max="10" step="0.5" value="0"> <span id="minv">0</span></label>
   <input type="search" id="q" placeholder="Filter ticker">
   <a href="reversal_signals.xlsx">Download Excel</a>
   <nav><a href="tracker.html">Trade tracker →</a></nav>
 </div>
+<div class="check">
+  <details id="ckBox">
+    <summary>Check a ticker on a past date</summary>
+    <div class="sub">See what the scanner would have shown at 3:30 PM ET on any day in the last ~60 days (earlier dates use the closing bar). Takes about 1–2 minutes.</div>
+    <div class="row">
+      <input id="ckTickers" placeholder="Tickers, e.g. TPR AAPL" aria-label="Tickers" style="min-width:180px">
+      <input id="ckDate" type="date" aria-label="Date">
+      <button class="primary" id="ckGo">Check</button>
+      <button class="ghost" id="ckLast">Show last check</button>
+      <span id="ckStatus" class="sub"></span>
+    </div>
+    <div id="ckOut"></div>
+  </details>
+</div>
 <div class="legend">
-  <span><i class="dot" style="background:var(--green)"></i>Likely to confirm by the close</span>
-  <span><i class="dot" style="background:var(--amber)"></i>Developing</span>
-  <span><i class="dot" style="background:var(--red)"></i>At risk of failing</span>
-  <span><i class="dot" style="background:var(--grey)"></i>Signal faded</span>
+  <span><i class="dot" style="background:var(--green)"></i>Tail forming now at the high / low</span>
+  <span><i class="dot" style="background:var(--accent)"></i>Tail 1-2 days ago, not yet run away</span>
+  <span><i class="dot" style="background:var(--amber)"></i>Watch: pushing into a level, no tail yet</span>
+  <span><i class="dot" style="background:var(--grey)"></i>Setup no longer valid</span>
 </div>
 <main><div class="grid" id="grid"></div></main>
 <script>
@@ -104,8 +128,10 @@ window.CFG = /*__CFG__*/null || {};
 const DATA = /*__DATA__*/null;
 const CFG = window.CFG;
 let TRADES = [];
-const state = {tf: "daily", dir: "all", min: 3, q: "", stf: "all", sort: "confirm"};
-const RANK = {green: 3, amber: 2, red: 1, grey: 0};
+const state = {tf: "daily", dir: "all", min: 0, q: "", stf: "all", sort: "stage"};
+const RANK = {forming: 3, day2: 2, watch: 1};
+const STAGE = {forming: ["green", "Tail forming now"], day2: ["accent", "Tail 1-2 days ago"],
+               watch: ["amber", "Watch: into a level"]};
 let backend = "none";   // "local" | "github" | "none"
 const $ = id => document.getElementById(id);
 const store = {get: k => { try { return localStorage.getItem(k); } catch(e) { return null; } },
@@ -139,23 +165,22 @@ function chart(bars, levels, dir, inv){
 }
 
 function card(r){
-  const c = r.confirm || {status: "grey", label: "n/a", hold_odds: 0, checks: []};
-  const pct = Math.round(c.hold_odds * 100);
+  const [col, label] = r.qualifies === false ? ["grey", "No longer valid"] : (STAGE[r.stage] || ["grey", "—"]);
   return `
-  <div class="card ${r.direction} ${c.status}" style="--st:var(--${c.status})">
+  <div class="card ${r.direction}" style="--st:var(--${col})">
     <div class="top">
       <a class="tk" href="https://www.tradingview.com/chart/?symbol=${r.ticker}" target="_blank" rel="noopener">${r.ticker}</a>
       <span class="px">${r.close.toFixed(2)} (${r.change_pct > 0 ? "+" : ""}${r.change_pct}%)</span>
       <span class="pill">${r.direction}</span>
-      <span class="score" title="Weighted confluence score">${r.score}</span>
+      <span class="score" title="Ranking score">${r.score}</span>
     </div>
-    <div class="conf"><span>● ${c.label}</span><div class="meter"><i style="width:${pct}%"></i></div><span>${pct}%</span></div>
-    ${chart(r.bars, r.levels, r.direction, c.invalidation)}
+    <div class="conf"><span>● ${label}</span></div>
+    ${r.idea && r.qualifies !== false ? `<div class="idea">${r.idea}</div>` : ""}
+    ${chart(r.bars, r.levels, r.direction, r.qualifies === false ? null : r.stop)}
     <ul class="f">${r.factors.map(f => `<li>${f}</li>`).join("")}</ul>
-    <details><summary>Confirmation checks (${c.passed ?? 0}/${c.total ?? 0})</summary>
-      <ul class="checks">${c.checks.map(k => `<li>${k.ok ? "✓" : "✗"} ${k.name} <span class="d">${k.detail}</span></li>`).join("")}</ul>
-    </details>
-    <div class="meta"><span>Count ${r.count ?? r.td}</span><span>RSI ${r.rsi}</span><span>${r.n_factors} factors</span><span>Bar ${r.bar_date}</span></div>
+    <div class="meta">${r.stage === "watch" ? `<span>Wait for a tail; stop beyond ${r.stop}</span>`
+      : `<span>Entry ~${r.entry}</span><span>Stop ${r.stop} (${r.risk_pct}%)</span>`}
+      <span>${r.moved_pct}% from extreme</span><span>RSI ${r.rsi}</span><span>Bar ${r.bar_date}</span></div>
     ${tradeBox(r)}
   </div>`;
 }
@@ -201,9 +226,11 @@ async function takeTrade(tf, ticker, q){
     price_source: q ? "live" : "manual", quote_time: q ? q.time : null,
     note: q ? "" : $(id + "_n").value.trim(), status: "open", exit_price: null, exit_time: null, return_pct: null,
     signal: {score: r.score, n_factors: r.n_factors, factors: r.factors, keys: r.keys || [],
+             stage: r.stage, idea: r.idea, stop: r.stop, moved_pct: r.moved_pct, move_atr: r.move_atr,
+             efficiency: r.efficiency,
              count: r.count ?? null, rsi: r.rsi, carried: r.carried || 0, bar_date: r.bar_date,
              scan_close: r.close, confirm_status: r.confirm?.status, confirm_label: r.confirm?.label,
-             hold_odds: r.confirm?.hold_odds, invalidation: r.confirm?.invalidation,
+             hold_odds: r.confirm?.hold_odds, invalidation: r.stop ?? r.confirm?.invalidation,
              minutes_left: r.confirm?.minutes_left, levels: r.levels}
   };
   $("rstatus").textContent = `Saving ${ticker}…`;
@@ -219,13 +246,61 @@ function render(){
   seg($("dir"), [["all","All"],["bearish","Bearish"],["bullish","Bullish"]], "dir");
   const d = (DATA && DATA[state.tf]) || {rows: []};
   $("stamp").textContent = d.generated ? `Last ${d.mode === "quick" ? "refresh" : "scan"}: ${d.generated}` : "No scan yet for this timeframe";
-  const okStatus = s => state.stf === "all" || (state.stf === "green" ? s === "green" : (s === "green" || s === "amber"));
+  const okStatus = s => state.stf === "all" || s === state.stf;
   let rows = d.rows.filter(r => (state.dir === "all" || r.direction === state.dir) && r.score >= state.min &&
-                               r.ticker.includes(state.q.toUpperCase()) && okStatus(r.confirm?.status));
+                               r.ticker.includes(state.q.toUpperCase()) && okStatus(r.stage));
   rows.sort(state.sort === "score" ? (a, b) => b.score - a.score
-    : (a, b) => (RANK[b.confirm?.status] - RANK[a.confirm?.status]) || (b.confirm?.hold_odds - a.confirm?.hold_odds) || (b.score - a.score));
+    : (a, b) => ((RANK[b.stage] || 0) - (RANK[a.stage] || 0)) || (b.score - a.score));
   $("grid").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">No candidates match these filters.</div>`;
 }
+
+/* ---- Check a ticker on a past date ---- */
+function checkCard(x){
+  if (x.error) return `<div class="card" style="--st:var(--grey)"><div class="top"><span class="tk">${x.ticker}</span></div><div>${x.error}</div></div>`;
+  const [col, label] = x.flagged ? (STAGE[x.stage] || ["green", "Flagged"]) : ["grey", "Not flagged"];
+  return `<div class="card ${x.direction}" style="--st:var(--${col})">
+    <div class="top"><span class="tk">${x.ticker}</span><span class="px">${x.close.toFixed(2)}</span>
+      <span class="pill">${x.direction}</span><span class="score">${x.score}</span></div>
+    <div class="verdict">● ${x.flagged ? "Would have been FLAGGED: " + label : "Would NOT have been flagged"}</div>
+    ${x.idea ? `<div class="idea">${x.idea}</div>` : ""}
+    ${x.why_not.length ? `<div class="why">Missing: ${x.why_not.join("; ")}</div>` : ""}
+    ${chart(x.bars, x.levels, x.direction, x.flagged ? x.stop : null)}
+    <ul class="f">${x.factors.map(f => `<li>${f}</li>`).join("") || "<li>No factors found</li>"}</ul>
+    <div class="meta"><span>Count ${x.count ?? "–"}</span><span>${x.moved_pct ?? "–"}% from extreme</span><span>${x.note}</span></div>
+    ${(x.alternatives || []).map(a => `<div class="why">Other direction (${a.direction}): ${a.why.join("; ") || "qualified"}</div>`).join("")}
+  </div>`;
+}
+function showCheck(j){
+  $("ckOut").innerHTML = `<div class="sub" style="grid-column:1/-1">Check for ${j.asof} at ${j.at} ET</div>` + j.results.map(checkCard).join("");
+}
+function lastTradingDay(back){
+  const d = new Date(new Date().toLocaleString("en-US", {timeZone: "America/New_York"}));
+  while (back > 0) { d.setDate(d.getDate() - 1); if (d.getDay() % 6) back--; }
+  return d.toISOString().slice(0, 10);
+}
+$("ckDate").value = lastTradingDay(2);
+$("ckLast").onclick = async () => {
+  const j = await Store.readRepoJson("checks/latest.json");
+  if (j) showCheck(j); else $("ckStatus").textContent = Store.token() ? "No checks yet." : "Add your GitHub token in Settings first.";
+};
+$("ckGo").onclick = async () => {
+  const tickers = $("ckTickers").value.toUpperCase().replace(/[^A-Z0-9.\- ]/g, " ").trim().split(/\s+/).filter(Boolean);
+  if (!tickers.length) { $("ckStatus").textContent = "Enter at least one ticker."; return; }
+  if (!Store.token()) { $("ckStatus").textContent = "Add your GitHub token in Settings first."; return; }
+  const date = $("ckDate").value, started = new Date().toISOString();
+  $("ckGo").disabled = true; $("ckOut").innerHTML = "";
+  try { await Store.dispatch({mode: "full", check_tickers: tickers.join(" "), check_date: date}); }
+  catch (e) { $("ckStatus").textContent = e.message; $("ckGo").disabled = false; return; }
+  const t0 = Date.now();
+  while (Date.now() - t0 < 6 * 60 * 1000) {
+    $("ckStatus").textContent = `Checking ${tickers.join(", ")} for ${date}… ${Math.round((Date.now() - t0) / 1000)} s`;
+    await new Promise(r => setTimeout(r, 10000));
+    const j = await Store.readRepoJson("checks/latest.json").catch(() => null);
+    if (j && j.generated_iso > started && j.asof === date) { showCheck(j); $("ckStatus").textContent = ""; $("ckGo").disabled = false; return; }
+  }
+  $("ckStatus").textContent = "Still running; press \"Show last check\" in a minute.";
+  $("ckGo").disabled = false;
+};
 
 /* ---- Market clock (Eastern Time) ---- */
 function tick(){

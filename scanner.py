@@ -28,7 +28,8 @@ import pandas as pd
 
 import config as C
 from confirm import assess
-from indicators import atr, evaluate
+from indicators import atr
+from setup import STAGE_RANK, evaluate_setup
 import analysis
 from report import write_outputs, write_pages
 
@@ -162,57 +163,20 @@ def download_intraday(tickers: list[str], day: dt.date, until: dt.time | None = 
 
 
 def qualifies(res: dict) -> bool:
-    return ((res.get("has_candle") or not C.REQUIRE_CANDLE)
-            and res["n_factors"] >= C.MIN_FACTORS and res["score"] >= C.MIN_SCORE)
-
-
-def carried_setup(df: pd.DataFrame, tf: dict) -> dict | None:
-    """A qualifying setup from 1-N bars ago that has not run away yet: price is
-    still within `late_atr` ATRs of the signal bar's close and has not broken
-    the signal bar's tail."""
-    P = C.PARAMS
-    for k in range(1, P["carry_days"] + 1):
-        if len(df) <= k + 60:
-            break
-        res = evaluate(df.iloc[:-k], tf, P, C.WEIGHTS)
-        if not res or not qualifies(res):
-            continue
-        sig = df.iloc[-k - 1]
-        after = df.iloc[-k:]
-        a = res["atr"]
-        c = float(df["Close"].iloc[-1])
-        if res["direction"] == "bullish":
-            intact = float(after["Low"].min()) > float(sig.Low)
-            moved = (c - float(sig.Close)) / a
-            stop = float(sig.Low)
-        else:
-            intact = float(after["High"].max()) < float(sig.High)
-            moved = (float(sig.Close) - c) / a
-            stop = float(sig.High)
-        if intact and moved <= P["late_atr"]:
-            res = dict(res)
-            res["factors"] = [f"Setup from {k} bar{'s' if k > 1 else ''} ago, still near entry "
-                              f"({moved:+.1f} ATR since signal; stop beyond {stop:.2f})"] + res["factors"]
-            res["levels"] = [round(stop, 4)]
-            res["carried"] = k
-            res["keys"] = ["carried"] + list(res.get("keys", []))
-            return res
-    return None
+    if not res or not res.get("qualified"):
+        return False
+    return C.SHOW_WATCH or res.get("stage") != "watch"
 
 
 def build_row(t: str, tf_name: str, raw: pd.DataFrame, now: dt.datetime,
               intraday: dict | None, keep: set[str]) -> dict | None:
     tf = C.TIMEFRAMES[tf_name]
     df = prepare(raw, tf["rule"], now)
-    res = evaluate(df, tf, C.PARAMS, C.WEIGHTS)
-    ok = bool(res) and qualifies(res)
-    if not ok:
-        carried = carried_setup(df, tf)
-        if carried:
-            res, ok = carried, True
+    res = evaluate_setup(df, tf, C.PARAMS, C.WEIGHTS)
+    ok = qualifies(res)
     if not res or (not ok and t not in keep):
         return None
-    res.pop("diag", None)
+    res = {k: v for k, v in res.items() if k not in ("hits", "alternatives", "why", "ext_pos")}
     last, prev = df.iloc[-1], df.iloc[-2]
     row = dict(ticker=t, timeframe=tf_name, close=round(float(last.Close), 2),
                change_pct=round((float(last.Close) / float(prev.Close) - 1) * 100, 2),
@@ -220,9 +184,9 @@ def build_row(t: str, tf_name: str, raw: pd.DataFrame, now: dt.datetime,
                bar_is_live=raw.index[-1].date() == now.date(),
                bars=df.iloc[-45:][["Open", "High", "Low", "Close"]].round(4).to_numpy().tolist(),
                **res)
+    # Intraday tape checks are kept for the trade journal / analysis (not shown on cards).
     row["confirm"] = assess(row, (float(last.High), float(last.Low), float(last.Close)),
-                            float(atr(raw).iloc[-1]), (intraday or {}).get(t), now, ok,
-                            use_mid=not res.get("carried"))
+                            float(atr(raw).iloc[-1]), (intraday or {}).get(t), now, ok)
     return row
 
 
@@ -246,12 +210,12 @@ def scan(tf_name: str, data: dict[str, pd.DataFrame], now: dt.datetime,
             continue
         if row:
             rows.append(row)
-    rows.sort(key=lambda r: (r["qualifies"], not r.get("carried"), r["score"], r["n_factors"]), reverse=True)
+    rows.sort(key=lambda r: (r["qualifies"], STAGE_RANK.get(r.get("stage"), 0), r["score"]), reverse=True)
     out = []
     for d in ("bearish", "bullish"):
         side = [r for r in rows if r["direction"] == d]
         out += [r for r in side if r["qualifies"]][:C.MAX_RESULTS] + [r for r in side if not r["qualifies"]]
-    return sorted(out, key=lambda r: (r["qualifies"], not r.get("carried"), r["score"]), reverse=True)
+    return sorted(out, key=lambda r: (r["qualifies"], STAGE_RANK.get(r.get("stage"), 0), r["score"]), reverse=True)
 
 
 # --------------------------------------------------------------------------- #
@@ -262,15 +226,18 @@ def explain(tickers: list[str], asof: dt.date, at: dt.time) -> int:
     data = download(tickers, "3y")
     intra = download_intraday(tickers, asof, until=at)
     out = [f"# Signal check for {asof} at {at.strftime('%H:%M')} ET\n"]
+    results = []
     tf = C.TIMEFRAMES["daily"]
     for t in tickers:
         raw = data.get(t)
         if raw is None:
             out.append(f"## {t}\nNo price data.\n")
+            results.append(dict(ticker=t, error="No price data for this ticker."))
             continue
         raw = raw[raw.index.date <= asof].copy()
         if not len(raw) or raw.index[-1].date() != asof:
             out.append(f"## {t}\nNo trading bar on {asof}.\n")
+            results.append(dict(ticker=t, error=f"No trading day on {asof} (weekend or holiday?)."))
             continue
         note = "closing bar for that day (5-minute data not available)"
         if t in intra:
@@ -279,37 +246,46 @@ def explain(tickers: list[str], asof: dt.date, at: dt.time) -> int:
                             float(b.Close.iloc[-1]), float(b.Volume.sum())]
             note = f"the bar as it stood at {at.strftime('%H:%M')} (rebuilt from 5-minute data)"
         df = prepare(raw, None, now)
-        res = evaluate(df, tf, C.PARAMS, C.WEIGHTS)
-        row = build_row(t, "daily", raw, now, {}, keep={t})
+        res = evaluate_setup(df, tf, C.PARAMS, C.WEIGHTS)
         out.append(f"## {t}\nUsing {note}.\n")
         if not res:
             out.append("Not enough history to evaluate.\n")
+            results.append(dict(ticker=t, error="Not enough price history."))
             continue
-        d = res["diag"]
-        cs = d["candle"]
-        out.append(f"**Verdict: {'FLAGGED' if row and row['qualifies'] else 'NOT flagged'}**"
-                   f" | direction tested: {res['direction']} (prior trend {d['prior_trend']})"
-                   f" | score {res['score']} (need {C.MIN_SCORE}) | factors {res['n_factors']} (need {C.MIN_FACTORS})"
-                   f" | reversal candle: {'yes' if res['has_candle'] else 'NO'}\n")
-        out.append("Factors found:\n" + "\n".join(f"- {f}" for f in res["factors"]) + "\n")
-        out.append(f"Candle: O {cs['open']:.2f} H {cs['high']:.2f} L {cs['low']:.2f} C {cs['close']:.2f}"
-                   f" | range {cs['range_atr']} ATR | body {cs['body_pct']:.0%} | upper wick {cs['upper_wick_pct']:.0%}"
-                   f" | lower wick {cs['lower_wick_pct']:.0%} | close position {cs['close_position']:.0%}"
-                   f" (tail rule: wick >= {C.PARAMS['tail_min_pct']:.0%} of range and >= {C.PARAMS['tail_min_atr']} ATR,"
-                   f" close in the reversal half)\n")
-        out.append("Time counts (bars before this one): " +
-                   ", ".join(f"{k} {v}" for k, v in d["counts"].items()) + f" (need {C.PARAMS['count_min']})\n")
-        out.append(f"Nearest pivot zones (tolerance {d['tolerance']}): " +
-                   "; ".join(f"{z['price']:.2f} ({z['touches']} touches, {z['rv']:.1f}x vol"
-                             f"{', major' if z['major'] else ''})" for z in d["nearest_zones"]) + "\n")
-        if row and row.get("carried"):
-            out.append(f"Listed as a carried setup from {row['carried']} bar(s) earlier.\n")
+        flagged = qualifies(res)
+        why = list(res.get("why", []))
+        if res.get("qualified") and not flagged:
+            why.append("WATCH setups are hidden (SHOW_WATCH = False)")
+        out.append(f"**Verdict: {'FLAGGED (' + str(res.get('stage')).upper() + ')' if flagged else 'NOT flagged'}**"
+                   f" | best direction: {res['direction']} | time count {res.get('count')} | "
+                   f"{res.get('moved_pct')}% from the extreme\n")
+        if why:
+            out.append("Missing:\n" + "\n".join(f"- {w}" for w in why) + "\n")
+        out.append("Found:\n" + "\n".join(f"- {f}" for f in res.get("factors", [])) + "\n")
+        if res.get("idea") and flagged:
+            out.append(f"Idea: {res['idea']} Entry ~{res['entry']}, stop {res['stop']} ({res['risk_pct']}% risk).\n")
+        for alt in res.get("alternatives", []):
+            out.append(f"Other direction ({alt['direction']}): " + ("; ".join(alt["why"]) or "qualified") + "\n")
+        results.append(dict(
+            ticker=t, flagged=flagged, note=note, direction=res["direction"], stage=res.get("stage"),
+            score=res.get("score", 0), count=res.get("count"), moved_pct=res.get("moved_pct"),
+            factors=res.get("factors", []), why_not=[] if flagged else why, idea=res.get("idea") if flagged else "",
+            entry=res.get("entry"), stop=res.get("stop"), risk_pct=res.get("risk_pct"),
+            levels=res.get("levels", []), close=round(float(df["Close"].iloc[-1]), 2),
+            alternatives=res.get("alternatives", []),
+            bars=df.iloc[-45:][["Open", "High", "Low", "Close"]].round(4).to_numpy().tolist()))
     text = "\n".join(out)
     print(text)
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:
         with open(summary, "a") as f:
             f.write(text)
+    # Saved for the dashboard's "Check a ticker" box
+    chk = ROOT / "checks"
+    chk.mkdir(exist_ok=True)
+    (chk / "latest.json").write_text(json.dumps(dict(
+        generated_iso=dt.datetime.now(dt.timezone.utc).isoformat(), asof=str(asof), at=at.strftime("%H:%M"),
+        tickers=tickers, results=results), default=float))
     return 0
 
 
