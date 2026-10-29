@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trade Tracker</title>
+<style>
+  :root{--bg:#f7f7f5;--card:#fff;--ink:#1c1c1a;--mute:#6b6b66;--line:#e4e4df;--up:#15803d;--down:#c2410c;--accent:#1d4ed8;--soft:#f0f0ec}
+  @media (prefers-color-scheme:dark){:root{--bg:#141413;--card:#1d1d1b;--ink:#ecece8;--mute:#9a9a93;--line:#2f2f2c;--up:#4ade80;--down:#fb923c;--accent:#93b4ff;--soft:#262624}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+  .wrap{max-width:1200px;margin:auto;padding:20px 16px 48px}
+  header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-end}
+  h1{margin:0;font-size:22px} h2{font-size:16px;margin:28px 0 8px}
+  .sub{color:var(--mute);font-size:13px}
+  a{color:var(--accent)}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:16px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .tile .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+  .tile .k{font-size:12px;color:var(--mute)}
+  .tbl{width:100%;overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+  table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;white-space:nowrap}
+  th{font-size:12px;color:var(--mute);font-weight:600;background:var(--soft)}
+  td.f{white-space:normal;min-width:220px;color:var(--mute);font-size:12px}
+  .pos{color:var(--up);font-weight:600} .neg{color:var(--down);font-weight:600}
+  input{padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;width:90px}
+  .primary{background:var(--ink);color:var(--bg);border:0;padding:5px 10px;border-radius:6px;font:inherit;font-weight:600;cursor:pointer}
+  .ghost{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:5px 10px;border-radius:6px;font:inherit;cursor:pointer}
+  .link{background:none;border:0;color:var(--mute);cursor:pointer;font:inherit;text-decoration:underline;padding:0}
+  details.settings{font-size:12px;color:var(--mute)} details.settings input{width:260px}
+  #status{font-size:12px;color:var(--mute);min-height:16px}
+  .insights{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+  .insights li{margin:4px 0}
+  .empty{color:var(--mute);padding:16px}
+  .bar{display:inline-block;height:8px;border-radius:4px;background:var(--accent);vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>Trade Tracker</h1>
+    <div class="sub"><a href="index.html">← Scanner</a> · <span id="asof"></span></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+    <div style="display:flex;gap:6px">
+      <button class="ghost" id="btnAnalyze" title="Re-run the analysis with the latest prices (about 1 minute)">Update analysis</button>
+      <button class="ghost" id="btnCsv">Export CSV</button>
+    </div>
+    <div id="status"></div>
+    <div id="tokenPanel"></div>
+  </div>
+</header>
+
+<div class="tiles" id="tiles"></div>
+
+<h2>Open trades</h2>
+<div class="tbl" id="open"></div>
+
+<h2>Closed trades</h2>
+<div class="tbl" id="closed"></div>
+
+<h2>What is working</h2>
+<div class="insights" id="insights"></div>
+
+<h2>Breakdown by factor and setup</h2>
+<div class="tbl" id="breakdown"></div>
+</div>
+
+<script>window.CFG = {"repo": "Ron1415/reversal-scanner", "branch": "main", "workflow": "scan.yml"} || {};</script>
+<script src="store.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+let TRADES = [], ANALYSIS = null, PRICES = {};
+const pct = v => v == null ? "–" : `<span class="${v >= 0 ? "pos" : "neg"}">${v > 0 ? "+" : ""}${v.toFixed(2)}%</span>`;
+const days = (a, b) => ((b ? new Date(b) : new Date()) - new Date(a)) / 86400000;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+
+async function loadAll(){
+  try { TRADES = await Store.load(); } catch (e) { $("status").textContent = e.message; }
+  try { ANALYSIS = await (await fetch(`data/analysis.json?t=${Date.now()}`, {cache: "no-store"})).json(); } catch (e) { ANALYSIS = null; }
+  PRICES = Object.assign({}, ANALYSIS?.prices || {});
+  try {   // newest scan prices win
+    const d = await (await fetch(`data/daily.json?t=${Date.now()}`, {cache: "no-store"})).json();
+    d.rows.forEach(r => { PRICES[r.ticker] = {price: r.close, time: d.generated}; });
+  } catch (e) {}
+  render();
+  await livePrices();
+}
+
+/* Live prices for open trades (needs the Finnhub key in Settings). */
+async function livePrices(){
+  if (!Store.quoteKey()) return;
+  const open = [...new Set(TRADES.filter(t => t.status === "open").map(t => t.ticker))];
+  for (const tk of open) {
+    const q = await Store.quote(tk);
+    if (q) PRICES[tk] = {price: q.price, time: q.time, live: true};
+  }
+  if (open.length) { render(); $("status").textContent = `Live prices updated ${Store.fmtTime(new Date().toISOString())}`; }
+}
+
+function tiles(){
+  const closed = TRADES.filter(t => t.status === "closed"), open = TRADES.filter(t => t.status === "open");
+  const rets = closed.map(t => t.return_pct);
+  const wins = rets.filter(r => r > 0), losses = rets.filter(r => r <= 0);
+  const sum = rets.reduce((a, b) => a + b, 0);
+  const unreal = open.map(t => Store.returnPct(t, PRICES[t.ticker]?.price)).filter(v => v != null);
+  const gw = wins.reduce((a, b) => a + b, 0), gl = -losses.reduce((a, b) => a + b, 0);
+  const T = [
+    ["Closed trades", closed.length], ["Win rate", closed.length ? `${Math.round(100 * wins.length / closed.length)}%` : "–"],
+    ["Total return (sum)", closed.length ? pct(sum) : "–"], ["Average per trade", closed.length ? pct(sum / closed.length) : "–"],
+    ["Average win", wins.length ? pct(gw / wins.length) : "–"], ["Average loss", losses.length ? pct(-gl / losses.length) : "–"],
+    ["Profit factor", gl > 0 ? (gw / gl).toFixed(2) : (gw > 0 ? "∞" : "–")],
+    ["Open trades", open.length], ["Open P/L (avg)", unreal.length ? pct(unreal.reduce((a, b) => a + b, 0) / unreal.length) : "–"],
+  ];
+  $("tiles").innerHTML = T.map(([k, v]) => `<div class="tile"><div class="v">${v}</div><div class="k">${k}</div></div>`).join("");
+}
+
+function openTable(){
+  const open = TRADES.filter(t => t.status === "open").sort((a, b) => b.entry_time.localeCompare(a.entry_time));
+  if (!open.length) { $("open").innerHTML = `<div class="empty">No open trades. Use "Took this trade" on a scanner card.</div>`; return; }
+  $("open").innerHTML = `<table><tr><th>Ticker</th><th>Side</th><th>Opened</th><th>Entry</th><th>Last price</th><th>P/L</th><th>Days</th>
+    <th>Stop</th><th>Signal</th><th>Close trade</th><th></th></tr>` + open.map(t => {
+    const p = PRICES[t.ticker]?.price, r = Store.returnPct(t, p);
+    return `<tr><td><b>${t.ticker}</b></td><td>${t.side}</td><td>${Store.fmtTime(t.entry_time)}</td><td>${t.entry_price}</td>
+      <td>${p ?? "–"}${PRICES[t.ticker]?.live ? ' <span class="sub">live</span>' : ""}</td><td>${pct(r)}</td><td>${days(t.entry_time).toFixed(1)}</td><td>${t.signal?.invalidation ?? "–"}</td>
+      <td class="f">Score ${t.signal?.score} · ${esc((t.signal?.factors || []).join(" · "))}${t.note ? `<br><i>${esc(t.note)}</i>` : ""}</td>
+      <td><input type="number" step="0.01" id="x_${t.id}" value="${p ?? ""}" placeholder="Exit price">
+          <button class="primary" onclick="closeTrade('${t.id}')">Close</button></td>
+      <td><button class="link" onclick="removeTrade(this,'${t.id}')">remove</button></td></tr>`;
+  }).join("") + `</table>`;
+}
+
+function closedTable(){
+  const closed = TRADES.filter(t => t.status === "closed").sort((a, b) => b.exit_time.localeCompare(a.exit_time));
+  if (!closed.length) { $("closed").innerHTML = `<div class="empty">No closed trades yet.</div>`; return; }
+  const ex = ANALYSIS?.excursions || {};
+  $("closed").innerHTML = `<table><tr><th>Ticker</th><th>Side</th><th>Opened</th><th>Closed</th><th>Entry</th><th>Exit</th><th>Return</th>
+    <th>Days</th><th title="Best move in your favour while open">Max gain</th><th title="Worst move against you while open">Max drawdown</th><th>Signal</th><th></th></tr>` +
+    closed.map(t => `<tr><td><b>${t.ticker}</b></td><td>${t.side}</td><td>${Store.fmtTime(t.entry_time)}</td><td>${Store.fmtTime(t.exit_time)}</td>
+      <td>${t.entry_price}</td><td>${t.exit_price}</td><td>${pct(t.return_pct)}</td><td>${days(t.entry_time, t.exit_time).toFixed(1)}</td>
+      <td>${pct(ex[t.id]?.mfe ?? null)}</td><td>${pct(ex[t.id]?.mae ?? null)}</td>
+      <td class="f">Score ${t.signal?.score} · ${esc((t.signal?.factors || []).join(" · "))}${t.note ? `<br><i>${esc(t.note)}</i>` : ""}</td>
+      <td><button class="link" onclick="removeTrade(this,'${t.id}')">remove</button></td></tr>`).join("") + `</table>`;
+}
+
+function insights(){
+  if (!ANALYSIS) { $("insights").innerHTML = `<div class="empty">The analysis appears after the next scan, or press "Update analysis".</div>`;
+                   $("breakdown").innerHTML = ""; return; }
+  $("insights").innerHTML = `<ul>${ANALYSIS.insights.map(i => `<li>${esc(i)}</li>`).join("")}</ul>
+    <div class="sub">Analysis run ${esc(ANALYSIS.generated)} on ${ANALYSIS.n_closed} closed trades.</div>`;
+  const rows = ANALYSIS.breakdown || [];
+  if (!rows.length) { $("breakdown").innerHTML = `<div class="empty">Breakdowns appear once trades are closed.</div>`; return; }
+  $("breakdown").innerHTML = `<table><tr><th>Group</th><th>Trades</th><th>Win rate</th><th></th><th>Avg return</th><th>Avg max gain</th><th>Avg days</th></tr>` +
+    rows.map(b => `<tr><td>${esc(b.group)}</td><td>${b.n}</td><td>${Math.round(b.win_rate * 100)}%</td>
+      <td><span class="bar" style="width:${Math.round(b.win_rate * 80)}px"></span></td><td>${pct(b.avg_return)}</td>
+      <td>${pct(b.avg_mfe)}</td><td>${b.avg_days ?? "–"}</td></tr>`).join("") + `</table>`;
+}
+
+function render(){
+  $("asof").textContent = TRADES.length ? `${TRADES.length} trades recorded` : "No trades recorded yet";
+  tiles(); openTable(); closedTable(); insights();
+}
+
+async function closeTrade(id){
+  const t0 = TRADES.find(x => x.id === id);
+  const q = t0 ? await Store.quote(t0.ticker) : null;   // use the live price at the moment you click
+  if (q) $("x_" + id).value = q.price;
+  const price = parseFloat($("x_" + id).value);
+  if (!(price > 0)) { $("status").textContent = "Enter the exit price first."; return; }
+  $("status").textContent = "Saving…";
+  try {
+    TRADES = await Store.update(ts => {
+      const t = ts.find(x => x.id === id); if (!t) return;
+      t.status = "closed"; t.exit_price = price; t.exit_time = new Date().toISOString(); t.return_pct = Store.returnPct(t, price);
+      t.exit_price_source = q ? "live" : "manual";
+    }, `Close ${id} @ ${price}`);
+    $("status").textContent = "Trade closed.";
+    render();
+  } catch (e) { $("status").textContent = e.message; }
+}
+
+async function removeTrade(btn, id){
+  if (btn.dataset.armed !== "1") { btn.dataset.armed = "1"; btn.textContent = "confirm remove"; return; }
+  try { TRADES = await Store.update(ts => { const i = ts.findIndex(x => x.id === id); if (i >= 0) ts.splice(i, 1); }, `Remove ${id}`); render(); }
+  catch (e) { $("status").textContent = e.message; }
+}
+
+$("btnCsv").onclick = () => {
+  const cols = ["ticker","side","direction","timeframe","entry_time","entry_price","exit_time","exit_price","return_pct","status","note"];
+  const sig = ["score","n_factors","count","rsi","carried","confirm_label","hold_odds"];
+  const lines = [[...cols, ...sig, "factors"].join(",")].concat(TRADES.map(t =>
+    [...cols.map(c => t[c]), ...sig.map(c => t.signal?.[c]), (t.signal?.factors || []).join(" | ")]
+      .map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")));
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\n")], {type: "text/csv"}));
+  a.download = "trades.csv"; a.click();
+};
+$("btnAnalyze").onclick = async () => {
+  try { await Store.dispatch({mode: "analyze"}); $("status").textContent = "Analysis started; reload this page in about 2 minutes."; }
+  catch (e) { $("status").textContent = e.message; }
+};
+Store.mountSettings($("tokenPanel"), loadAll);
+loadAll();
+setInterval(livePrices, 60000);   // keep open-trade P/L current while the page is open
+</script>
+</body>
+</html>
