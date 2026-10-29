@@ -1,0 +1,71 @@
+name: reversal-scan
+
+on:
+  schedule:
+    # Times are UTC. Each pair covers summer (EDT) and winter (EST) time.
+    # The scanner itself skips any run outside 2:45-3:59 PM New York time.
+    - cron: "5 19 * * 1-5"
+    - cron: "30 19 * * 1-5"
+    - cron: "50 19 * * 1-5"
+    - cron: "5 20 * * 1-5"
+    - cron: "30 20 * * 1-5"
+    - cron: "50 20 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "full = scan every stock, quick = re-check today's list"
+        default: "full"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency: reversal-scan
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Scan
+        env:
+          MODE: ${{ github.event.inputs.mode }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python scanner.py --refresh "${MODE:-full}"
+          else
+            python scanner.py --auto
+          fi
+          mkdir -p site
+          [ -f site/index.html ] || cp dashboard_template.html site/index.html
+
+      - name: Save results
+        run: |
+          git config user.name "reversal-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A site
+          if [ -d history ]; then git add -A history; fi
+          git diff --cached --quiet || git commit -m "Scan $(TZ=America/New_York date '+%Y-%m-%d %H:%M ET')"
+          git push
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
