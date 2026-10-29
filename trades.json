@@ -49,5 +49,56 @@
     434.715
    ]
   }
+ },
+ {
+  "id": "LDOS-1793317259026",
+  "ticker": "LDOS",
+  "timeframe": "daily",
+  "direction": "bearish",
+  "side": "short",
+  "entry_price": 141.02,
+  "entry_time": "2026-10-29T23:40:59.026Z",
+  "price_source": "live",
+  "quote_time": "2026-10-29T20:00:00.000Z",
+  "note": "",
+  "status": "open",
+  "exit_price": null,
+  "exit_time": null,
+  "return_pct": null,
+  "signal": {
+   "score": 5.83,
+   "n_factors": 4,
+   "factors": [
+    "Topping tail forming at the high (tail 58% of range)",
+    "Time count 11: up bars since the last real down bar",
+    "Liquidity swept Major swing high @ 142.02",
+    "RSI overbought (73)"
+   ],
+   "keys": [
+    "stage_forming",
+    "count_9",
+    "liq_major_swing_high",
+    "sweep"
+   ],
+   "stage": "forming",
+   "idea": "Expecting DOWN: 11-bar rally at major swing high 142.02; topping tail forming now.",
+   "stop": 143.62,
+   "moved_pct": 1.56,
+   "move_atr": 8.5,
+   "efficiency": 0.97,
+   "count": 11,
+   "rsi": 73.1,
+   "carried": 0,
+   "bar_date": "2026-10-29",
+   "scan_close": 141.02,
+   "confirm_status": "amber",
+   "confirm_label": "Developing",
+   "hold_odds": 1,
+   "invalidation": 143.62,
+   "minutes_left": 0,
+   "levels": [
+    142.0188
+   ]
+  }
  }
 ]
