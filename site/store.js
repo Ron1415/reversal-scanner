@@ -78,6 +78,14 @@ const Store = (() => {
     return Math.round(r * 10000) / 100;
   }
 
+  /* Read any JSON file from the repository (e.g. checks/latest.json). */
+  async function readRepoJson(path) {
+    if (!canWrite()) return null;
+    const r = await fetch(api(`contents/${path}?ref=${CFG.branch || "main"}&t=${Date.now()}`), {headers: headers(), cache: "no-store"});
+    if (!r.ok) return null;
+    return JSON.parse(dec((await r.json()).content));
+  }
+
   async function dispatch(inputs) {
     const r = await fetch(api(`actions/workflows/${CFG.workflow || "scan.yml"}/dispatches`), {
       method: "POST", headers: headers(), body: JSON.stringify({ref: CFG.branch || "main", inputs})});
@@ -103,6 +111,6 @@ const Store = (() => {
     };
   }
 
-  return {load, update, returnPct, dispatch, token, setToken, canWrite, mountSettings, fmtTime, quote, quoteKey,
+  return {load, update, returnPct, dispatch, token, setToken, canWrite, mountSettings, fmtTime, quote, quoteKey, readRepoJson,
           get trades() { return cache.trades; }};
 })();
