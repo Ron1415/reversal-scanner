@@ -74,7 +74,7 @@ def download(tickers: list[str], period: str) -> dict[str, pd.DataFrame]:
         for t in batch:
             try:
                 df = raw[t] if isinstance(raw.columns, pd.MultiIndex) else raw
-                df = df[["Open", "High", "Low", "Close", "Volume"]].dropna()
+                df = df[["Open", "High", "Low", "Close", "Volume"]].dropna().astype("float64")
                 if len(df):
                     df.index = pd.to_datetime(df.index).tz_localize(None)
                     out[t] = df
@@ -115,7 +115,7 @@ def in_window(now: dt.datetime) -> bool:
 
 
 def prepare(df: pd.DataFrame, rule: str | None, now: dt.datetime) -> pd.DataFrame:
-    df = df.copy()
+    df = df.astype("float64")   # Yahoo returns whole-number volume; keep everything float
     # Project today's partial volume to a full-session estimate.
     if df.index[-1].date() == now.date() and now.time() < dt.time(16, 0):
         df.iloc[-1, df.columns.get_loc("Volume")] /= session_fraction(now)
@@ -143,7 +143,7 @@ def download_intraday(tickers: list[str], today: dt.date) -> dict[str, pd.DataFr
     for t in tickers:
         try:
             df = raw[t] if isinstance(raw.columns, pd.MultiIndex) else raw
-            df = df[["Open", "High", "Low", "Close", "Volume"]].dropna()
+            df = df[["Open", "High", "Low", "Close", "Volume"]].dropna().astype("float64")
             idx = pd.to_datetime(df.index)
             idx = idx.tz_convert(NY) if idx.tz is not None else idx.tz_localize(NY)
             df.index = idx
@@ -169,8 +169,8 @@ def scan(tf_name: str, data: dict[str, pd.DataFrame], now: dt.datetime,
         if t not in keep and (raw["Close"].iloc[-1] < C.MIN_PRICE or
                               (tail["Close"] * tail["Volume"]).mean() < C.MIN_AVG_DOLLAR_VOLUME):
             continue
-        df = prepare(raw, tf["rule"], now)
         try:
+            df = prepare(raw, tf["rule"], now)
             res = evaluate(df, tf, C.PARAMS, C.WEIGHTS)
         except Exception as e:
             log.warning("%s: %s", t, e)
