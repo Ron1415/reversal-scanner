@@ -78,10 +78,28 @@ def write_outputs(tf: str, rows: list[dict], now: dt.datetime, root: Path, mode:
         latest[name] = json.loads(f.read_text()) if f.exists() else dict(timeframe=name, generated=None, rows=[])
     _write_xlsx(root / "site" / "reversal_signals.xlsx", {k: _table(v["rows"]) for k, v in latest.items()})
 
-    tpl = (root / "dashboard_template.html").read_text()
+    write_pages(root, latest)
+
+
+def _cfg() -> dict:
     # e.g. GITHUB_WORKFLOW_REF = "user/repo/.github/workflows/scan.yml@refs/heads/main"
     wf = os.environ.get("GITHUB_WORKFLOW_REF", "").split("@")[0].rsplit("/", 1)[-1] or "scan.yml"
-    cfg = dict(repo=os.environ.get("GITHUB_REPOSITORY", ""), branch=os.environ.get("GITHUB_REF_NAME", "main"),
-               workflow=wf)
-    html = tpl.replace("/*__DATA__*/null", json.dumps(latest)).replace("/*__CFG__*/null", json.dumps(cfg))
-    (root / "site" / "index.html").write_text(html)
+    return dict(repo=os.environ.get("GITHUB_REPOSITORY", ""), branch=os.environ.get("GITHUB_REF_NAME", "main"),
+                workflow=wf)
+
+
+def write_pages(root: Path, latest: dict | None = None) -> None:
+    """(Re)build site/index.html, site/tracker.html and site/store.js."""
+    site = root / "site"
+    (site / "data").mkdir(parents=True, exist_ok=True)
+    if latest is None:
+        latest = {}
+        for name in TFS:
+            f = site / "data" / f"{name}.json"
+            latest[name] = json.loads(f.read_text()) if f.exists() else dict(timeframe=name, generated=None, rows=[])
+    cfg = json.dumps(_cfg())
+    tpl = (root / "dashboard_template.html").read_text()
+    (site / "index.html").write_text(tpl.replace("/*__DATA__*/null", json.dumps(latest)).replace("/*__CFG__*/null", cfg))
+    tpl = (root / "tracker_template.html").read_text()
+    (site / "tracker.html").write_text(tpl.replace("/*__CFG__*/null", cfg))
+    (site / "store.js").write_text((root / "store.js").read_text())

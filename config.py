@@ -9,8 +9,9 @@ FALLBACK_TICKERS_FILE = "watchlist.txt"
 MIN_PRICE = 5.0
 MIN_AVG_DOLLAR_VOLUME = 20_000_000  # 20-day average close * volume
 
-# A ticker is listed only when it meets BOTH thresholds
-MIN_FACTORS = 3       # at least three independent confluence factors
+# A ticker is listed only when it meets ALL of these
+REQUIRE_CANDLE = True # a reversal candle (tail / engulfing / doji) must be present today
+MIN_FACTORS = 3       # at least three confluence factors (the candle counts as one)
 MIN_SCORE = 3.0       # weighted score (see WEIGHTS)
 MAX_RESULTS = 40      # per direction, per timeframe
 
@@ -26,9 +27,20 @@ TIMEFRAMES = {
 }
 
 PARAMS = dict(
-    proximity_atr=0.30,   # how close (in ATRs) price must come to a level
-    td_min=7,             # TD Setup count that starts to matter (9 = classic signal)
-    streak_min=6,         # consecutive closes in one direction
+    proximity_atr=0.50,   # how close (in ATRs) price must come to a level / zone
+    # Reversal candle (bottoming / topping tail)
+    tail_min_pct=0.45,    # tail must be at least this share of the bar's range
+    tail_min_atr=0.30,    # ...and at least this many ATRs long
+    # Time count: bars in the move before the reversal bar (largest of: bars since
+    # the last opposite bar, bars without a new high/low, straight closes, TD setup)
+    count_min=7,
+    count_body_atr=0.30,  # a counter-trend bar only breaks the count if its body is
+                          # at least this many ATRs (small green bars in a decline count)
+    count_tol_atr=0.10,   # ignore new highs / closes smaller than this many ATRs
+    # Keep a setup listed for this many days after the tail while price stays
+    # within `late_atr` ATRs of the tail's close and has not broken the tail.
+    carry_days=2,
+    late_atr=1.0,
     rsi_hi=70, rsi_lo=30,
     extension_atr=2.5,    # distance from 20 EMA, in ATRs
     volume_mult=1.5,      # projected volume vs 20-bar average
@@ -45,7 +57,7 @@ PARAMS = dict(
 # are location / context confluence.
 WEIGHTS = dict(
     candle=1.5, candle_doji=1.0,
-    exhaustion_9=1.5, exhaustion=1.0,
+    count=1.5,
     fib=1.0, sr=0.75, sr_major=1.5, hvn=1.0, trendline=1.0,
     rsi=1.0, bollinger=0.75, extension=0.75, volume=0.5,
 )

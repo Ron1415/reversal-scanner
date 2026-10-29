@@ -193,7 +193,14 @@ def trendline(df: pd.DataFrame, k: int, lookback: int, kind: str) -> tuple[str, 
 # --------------------------------------------------------------------------- #
 # Candles
 # --------------------------------------------------------------------------- #
-def candle_signal(df: pd.DataFrame, direction: str):
+def candle_signal(df: pd.DataFrame, direction: str, a: float, P: dict):
+    """Reversal candle on the newest bar (still forming at 3:30 PM).
+
+    Bottoming tail (bullish): the lower wick is at least `tail_min_pct` of the
+    bar's range and at least `tail_min_atr` ATRs long, and the close sits in
+    the upper half of the range. Topping tail is the mirror image. A tail that
+    also pokes to a new 3-bar extreme (stops run, then rejected) is noted.
+    """
     o, h, l, c = (float(df[x].iloc[-1]) for x in ("Open", "High", "Low", "Close"))
     po, pc = float(df["Open"].iloc[-2]), float(df["Close"].iloc[-2])
     rng = h - l
@@ -201,19 +208,82 @@ def candle_signal(df: pd.DataFrame, direction: str):
         return None
     body = abs(c - o)
     upper, lower = h - max(o, c), min(o, c) - l
-    if direction == "bearish":
-        if upper >= 2 * body and upper >= 0.5 * rng and lower <= 0.25 * rng:
-            return "Shooting star / topping tail", "candle"
-        if pc > po and c < o and o >= pc and c <= po:
-            return "Bearish engulfing", "candle"
-    else:
-        if lower >= 2 * body and lower >= 0.5 * rng and upper <= 0.25 * rng:
-            return "Hammer / bottoming tail", "candle"
+    pos = (c - l) / rng                      # 0 = closed on the low, 1 = on the high
+    tail_pct, tail_atr = P["tail_min_pct"], P["tail_min_atr"] * a
+    if direction == "bullish":
+        if lower >= tail_pct * rng and lower >= tail_atr and pos >= 0.5:
+            new_low = l <= float(df["Low"].iloc[-4:-1].min())
+            return ("Bottoming tail" + (" (new low rejected)" if new_low else "")
+                    + f", tail {lower / rng:.0%} of range", "candle")
         if pc < po and c > o and o <= pc and c >= po:
             return "Bullish engulfing", "candle"
+    else:
+        if upper >= tail_pct * rng and upper >= tail_atr and pos <= 0.5:
+            new_high = h >= float(df["High"].iloc[-4:-1].max())
+            return ("Topping tail" + (" (new high rejected)" if new_high else "")
+                    + f", tail {upper / rng:.0%} of range", "candle")
+        if pc > po and c < o and o >= pc and c <= po:
+            return "Bearish engulfing", "candle"
     if body <= 0.1 * rng:
         return "Doji (indecision at extreme)", "candle_doji"
     return None
+
+
+def candle_stats(df: pd.DataFrame, a: float) -> dict:
+    o, h, l, c = (float(df[x].iloc[-1]) for x in ("Open", "High", "Low", "Close"))
+    rng = max(h - l, 1e-9)
+    return dict(open=o, high=h, low=l, close=c, range_atr=round(rng / a, 2),
+                body_pct=round(abs(c - o) / rng, 2),
+                upper_wick_pct=round((h - max(o, c)) / rng, 2),
+                lower_wick_pct=round((min(o, c) - l) / rng, 2),
+                close_position=round((c - l) / rng, 2))
+
+
+# --------------------------------------------------------------------------- #
+# Bar counts ("time" in the move)
+# --------------------------------------------------------------------------- #
+def bar_counts(df: pd.DataFrame, direction: str, P: dict) -> dict[str, int]:
+    """Counts measured on the bars BEFORE the newest (reversal) bar.
+
+    The counts are deliberately forgiving: a small counter-trend bar does not
+    break the count. For a decline, a bar only ends the count if it is a real
+    up bar: green with a body of at least `count_body_atr` ATRs AND a close
+    above the prior close. Small green bars (close barely above open) are
+    treated as part of the decline. New highs / higher closes smaller than
+    `count_tol_atr` ATRs are also ignored. Mirror logic for an advance.
+
+    bars_since: bars since the last meaningful bar the other way
+    swing_bars: consecutive bars without a meaningfully higher high (decline)
+                or lower low (advance)
+    closes:     consecutive closes without a meaningfully higher (or lower) close
+    td:         DeMark TD Setup count
+    """
+    w = df.iloc[:-1]
+    o, h, l, c = (w[x].to_numpy() for x in ("Open", "High", "Low", "Close"))
+    a = atr(w).to_numpy()
+    n = len(w)
+    body_min, tol = P["count_body_atr"], P["count_tol_atr"]
+    down = direction == "bullish"            # a bullish reversal follows a decline
+
+    def run(breaks):
+        k = 0
+        for i in range(n - 1, 0, -1):
+            if breaks(i, a[i] if np.isfinite(a[i]) else 0.0):
+                break
+            k += 1
+        return k
+
+    if down:
+        since = run(lambda i, x: c[i] - o[i] >= body_min * x and c[i] > c[i - 1])
+        hl = run(lambda i, x: h[i] > h[i - 1] + tol * x)
+        cl = run(lambda i, x: c[i] > c[i - 1] + tol * x)
+    else:
+        since = run(lambda i, x: o[i] - c[i] >= body_min * x and c[i] < c[i - 1])
+        hl = run(lambda i, x: l[i] < l[i - 1] - tol * x)
+        cl = run(lambda i, x: c[i] < c[i - 1] - tol * x)
+    td = int(td_setup(w["Close"]).iloc[-1])
+    td = -td if down else td
+    return dict(bars_since=since, swing_bars=hl, closes=cl, td=max(td, 0))
 
 
 # --------------------------------------------------------------------------- #
@@ -240,10 +310,7 @@ def evaluate(df: pd.DataFrame, tf: dict, P: dict, W: dict) -> dict | None:
     tol = P["proximity_atr"] * a
     k, lb = tf["pivot_k"], tf["lookback"]
 
-    # Exhaustion counts are measured on the bar BEFORE the reversal candle as
-    # well, since a reversal bar often breaks the streak.
-    td_now, td_prev = int(last.TD), int(df["TD"].iloc[-2])
-    st_now, st_prev = int(last.STREAK), int(df["STREAK"].iloc[-2])
+    td_now, st_now = int(last.TD), int(last.STREAK)
 
     tb = P["trend_lookback"]
     prior_up = df["Close"].iloc[-2] > df["Close"].iloc[-2 - tb]
@@ -256,28 +323,29 @@ def evaluate(df: pd.DataFrame, tf: dict, P: dict, W: dict) -> dict | None:
         if (direction == "bearish") != bool(prior_up):
             continue   # only look for reversals of the trend that exists
         sgn = 1 if direction == "bearish" else -1
-        factors, score, levels = [], 0.0, []
+        factors, score, levels, keys = [], 0.0, [], []
 
         def add(label, wkey, lvl=None):
             nonlocal score
             factors.append(label)
+            keys.append(wkey)
             score += W[wkey]
             if lvl is not None:
                 levels.append(round(lvl, 4))
 
-        cs = candle_signal(df, direction)
+        cs = candle_signal(df, direction, a, P)
         if cs:
             add(*cs)
 
-        td = max(sgn * td_now, sgn * td_prev)
-        st = max(sgn * st_now, sgn * st_prev)
-        if td >= P["td_min"] or st >= P["streak_min"]:
-            parts = []
-            if td >= P["td_min"]:
-                parts.append(f"TD setup {td}")
-            if st >= P["streak_min"]:
-                parts.append(f"{st} straight {'up' if sgn > 0 else 'down'} closes")
-            add("Exhaustion: " + ", ".join(parts), "exhaustion_9" if td >= 9 else "exhaustion")
+        cnt = bar_counts(df, direction, P)
+        best_name, best_n = max(cnt.items(), key=lambda kv: kv[1])
+        names = dict(bars_since=f"{best_n} {'down' if sgn < 0 else 'up'} bars since the last "
+                                f"{'up' if sgn < 0 else 'down'} bar",
+                     swing_bars=f"{best_n} bars without a {'higher high' if sgn < 0 else 'lower low'}",
+                     closes=f"{best_n} straight {'lower' if sgn < 0 else 'higher'} closes",
+                     td=f"TD setup {best_n}")
+        if best_n >= P["count_min"]:
+            add(f"Time count: {names[best_name]}", "count")
 
         hit = _nearest(direction, h, l, c, tol, fibs[direction])
         if hit:
@@ -328,7 +396,11 @@ def evaluate(df: pd.DataFrame, tf: dict, P: dict, W: dict) -> dict | None:
 
         cand = dict(direction=direction, score=round(score, 2), n_factors=len(factors),
                     factors=factors, levels=levels, td=td_now, streak=st_now,
-                    rsi=round(r, 1), atr=round(a, 4))
+                    rsi=round(r, 1), atr=round(a, 4), has_candle=bool(cs), keys=keys,
+                    count=best_n,
+                    diag=dict(candle=candle_stats(df, a), counts=cnt,
+                              nearest_zones=sorted(sr, key=lambda z: abs((l if sgn < 0 else h) - z["price"]))[:3],
+                              tolerance=round(tol, 2), prior_trend="down" if sgn < 0 else "up"))
         if best is None or cand["score"] > best["score"]:
             best = cand
     return best

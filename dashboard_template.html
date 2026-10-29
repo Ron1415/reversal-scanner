@@ -49,6 +49,12 @@
   ul.f{margin:0;padding-left:18px;font-size:13px}
   .meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--mute);font-size:12px;font-variant-numeric:tabular-nums}
   .empty{color:var(--mute);padding:40px 0;text-align:center}
+  .trade{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-top:1px dashed var(--line);padding-top:8px;font-size:13px}
+  .trade input,.trade select{padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;width:90px}
+  .trade input.note{flex:1;min-width:120px;width:auto}
+  .taken{font-weight:600;color:var(--accent)}
+  .small{padding:4px 10px;font-size:13px}
+  nav a{font-weight:600}
 </style>
 </head>
 <body>
@@ -63,11 +69,7 @@
       <button class="ghost" id="btnFull" title="Rescan the whole universe">Full rescan</button>
     </div>
     <div id="rstatus"></div>
-    <details class="settings" id="ghSettings" hidden>
-      <summary>GitHub refresh settings</summary>
-      <div>Fine-grained token with "Actions: read and write" on this repository. Stored only in this browser.</div>
-      <input type="password" id="ghToken" placeholder="github_pat_..."> <button class="ghost" id="ghSave">Save</button>
-    </details>
+    <div id="tokenPanel"></div>
   </div>
 </header>
 <div class="bar">
@@ -85,6 +87,7 @@
   <label>Min score <input type="range" id="min" min="3" max="10" step="0.5" value="3"> <span id="minv">3</span></label>
   <input type="search" id="q" placeholder="Filter ticker">
   <a href="reversal_signals.xlsx">Download Excel</a>
+  <nav><a href="tracker.html">Trade tracker →</a></nav>
 </div>
 <div class="legend">
   <span><i class="dot" style="background:var(--green)"></i>Likely to confirm by the close</span>
@@ -94,8 +97,13 @@
 </div>
 <main><div class="grid" id="grid"></div></main>
 <script>
+window.CFG = /*__CFG__*/null || {};
+</script>
+<script src="store.js"></script>
+<script>
 const DATA = /*__DATA__*/null;
-const CFG = /*__CFG__*/null || {};
+const CFG = window.CFG;
+let TRADES = [];
 const state = {tf: "daily", dir: "all", min: 3, q: "", stf: "all", sort: "confirm"};
 const RANK = {green: 3, amber: 2, red: 1, grey: 0};
 let backend = "none";   // "local" | "github" | "none"
@@ -147,8 +155,63 @@ function card(r){
     <details><summary>Confirmation checks (${c.passed ?? 0}/${c.total ?? 0})</summary>
       <ul class="checks">${c.checks.map(k => `<li>${k.ok ? "✓" : "✗"} ${k.name} <span class="d">${k.detail}</span></li>`).join("")}</ul>
     </details>
-    <div class="meta"><span>TD ${r.td}</span><span>Streak ${r.streak}</span><span>RSI ${r.rsi}</span><span>${r.n_factors} factors</span><span>Bar ${r.bar_date}</span></div>
+    <div class="meta"><span>Count ${r.count ?? r.td}</span><span>RSI ${r.rsi}</span><span>${r.n_factors} factors</span><span>Bar ${r.bar_date}</span></div>
+    ${tradeBox(r)}
   </div>`;
+}
+
+function tradeBox(r){
+  const open = TRADES.find(t => t.ticker === r.ticker && t.status === "open");
+  if (open) return `<div class="trade"><span class="taken">✓ Taken ${Store.fmtTime(open.entry_time)} @ ${open.entry_price}${open.price_source === "live" ? " (live)" : ""}</span>
+    <a href="tracker.html">View in tracker</a></div>`;
+  const id = `tb_${r.timeframe}_${r.ticker}`;
+  return `<div class="trade" id="${id}">
+    <button class="ghost small" id="${id}_b" onclick="startTrade('${r.timeframe}','${r.ticker}')">Took this trade</button>
+    <span id="${id}_f" hidden>
+      <label>Entry <input type="number" step="0.01" value="${r.close}" id="${id}_p"></label>
+      <select id="${id}_s" aria-label="Side"><option value="long" ${r.direction === "bullish" ? "selected" : ""}>Long</option>
+        <option value="short" ${r.direction === "bearish" ? "selected" : ""}>Short</option></select>
+      <input class="note" id="${id}_n" placeholder="Note (optional)">
+      <button class="primary small" onclick="takeTrade('${r.timeframe}','${r.ticker}')">Save</button>
+    </span></div>`;
+}
+
+/* One click: fetch the live price and save. If no live price is available,
+   show the small form (pre-filled with the scan price) instead. */
+async function startTrade(tf, ticker){
+  const id = `tb_${tf}_${ticker}`;
+  $(id + "_b").disabled = true;
+  $("rstatus").textContent = `Getting live price for ${ticker}…`;
+  const q = await Store.quote(ticker);
+  if (q) return takeTrade(tf, ticker, q);
+  $(id + "_b").remove(); $(id + "_f").hidden = false;
+  $("rstatus").textContent = Store.quoteKey() ? "Live price unavailable; enter your fill price."
+                                              : "Add a Finnhub key in Settings for one-click live prices.";
+}
+
+async function takeTrade(tf, ticker, q){
+  const r = DATA[tf].rows.find(x => x.ticker === ticker);
+  const id = `tb_${tf}_${ticker}`;
+  const price = q ? q.price : parseFloat($(id + "_p").value);
+  if (!(price > 0)) { $("rstatus").textContent = "Enter the entry price."; return; }
+  const trade = {
+    id: `${ticker}-${Date.now()}`, ticker, timeframe: tf, direction: r.direction,
+    side: q ? (r.direction === "bearish" ? "short" : "long") : $(id + "_s").value,
+    entry_price: price, entry_time: new Date().toISOString(),
+    price_source: q ? "live" : "manual", quote_time: q ? q.time : null,
+    note: q ? "" : $(id + "_n").value.trim(), status: "open", exit_price: null, exit_time: null, return_pct: null,
+    signal: {score: r.score, n_factors: r.n_factors, factors: r.factors, keys: r.keys || [],
+             count: r.count ?? null, rsi: r.rsi, carried: r.carried || 0, bar_date: r.bar_date,
+             scan_close: r.close, confirm_status: r.confirm?.status, confirm_label: r.confirm?.label,
+             hold_odds: r.confirm?.hold_odds, invalidation: r.confirm?.invalidation,
+             minutes_left: r.confirm?.minutes_left, levels: r.levels}
+  };
+  $("rstatus").textContent = `Saving ${ticker}…`;
+  try {
+    TRADES = await Store.update(ts => ts.push(trade), `Open ${trade.side} ${ticker} @ ${price}`);
+    $("rstatus").textContent = `${ticker} saved to your tracker.`;
+    render();
+  } catch (e) { $("rstatus").textContent = e.message; }
 }
 
 function render(){
@@ -182,7 +245,7 @@ function busy(on, msg){ $("btnQuick").disabled = $("btnFull").disabled = on; $("
 async function detectBackend(){
   if (location.protocol.startsWith("http")) {
     try { const r = await fetch("api/ping", {cache: "no-store"}); if (r.ok) { backend = "local"; return; } } catch(e) {}
-    if (CFG.repo) { backend = "github"; $("ghSettings").hidden = false; return; }
+    if (CFG.repo) { backend = "github"; return; }
   }
   backend = "none";
 }
@@ -213,15 +276,9 @@ async function refresh(mode){
     return;
   }
   if (backend === "github") {
-    const tok = store.get("gh_token");
-    if (!tok) { $("ghSettings").open = true; $("rstatus").textContent = "Add a GitHub token to enable refresh."; return; }
+    if (!Store.token()) { $("rstatus").textContent = "Add your GitHub token (link under the buttons) to enable refresh."; return; }
     busy(true, "Starting GitHub scan…");
-    const r = await fetch(`https://api.github.com/repos/${CFG.repo}/actions/workflows/${CFG.workflow || "scan.yml"}/dispatches`, {
-      method: "POST",
-      headers: {Authorization: `Bearer ${tok}`, Accept: "application/vnd.github+json"},
-      body: JSON.stringify({ref: CFG.branch || "main", inputs: {mode}})
-    });
-    if (r.status !== 204) { busy(false, `GitHub refused the request (${r.status}). Check the token.`); return; }
+    try { await Store.dispatch({mode}); } catch (e) { busy(false, e.message); return; }
     busy(true, "Scan queued on GitHub; results usually arrive in 2–4 minutes.");
     if (await waitForNewData(prev, 8 * 60 * 1000)) location.reload();
     else busy(false, "Still waiting; check the Actions tab.");
@@ -241,7 +298,9 @@ async function poll(){
 
 $("btnQuick").onclick = () => refresh("quick");
 $("btnFull").onclick = () => refresh("full");
-$("ghSave").onclick = () => { store.set("gh_token", $("ghToken").value.trim()); $("rstatus").textContent = "Token saved in this browser."; };
+Store.mountSettings($("tokenPanel"), loadTrades);
+async function loadTrades(){ try { TRADES = await Store.load(); render(); } catch (e) { $("rstatus").textContent = e.message; } }
+loadTrades();
 $("min").oninput = e => { state.min = +e.target.value; $("minv").textContent = e.target.value; render(); };
 $("q").oninput = e => { state.q = e.target.value; render(); };
 $("stf").onchange = e => { state.stf = e.target.value; render(); };

@@ -38,17 +38,18 @@ def minutes_to_close(now: dt.datetime) -> float:
 
 
 def assess(row: dict, bar: tuple[float, float, float], daily_atr: float,
-           intraday: pd.DataFrame | None, now: dt.datetime, qualifies: bool = True) -> dict:
+           intraday: pd.DataFrame | None, now: dt.datetime, qualifies: bool = True,
+           use_mid: bool = True) -> dict:
     d = row["direction"]
     h, l, c = bar
-    mid = l + 0.5 * (h - l)
+    mid = l + 0.5 * (h - l)   # for a carried setup (use_mid=False) only the stop level counts
 
     # Invalidation price: the nearer of the bar midpoint and the rejected level.
     if d == "bearish":
-        inv = min([mid] + [x for x in row["levels"] if x >= c])
+        inv = min([mid if use_mid else 1e18] + [x for x in row["levels"] if x >= c])
         cushion = inv - c
     else:
-        inv = max([mid] + [x for x in row["levels"] if x <= c])
+        inv = max([mid if use_mid else -1e18] + [x for x in row["levels"] if x <= c])
         cushion = c - inv
 
     mins = minutes_to_close(now) if row.get("bar_is_live", True) else 0.0

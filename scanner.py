@@ -8,6 +8,7 @@ Usage
   python scanner.py --tickers AAPL MSFT NVDA --timeframe daily
   python scanner.py --refresh quick        # re-check today's candidates (about 15 seconds)
   python scanner.py --refresh full         # rescan the whole universe
+  python scanner.py --explain --tickers TPR --asof 2026-10-27   # why was / wasn't it flagged?
 """
 from __future__ import annotations
 
@@ -16,6 +17,7 @@ import datetime as dt
 import io
 import json
 import logging
+import os
 import sys
 import time
 from pathlib import Path
@@ -27,7 +29,8 @@ import pandas as pd
 import config as C
 from confirm import assess
 from indicators import atr, evaluate
-from report import write_outputs
+import analysis
+from report import write_outputs, write_pages
 
 NY = ZoneInfo("America/New_York")
 ROOT = Path(__file__).resolve().parent
@@ -128,13 +131,14 @@ def prepare(df: pd.DataFrame, rule: str | None, now: dt.datetime) -> pd.DataFram
 # --------------------------------------------------------------------------- #
 # Scan
 # --------------------------------------------------------------------------- #
-def download_intraday(tickers: list[str], today: dt.date) -> dict[str, pd.DataFrame]:
-    """Today's 5-minute bars, used by the confirmation meter."""
+def download_intraday(tickers: list[str], day: dt.date, until: dt.time | None = None) -> dict[str, pd.DataFrame]:
+    """5-minute bars for one session (today, or any day in the last ~60 days)."""
     if not tickers:
         return {}
+    period = "1d" if day == dt.datetime.now(NY).date() else "60d"
     try:
         import yfinance as yf
-        raw = yf.download(tickers, period="1d", interval="5m", group_by="ticker",
+        raw = yf.download(tickers, period=period, interval="5m", group_by="ticker",
                           auto_adjust=True, threads=True, progress=False)
     except Exception as e:
         log.warning("intraday download failed: %s", e)
@@ -147,7 +151,9 @@ def download_intraday(tickers: list[str], today: dt.date) -> dict[str, pd.DataFr
             idx = pd.to_datetime(df.index)
             idx = idx.tz_convert(NY) if idx.tz is not None else idx.tz_localize(NY)
             df.index = idx
-            df = df[df.index.date == today]
+            df = df[df.index.date == day]
+            if until is not None:
+                df = df[df.index.time < until]
             if len(df):
                 out[t] = df
         except KeyError:
@@ -155,47 +161,156 @@ def download_intraday(tickers: list[str], today: dt.date) -> dict[str, pd.DataFr
     return out
 
 
+def qualifies(res: dict) -> bool:
+    return ((res.get("has_candle") or not C.REQUIRE_CANDLE)
+            and res["n_factors"] >= C.MIN_FACTORS and res["score"] >= C.MIN_SCORE)
+
+
+def carried_setup(df: pd.DataFrame, tf: dict) -> dict | None:
+    """A qualifying setup from 1-N bars ago that has not run away yet: price is
+    still within `late_atr` ATRs of the signal bar's close and has not broken
+    the signal bar's tail."""
+    P = C.PARAMS
+    for k in range(1, P["carry_days"] + 1):
+        if len(df) <= k + 60:
+            break
+        res = evaluate(df.iloc[:-k], tf, P, C.WEIGHTS)
+        if not res or not qualifies(res):
+            continue
+        sig = df.iloc[-k - 1]
+        after = df.iloc[-k:]
+        a = res["atr"]
+        c = float(df["Close"].iloc[-1])
+        if res["direction"] == "bullish":
+            intact = float(after["Low"].min()) > float(sig.Low)
+            moved = (c - float(sig.Close)) / a
+            stop = float(sig.Low)
+        else:
+            intact = float(after["High"].max()) < float(sig.High)
+            moved = (float(sig.Close) - c) / a
+            stop = float(sig.High)
+        if intact and moved <= P["late_atr"]:
+            res = dict(res)
+            res["factors"] = [f"Setup from {k} bar{'s' if k > 1 else ''} ago, still near entry "
+                              f"({moved:+.1f} ATR since signal; stop beyond {stop:.2f})"] + res["factors"]
+            res["levels"] = [round(stop, 4)]
+            res["carried"] = k
+            res["keys"] = ["carried"] + list(res.get("keys", []))
+            return res
+    return None
+
+
+def build_row(t: str, tf_name: str, raw: pd.DataFrame, now: dt.datetime,
+              intraday: dict | None, keep: set[str]) -> dict | None:
+    tf = C.TIMEFRAMES[tf_name]
+    df = prepare(raw, tf["rule"], now)
+    res = evaluate(df, tf, C.PARAMS, C.WEIGHTS)
+    ok = bool(res) and qualifies(res)
+    if not ok:
+        carried = carried_setup(df, tf)
+        if carried:
+            res, ok = carried, True
+    if not res or (not ok and t not in keep):
+        return None
+    res.pop("diag", None)
+    last, prev = df.iloc[-1], df.iloc[-2]
+    row = dict(ticker=t, timeframe=tf_name, close=round(float(last.Close), 2),
+               change_pct=round((float(last.Close) / float(prev.Close) - 1) * 100, 2),
+               bar_date=str(df.index[-1].date()), qualifies=ok,
+               bar_is_live=raw.index[-1].date() == now.date(),
+               bars=df.iloc[-45:][["Open", "High", "Low", "Close"]].round(4).to_numpy().tolist(),
+               **res)
+    row["confirm"] = assess(row, (float(last.High), float(last.Low), float(last.Close)),
+                            float(atr(raw).iloc[-1]), (intraday or {}).get(t), now, ok,
+                            use_mid=not res.get("carried"))
+    return row
+
+
 def scan(tf_name: str, data: dict[str, pd.DataFrame], now: dt.datetime,
          keep: set[str] | None = None, intraday: dict[str, pd.DataFrame] | None = None) -> list[dict]:
     """Score every ticker. Tickers in `keep` (earlier candidates being refreshed)
     stay on the list even if they no longer qualify, flagged as faded."""
-    tf = C.TIMEFRAMES[tf_name]
     keep = keep or set()
     rows = []
     for t, raw in data.items():
-        if len(raw) < 30:
+        if len(raw) < 80:
             continue
         tail = raw.iloc[-20:]
         if t not in keep and (raw["Close"].iloc[-1] < C.MIN_PRICE or
                               (tail["Close"] * tail["Volume"]).mean() < C.MIN_AVG_DOLLAR_VOLUME):
             continue
         try:
-            df = prepare(raw, tf["rule"], now)
-            res = evaluate(df, tf, C.PARAMS, C.WEIGHTS)
+            row = build_row(t, tf_name, raw, now, intraday, keep)
         except Exception as e:
             log.warning("%s: %s", t, e)
             continue
-        if not res:
-            continue
-        qualifies = res["n_factors"] >= C.MIN_FACTORS and res["score"] >= C.MIN_SCORE
-        if not qualifies and t not in keep:
-            continue
-        last, prev = df.iloc[-1], df.iloc[-2]
-        row = dict(ticker=t, timeframe=tf_name, close=round(float(last.Close), 2),
-                   change_pct=round((float(last.Close) / float(prev.Close) - 1) * 100, 2),
-                   bar_date=str(df.index[-1].date()), qualifies=qualifies,
-                   bar_is_live=raw.index[-1].date() == now.date(),
-                   bars=df.iloc[-45:][["Open", "High", "Low", "Close"]].round(4).to_numpy().tolist(),
-                   **res)
-        row["confirm"] = assess(row, (float(last.High), float(last.Low), float(last.Close)),
-                                float(atr(raw).iloc[-1]), (intraday or {}).get(t), now, qualifies)
-        rows.append(row)
-    rows.sort(key=lambda r: (r["qualifies"], r["score"], r["n_factors"]), reverse=True)
+        if row:
+            rows.append(row)
+    rows.sort(key=lambda r: (r["qualifies"], not r.get("carried"), r["score"], r["n_factors"]), reverse=True)
     out = []
     for d in ("bearish", "bullish"):
         side = [r for r in rows if r["direction"] == d]
         out += [r for r in side if r["qualifies"]][:C.MAX_RESULTS] + [r for r in side if not r["qualifies"]]
-    return sorted(out, key=lambda r: (r["qualifies"], r["score"]), reverse=True)
+    return sorted(out, key=lambda r: (r["qualifies"], not r.get("carried"), r["score"]), reverse=True)
+
+
+# --------------------------------------------------------------------------- #
+# Explain mode: "would ticker X have been flagged on date D at 3:30 PM?"
+# --------------------------------------------------------------------------- #
+def explain(tickers: list[str], asof: dt.date, at: dt.time) -> int:
+    now = dt.datetime.combine(asof, at, tzinfo=NY)
+    data = download(tickers, "3y")
+    intra = download_intraday(tickers, asof, until=at)
+    out = [f"# Signal check for {asof} at {at.strftime('%H:%M')} ET\n"]
+    tf = C.TIMEFRAMES["daily"]
+    for t in tickers:
+        raw = data.get(t)
+        if raw is None:
+            out.append(f"## {t}\nNo price data.\n")
+            continue
+        raw = raw[raw.index.date <= asof].copy()
+        if not len(raw) or raw.index[-1].date() != asof:
+            out.append(f"## {t}\nNo trading bar on {asof}.\n")
+            continue
+        note = "closing bar for that day (5-minute data not available)"
+        if t in intra:
+            b = intra[t]
+            raw.iloc[-1] = [float(b.Open.iloc[0]), float(b.High.max()), float(b.Low.min()),
+                            float(b.Close.iloc[-1]), float(b.Volume.sum())]
+            note = f"the bar as it stood at {at.strftime('%H:%M')} (rebuilt from 5-minute data)"
+        df = prepare(raw, None, now)
+        res = evaluate(df, tf, C.PARAMS, C.WEIGHTS)
+        row = build_row(t, "daily", raw, now, {}, keep={t})
+        out.append(f"## {t}\nUsing {note}.\n")
+        if not res:
+            out.append("Not enough history to evaluate.\n")
+            continue
+        d = res["diag"]
+        cs = d["candle"]
+        out.append(f"**Verdict: {'FLAGGED' if row and row['qualifies'] else 'NOT flagged'}**"
+                   f" | direction tested: {res['direction']} (prior trend {d['prior_trend']})"
+                   f" | score {res['score']} (need {C.MIN_SCORE}) | factors {res['n_factors']} (need {C.MIN_FACTORS})"
+                   f" | reversal candle: {'yes' if res['has_candle'] else 'NO'}\n")
+        out.append("Factors found:\n" + "\n".join(f"- {f}" for f in res["factors"]) + "\n")
+        out.append(f"Candle: O {cs['open']:.2f} H {cs['high']:.2f} L {cs['low']:.2f} C {cs['close']:.2f}"
+                   f" | range {cs['range_atr']} ATR | body {cs['body_pct']:.0%} | upper wick {cs['upper_wick_pct']:.0%}"
+                   f" | lower wick {cs['lower_wick_pct']:.0%} | close position {cs['close_position']:.0%}"
+                   f" (tail rule: wick >= {C.PARAMS['tail_min_pct']:.0%} of range and >= {C.PARAMS['tail_min_atr']} ATR,"
+                   f" close in the reversal half)\n")
+        out.append("Time counts (bars before this one): " +
+                   ", ".join(f"{k} {v}" for k, v in d["counts"].items()) + f" (need {C.PARAMS['count_min']})\n")
+        out.append(f"Nearest pivot zones (tolerance {d['tolerance']}): " +
+                   "; ".join(f"{z['price']:.2f} ({z['touches']} touches, {z['rv']:.1f}x vol"
+                             f"{', major' if z['major'] else ''})" for z in d["nearest_zones"]) + "\n")
+        if row and row.get("carried"):
+            out.append(f"Listed as a carried setup from {row['carried']} bar(s) earlier.\n")
+    text = "\n".join(out)
+    print(text)
+    summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary:
+        with open(summary, "a") as f:
+            f.write(text)
+    return 0
 
 
 # --------------------------------------------------------------------------- #
@@ -221,10 +336,26 @@ def main(argv=None) -> int:
                     help="quick = re-check today's candidates only; full = rescan the universe")
     ap.add_argument("--force", action="store_true", help="ignore the ET time window in --auto mode")
     ap.add_argument("--tickers", nargs="+", help="override the universe")
+    ap.add_argument("--analyze", action="store_true", help="only update the trade-tracker analysis")
+    ap.add_argument("--explain", action="store_true",
+                    help="explain why --tickers were or were not flagged (use with --asof)")
+    ap.add_argument("--asof", help="date to check, YYYY-MM-DD (default today)")
+    ap.add_argument("--at", default="15:30", help="time of day for --explain, HH:MM ET")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args(argv)
     logging.basicConfig(level=logging.DEBUG if a.verbose else logging.INFO,
                         format="%(asctime)s %(levelname)s %(message)s")
+
+    if a.explain:
+        if not a.tickers:
+            ap.error("--explain needs --tickers")
+        day = dt.date.fromisoformat(a.asof) if a.asof else dt.datetime.now(NY).date()
+        return explain([t.upper() for t in a.tickers], day, dt.time.fromisoformat(a.at))
+
+    if a.analyze:
+        analysis.run(ROOT, download)
+        write_pages(ROOT)
+        return 0
 
     now = dt.datetime.now(NY)
     mode = a.refresh or "full"
@@ -266,6 +397,11 @@ def main(argv=None) -> int:
         log.info("%s: %d candidates (%d green)", tf, len(rows),
                  sum(r["confirm"]["status"] == "green" for r in rows))
         write_outputs(tf, rows, now, ROOT, mode)
+    try:
+        analysis.run(ROOT, download, now)
+    except Exception as e:   # the scan results still publish if the analysis fails
+        log.warning("trade analysis failed: %s", e)
+    write_pages(ROOT)
     return 0
 
 
