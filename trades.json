@@ -45,5 +45,56 @@
     115.235
    ]
   }
+ },
+ {
+  "id": "WST-1793302387010",
+  "ticker": "WST",
+  "timeframe": "daily",
+  "direction": "bearish",
+  "side": "short",
+  "entry_price": 420.32,
+  "entry_time": "2026-10-29T19:33:07.010Z",
+  "price_source": "live",
+  "quote_time": "2026-10-29T19:32:36.000Z",
+  "note": "",
+  "status": "open",
+  "exit_price": null,
+  "exit_time": null,
+  "return_pct": null,
+  "signal": {
+   "score": 7,
+   "n_factors": 7,
+   "factors": [
+    "Topping tail (new high rejected), tail 77% of range",
+    "Time count: 15 up bars since the last down bar",
+    "Fib 1.27 extension @ 434.72",
+    "RSI overbought (82)",
+    "Tagged upper Bollinger band",
+    "Extended 5.1 ATR from 20 EMA",
+    "Volume 2.6x average"
+   ],
+   "keys": [
+    "candle",
+    "count",
+    "fib",
+    "rsi",
+    "bollinger",
+    "extension",
+    "volume"
+   ],
+   "count": 15,
+   "rsi": 81.7,
+   "carried": 0,
+   "bar_date": "2026-10-29",
+   "scan_close": 419.61,
+   "confirm_status": "amber",
+   "confirm_label": "Developing",
+   "hold_odds": 1,
+   "invalidation": 426.79,
+   "minutes_left": 29,
+   "levels": [
+    434.715
+   ]
+  }
  }
 ]
