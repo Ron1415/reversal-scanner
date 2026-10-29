@@ -1,0 +1,49 @@
+[
+ {
+  "id": "TPR-1793301611452",
+  "ticker": "TPR",
+  "timeframe": "daily",
+  "direction": "bullish",
+  "side": "long",
+  "entry_price": 117.5,
+  "entry_time": "2026-10-29T19:20:11.452Z",
+  "price_source": "live",
+  "quote_time": "2026-10-29T19:19:40.000Z",
+  "note": "",
+  "status": "open",
+  "exit_price": null,
+  "exit_time": null,
+  "return_pct": null,
+  "signal": {
+   "score": 5,
+   "n_factors": 4,
+   "factors": [
+    "Time count: 9 down bars since the last up bar",
+    "Major pivot zone (2 touches, 1.9x vol) @ 112.16",
+    "High-volume node @ 115.70",
+    "Trendline (rising support) @ 115.23"
+   ],
+   "keys": [
+    "count",
+    "sr_major",
+    "hvn",
+    "trendline"
+   ],
+   "count": 9,
+   "rsi": 53,
+   "carried": 0,
+   "bar_date": "2026-10-29",
+   "scan_close": 117.5,
+   "confirm_status": "grey",
+   "confirm_label": "Signal faded",
+   "hold_odds": 0.994,
+   "invalidation": 115.7,
+   "minutes_left": 47,
+   "levels": [
+    112.1572,
+    115.6964,
+    115.235
+   ]
+  }
+ }
+]
