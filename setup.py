@@ -190,9 +190,9 @@ def evaluate_setup(df: pd.DataFrame, tf: dict, P: dict, W: dict) -> dict | None:
         cand["close_pos"] = round(pos, 2)
 
         if age > P["carry_days"]:
-            why.append(f"the extreme was {age} bars ago (reversal already under way)")
+            why.append(f"the {'high' if up else 'low'} was {age} bars ago (reversal already under way)")
         if moved > late_pct:
-            why.append(f"already {moved:.1f}% from the extreme (limit {late_pct}%)")
+            why.append(f"already {moved:.1f}% from the {'high' if up else 'low'} (limit {late_pct:g}%): reversal under way")
 
         if age == 0 and (tail_ok or doji):
             stage = "forming"
@@ -213,11 +213,11 @@ def evaluate_setup(df: pd.DataFrame, tf: dict, P: dict, W: dict) -> dict | None:
         need = P["count_min"]
         cand.update(count=cnt, efficiency=round(eff, 2), td=int(td[end]))
         if cnt < need:
-            why.append(f"time count {cnt} (need {need})")
+            why.append(f"time count {cnt} (needs {need})")
         if cnt and eff < P["min_efficiency"]:
-            why.append(f"choppy move into the level (orderliness {eff:.2f}, need {P['min_efficiency']})")
+            why.append("choppy, not a clean move into the level")
         if move_atr < P["min_move_atr"]:
-            why.append(f"move into the extreme only {move_atr:.1f} ATR (need {P['min_move_atr']})")
+            why.append(f"move into the level too small ({move_atr:.1f} average daily ranges, need {P['min_move_atr']:g})")
 
         # ---- liquidity at the extreme
         lv = liquidity_levels(df.iloc[:rb + 1], a, tf, P, "high" if up else "low")
@@ -245,8 +245,7 @@ def evaluate_setup(df: pd.DataFrame, tf: dict, P: dict, W: dict) -> dict | None:
             why.append("level ahead is not strong enough for an early heads-up (needs a major swing, "
                        "double top/bottom, or two levels together)")
         if stage == "watch" and cnt and eff < P["watch_efficiency"]:
-            why.append(f"run-up not clean enough for an early heads-up (orderliness {eff:.2f}, "
-                       f"need {P['watch_efficiency']})")
+            why.append("move not clean enough for an early heads-up")
 
         # ---- score (ranking only; qualification is the three requirements)
         score = 0.0

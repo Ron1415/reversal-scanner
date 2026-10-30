@@ -176,7 +176,9 @@ def build_row(t: str, tf_name: str, raw: pd.DataFrame, now: dt.datetime,
     ok = qualifies(res)
     if not res or (not ok and t not in keep):
         return None
+    reasons = list(res.get("why", [])) or (["WATCH setups are hidden (SHOW_WATCH = False)"] if not ok else [])
     res = {k: v for k, v in res.items() if k not in ("hits", "alternatives", "why", "ext_pos")}
+    res["reason"] = "" if ok else "; ".join(reasons)
     last, prev = df.iloc[-1], df.iloc[-2]
     row = dict(ticker=t, timeframe=tf_name, close=round(float(last.Close), 2),
                change_pct=round((float(last.Close) / float(prev.Close) - 1) * 100, 2),

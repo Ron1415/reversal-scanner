@@ -89,6 +89,7 @@
     <option value="forming">Tail forming now</option>
     <option value="day2">Tail 1-2 days ago</option>
     <option value="watch">Watch: into a level</option>
+    <option value="valid">Hide "no longer valid"</option>
   </select>
   <select id="sort" aria-label="Sort">
     <option value="stage">Sort: stage, then score</option>
@@ -175,13 +176,14 @@ function card(r){
       <span class="score" title="Ranking score">${r.score}</span>
     </div>
     <div class="conf"><span>● ${label}</span></div>
+    ${r.qualifies === false ? `<div class="why">Why: ${r.reason || "no longer passes all three requirements"}</div>` : ""}
     ${r.idea && r.qualifies !== false ? `<div class="idea">${r.idea}</div>` : ""}
     ${chart(r.bars, r.levels, r.direction, r.qualifies === false ? null : r.stop)}
-    <ul class="f">${r.factors.map(f => `<li>${f}</li>`).join("")}</ul>
-    <div class="meta">${r.stage === "watch" ? `<span>Wait for a tail; stop beyond ${r.stop}</span>`
+    ${r.qualifies === false ? "" : `<ul class="f">${r.factors.map(f => `<li>${f}</li>`).join("")}</ul>`}
+    <div class="meta">${r.qualifies === false ? "" : r.stage === "watch" ? `<span>Wait for a tail; stop beyond ${r.stop}</span>`
       : `<span>Entry ~${r.entry}</span><span>Stop ${r.stop} (${r.risk_pct}%)</span>`}
       <span>${r.moved_pct}% from extreme</span><span>RSI ${r.rsi}</span><span>Bar ${r.bar_date}</span></div>
-    ${tradeBox(r)}
+    ${r.qualifies === false ? "" : tradeBox(r)}
   </div>`;
 }
 
@@ -246,11 +248,13 @@ function render(){
   seg($("dir"), [["all","All"],["bearish","Bearish"],["bullish","Bullish"]], "dir");
   const d = (DATA && DATA[state.tf]) || {rows: []};
   $("stamp").textContent = d.generated ? `Last ${d.mode === "quick" ? "refresh" : "scan"}: ${d.generated}` : "No scan yet for this timeframe";
-  const okStatus = s => state.stf === "all" || s === state.stf;
+  const okStatus = (s, r) => state.stf === "all" || (state.stf === "valid" ? r.qualifies !== false
+                                                    : s === state.stf && r.qualifies !== false);
   let rows = d.rows.filter(r => (state.dir === "all" || r.direction === state.dir) && r.score >= state.min &&
-                               r.ticker.includes(state.q.toUpperCase()) && okStatus(r.stage));
-  rows.sort(state.sort === "score" ? (a, b) => b.score - a.score
-    : (a, b) => ((RANK[b.stage] || 0) - (RANK[a.stage] || 0)) || (b.score - a.score));
+                               r.ticker.includes(state.q.toUpperCase()) && okStatus(r.stage, r));
+  const valid = r => r.qualifies === false ? 0 : 1;      // "no longer valid" always last
+  rows.sort(state.sort === "score" ? (a, b) => (valid(b) - valid(a)) || (b.score - a.score)
+    : (a, b) => (valid(b) - valid(a)) || ((RANK[b.stage] || 0) - (RANK[a.stage] || 0)) || (b.score - a.score));
   $("grid").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">No candidates match these filters.</div>`;
 }
 

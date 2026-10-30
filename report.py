@@ -12,7 +12,7 @@ from openpyxl.utils import get_column_letter
 
 TFS = ("daily", "weekly", "monthly")
 COLS = ["ticker", "direction", "stage", "idea", "score", "count", "close", "change_pct", "entry", "stop",
-        "risk_pct", "moved_pct", "rsi", "factors", "bar_date", "chart"]
+        "risk_pct", "moved_pct", "rsi", "factors", "reason", "bar_date", "chart"]
 STAGE_NAMES = {"forming": "Tail forming now", "day2": "Tail 1-2 days ago", "watch": "Watch: into a level"}
 
 
@@ -36,7 +36,7 @@ def _write_xlsx(path: Path, sheets: dict[str, pd.DataFrame]) -> None:
                    "No longer valid": "9CA3AF"}
     head = PatternFill("solid", fgColor="1F2937")
     widths = dict(ticker=9, direction=10, stage=20, idea=70, score=7, count=7, close=10, change_pct=10, entry=10,
-                  stop=10, risk_pct=9, moved_pct=10, rsi=6, factors=90, bar_date=11, chart=12)
+                  stop=10, risk_pct=9, moved_pct=10, rsi=6, factors=90, reason=60, bar_date=11, chart=12)
     with pd.ExcelWriter(path, engine="openpyxl") as xw:
         for name, df in sheets.items():
             df.to_excel(xw, sheet_name=name.capitalize(), index=False)
