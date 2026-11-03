@@ -41,8 +41,8 @@
   <div id="botBlock" hidden>
     <h2>THE BOT: trend pullback + liquidity sweep (daily, 1-5 day holds)</h2>
     <div class="sub">Longs: uptrend (above a rising 50-day average), 4+ bar pullback, sweep of a liquidity level that closes back above it,
-      close in the upper half; stop just under the sweep low; exit by day 5. Shorts (strict): downtrend on the daily AND ~20-week average,
-      market (SPY) below its 50-day, 5+ bar rally, sweep of a strong level with a second level in the same place, weak close on 1.2x volume;
+      close in the upper half; stop just under the sweep low; exit by day 5. Shorts (looser since v23): price below a falling
+      50-day average, 4+ bar rally, sweep of a line where 2+ levels meet, close in the lower half; stop just above the sweep high;
       breakeven after 0.5 ATR, then the stop trails each prior bar's high; exit by day 3. Exits: 1/2 at +5% (stop then locks +2.5%), 1/4 at +7.5%, rest at +10%.</div>
     <div class="tbl" id="botTbl" style="margin-top:8px"></div>
     <div id="botTests"></div>
@@ -106,20 +106,23 @@ function result(v){
 
 function render(){
   const bot = REV?.bot, boti = REV?.bot_intraday, bot5 = REV?.bot_5m, bot5b = REV?.bot_5m_break;
-  $("botBlock").hidden = !(bot || boti || bot5 || bot5b);
+  $("botBlock").hidden = !(bot || boti || bot5 || bot5b || REV?.bot_fvg_limit);
   if (bot || boti || bot5 || bot5b) {
     const part = (title, b) => !b ? [] : [[`<i>${title}</i>`, null],
       ["All (sized: longs 1.25x, shorts 0.5x)", b.all], ["Longs", b.long], ["Shorts", b.short],
       ["First half of the period", b.first_half], ["Second half of the period", b.second_half]];
     const rowsB = [...part("Entry at the 3:30 PM close", bot), ...part("Entry during the day (hourly checks, no chase beyond 2%)", boti),
       ...part("5-minute stop run, entry on the first close back across the line (last ~60 days only)", bot5),
-      ...part("5-minute stop run, entry on a confirmed break (last ~60 days only)", bot5b)];
+      ...part("5-minute stop run, entry on a confirmed break (last ~60 days only)", bot5b),
+      ...part("FVG pullback after the stop run (limit in the gap, swing hold)", REV?.bot_fvg_limit),
+      ...part("Close back across the line, only with an FVG (swing hold)", REV?.bot_fvg_confirm)];
     $("botTbl").innerHTML = `<table><tr><th></th><th>Trades</th><th>Per week</th><th>Win rate</th><th>Average</th><th>Average %</th><th>Avg days held</th><th>Reached +5%</th><th>Total % (sized)</th></tr>` +
       rowsB.map(([k, b]) => !b ? `<tr><td colspan="9"><b>${k}</b></td></tr>` : `<tr><td>${k}</td><td>${b.n}</td><td>${b.per_week ?? "–"}</td><td>${pc(b.win)}</td><td>${R(b.avg_R)}</td><td>${P(b.avg_ret)}</td><td>${b.avg_days ?? "–"}</td><td>${pc(b.hit_5pct)}</td><td>${b.total_ret_sized ?? "–"}</td></tr>`).join("") + `</table>`;
   }
   const BT = REV?.bot_tests || {}, FL = {all: "All trades", spy: "SPY above 50-day", noon: "Before noon",
-    strong: "Strongest levels", combined: "All filters", combined_h1: "All filters, 1st half", combined_h2: "All filters, 2nd half"};
-  const BN = {bot: "Entry at the 3:30 PM close", bot_5m: "5-minute entry, close back across the line", bot_5m_break: "5-minute entry, confirmed break"};
+    strong: "Strongest levels", combined: "All filters", combined_h1: "All filters, 1st half", combined_h2: "All filters, 2nd half", combined_top110: "All filters, top-110 list only"};
+  const BN = {bot: "Entry at the 3:30 PM close", bot_5m: "5-minute entry, close back across the line", bot_5m_break: "5-minute entry, confirmed break", bot_fvg_limit: "FVG pullback entry (limit in the gap)",
+    bot_fvg_confirm: "5-minute close back, only with an FVG"};
   const tc = g => !g || !g.n ? "–" : `${P(g.avg_ret)} ${R(g.avg_R)}<br><span class="sub">${pc(g.win)} win · ${pc(g.stopped)} stopped · ${g.n}</span>`;
   $("botTests").innerHTML = Object.keys(BN).filter(k => BT[k]).map(k => {
     const T = BT[k];
@@ -129,6 +132,13 @@ function render(){
       <div class="tbl"><table><tr><th>Stop; targets</th>${T.filters.map(f => `<th>${FL[f] || f}</th>`).join("")}</tr>` +
       T.rows.map(r => `<tr><td><b>${esc(r.label)}</b></td>${T.filters.map(f => `<td>${tc(r[f])}</td>`).join("")}</tr>`).join("") + `</table></div>`;
   }).join("");
+  const ST = REV?.short_tests || {};
+  const sc = g => !g || !g.n ? "–" : `${P(g.avg_ret)} ${R(g.avg_R)}<br><span class="sub">${pc(g.win)} win · ${pc(g.stopped)} stopped · ${g.n}</span>`;
+  $("botTests").insertAdjacentHTML("beforeend", Object.keys(BN).filter(k => ST[k] && ST[k][0].with_.n).map(k =>
+    `<h3 style="margin:16px 0 4px">Shorts (looser rules): ${BN[k]}</h3><div class="sub">Shorts now need only a falling 50-day average with
+      price below it, a 4+ bar rally and 2+ levels together. Each row splits the shorts by one of the old strict checks.</div>
+      <div class="tbl"><table><tr><th>Old strict check</th><th>Shorts that pass it</th><th>Shorts that fail it</th></tr>` +
+      ST[k].map(r => `<tr><td><b>${esc(r.label)}</b></td><td>${sc(r.with_)}</td><td>${sc(r.without)}</td></tr>`).join("") + `</table></div>`).join(""));
   tiles($("tClose"), REV?.versions?.close?.summary);
   tiles($("tSafer"), REV?.versions?.safer?.summary);
   $("levelBlock").hidden = !REV?.versions?.level;
@@ -155,7 +165,7 @@ function render(){
     : `<div class="sub">No proposals yet.</div>`) + notes.map(n => `<div class="sub">${esc(n)}</div>`).join("");
   const VN = {close: "Entered at the close", safer: "Safer entry", level: "Entry at the liquidity line", bot: "The bot (3:30 PM close)",
               bot_intraday: "The bot (hourly, during the day)", bot_5m: "The bot (5-min, close back across the line)",
-              bot_5m_break: "The bot (5-min, confirmed break)"};
+              bot_5m_break: "The bot (5-min, confirmed break)", bot_fvg_limit: "FVG pullback entry", bot_fvg_confirm: "Close back with an FVG"};
   const bdHtml = Object.keys(VN).filter(k => (REV?.versions?.[k]?.breakdown || []).length).map(k => {
     const bd = REV.versions[k].breakdown;
     return `<h3 style="margin:14px 10px 6px">${VN[k]}</h3><table><tr><th>Group</th><th>Suggested</th><th>Triggered</th><th>Finished</th><th>Win rate</th><th>Avg</th><th>Avg %</th><th>All at +5%</th><th>All at +10%</th><th>Reached +5%</th></tr>` +
