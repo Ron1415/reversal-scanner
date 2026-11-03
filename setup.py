@@ -305,3 +305,77 @@ def evaluate_setup(df: pd.DataFrame, tf: dict, P: dict, W: dict) -> dict | None:
     best.setdefault("keys", []); best.setdefault("n_factors", 0); best.setdefault("has_candle", False)
     best["alternatives"] = [dict(direction=x["direction"], why=x["why"]) for x in candidates[1:]]
     return best
+
+
+# --------------------------------------------------------------------------- #
+# Alternative strategy: enter AT the liquidity level (no reversal bar needed)
+# --------------------------------------------------------------------------- #
+def evaluate_level_touch(df: pd.DataFrame, tf: dict, P: dict) -> dict | None:
+    """Same setup as evaluate_setup (time count, orderly move of min_move_atr,
+    liquidity map) but the trade is entered the moment the newest bar FIRST
+    reaches a strong level: a limit order at the level, no tail required.
+
+    Rules:
+      * the level is built from bars before today and was not reached yesterday
+        (first touch only); today's high (rally) / low (decline) reaches it
+      * strong levels only: strength >= 3 (double top/bottom, major swing) or a
+        prior week/month high/low or Fibonacci / trend line / volume zone (>= 2)
+      * time count >= count_min on the bars before today, orderliness and move
+        size as in the main setup
+      * entry = the level (or today's open if price gapped through it);
+        stop = level +/- level_stop_atr x ATR
+    """
+    n = len(df)
+    if n < 80:
+        return None
+    o, h, l, c = (df[x].to_numpy() for x in ("Open", "High", "Low", "Close"))
+    A = atr(df).to_numpy()
+    a = float(A[-2]) if np.isfinite(A[-2]) else float("nan")
+    if not np.isfinite(a) or a <= 0:
+        return None
+    best = None
+    for direction in ("bearish", "bullish"):
+        up = direction == "bearish"
+        end = n - 2                                   # count the bars before today
+        lo = max(0, end - P["move_lookback"])
+        start_pos = lo + int(np.argmin(l[lo:end + 1]) if up else np.argmax(h[lo:end + 1]))
+        cnt = time_count(df.iloc[:n - 1], end, up, P, start=start_pos)
+        if cnt < P["count_min"]:
+            continue
+        eff = efficiency(c, end - cnt, end)
+        if eff < P["min_efficiency"]:
+            continue
+        lv = liquidity_levels(df, a, tf, P, "high" if up else "low")
+        cands = []
+        for x in lv:
+            p = x["price"]
+            if x["strength"] < 2:
+                continue
+            first_touch = (h[-2] < p and h[-1] >= p) if up else (l[-2] > p and l[-1] <= p)
+            if not first_touch:
+                continue
+            move = (p - l[start_pos]) if up else (h[start_pos] - p)
+            if move / a < P["min_move_atr"]:
+                continue
+            cands.append(x)
+        if not cands:
+            continue
+        # the first level price meets on the way (nearest to yesterday's close), strongest on ties
+        x = min(cands, key=lambda z: (abs(z["price"] - c[-2]), -z["strength"]))
+        p = x["price"]
+        entry = max(o[-1], p) if up else min(o[-1], p)          # gap through the level fills at the open
+        stop = p + P["level_stop_atr"] * a if up else p - P["level_stop_atr"] * a
+        if (up and entry >= stop) or (not up and entry <= stop):
+            continue                                            # opened beyond the stop: no trade
+        cand = dict(direction=direction, stage="level", level=round(p, 4), level_label=x["label"],
+                    entry=round(float(entry), 4), stop=round(float(stop), 4), count=cnt, efficiency=round(eff, 2),
+                    move_atr=round(((p - l[start_pos]) if up else (h[start_pos] - p)) / a, 1), atr=round(a, 4),
+                    keys=["stage_level", "count_9" if cnt >= 9 else "count",
+                          f"liq_{x['label'].split(' (')[0].lower().replace(' ', '_')}"],
+                    factors=[f"Time count {cnt} into the level", f"{x['label']} @ {p:.2f} reached today"],
+                    idea=(f"Level entry: {'sell' if up else 'buy'} at {x['label'].lower()} {p:.2f} after a "
+                          f"{cnt}-bar {'rally' if up else 'decline'}; stop {stop:.2f}."),
+                    score=round(x["strength"] + (1 if cnt >= 9 else 0), 2), qualified=True)
+        if best is None or cand["score"] > best["score"]:
+            best = cand
+    return best

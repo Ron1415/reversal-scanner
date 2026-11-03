@@ -32,7 +32,7 @@ import pandas as pd
 
 import config as C
 import suggestions as S
-from setup import evaluate_setup
+from setup import evaluate_level_touch, evaluate_setup
 
 NY = ZoneInfo("America/New_York")
 log = logging.getLogger("backtest")
@@ -105,6 +105,26 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                 if tail["Close"].iloc[-1] < C.MIN_PRICE or (tail["Close"] * tail["Volume"]).mean() < C.MIN_AVG_DOLLAR_VOLUME:
                     continue
                 n_eval += 1
+                sig = str(sub.index[-1].date())
+                # ---- alternative strategy: enter at the liquidity level, no tail needed
+                try:
+                    lv = evaluate_level_touch(sub, tfc, C.PARAMS)
+                except Exception as e:
+                    lv = None
+                    log.debug("level %s %s: %s", t, sig, e)
+                if lv:
+                    k2 = f"{t}|{tf}|{lv['direction']}|{sig}|level"
+                    if k2 not in recs:
+                        recs[k2] = dict(
+                            key=k2, id=f"{t}-{tf}-{sig}-{lv['direction'][:4]}-lvl", ticker=t, timeframe=tf,
+                            strategy="level", direction=lv["direction"],
+                            side="short" if lv["direction"] == "bearish" else "long", rev_date=sig, signal_date=sig,
+                            first_seen=sig + "T15:30", stage="level", stages_seen=["level"],
+                            scan_price=round(float(sub["Close"].iloc[-1]), 2), entry=lv["entry"], stop=lv["stop"],
+                            level=lv["level"], level_label=lv["level_label"], score=lv["score"], count=lv["count"],
+                            efficiency=lv["efficiency"], move_atr=lv["move_atr"], keys=lv["keys"],
+                            factors=lv["factors"], idea=lv["idea"], valid_at_last_scan=True, last_reason="",
+                            status="pending", outcome={}, backtest=True)
                 try:
                     res = evaluate_setup(sub, tfc, C.PARAMS, C.WEIGHTS)
                 except Exception as e:
@@ -116,7 +136,6 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                 key = f"{t}|{tf}|{res['direction']}|{rev}"
                 if key in recs:
                     continue                         # first sighting only, like the live tracker
-                sig = str(sub.index[-1].date())
                 recs[key] = dict(
                     key=key, id=f"{t}-{tf}-{rev}-{res['direction'][:4]}", ticker=t, timeframe=tf,
                     direction=res["direction"], side="short" if res["direction"] == "bearish" else "long",
@@ -125,7 +144,7 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                     stop=res.get("stop"), score=res.get("score"), count=res.get("count"),
                     moved_pct=res.get("moved_pct"), tail_pct=res.get("tail_pct"), efficiency=res.get("efficiency"),
                     move_atr=res.get("move_atr"), rsi=res.get("rsi"), keys=res.get("keys", []),
-                    factors=res.get("factors", []), idea=res.get("idea"), valid_at_last_scan=True,
+                    factors=res.get("factors", []), idea=res.get("idea"), valid_at_last_scan=True, strategy="tail",
                     last_reason="", status="pending", outcome={}, backtest=True)
     log.info("backtest: %d evaluations, %d setups found (%.0fs)", n_eval, len(recs), time.time() - t0)
 
@@ -141,7 +160,10 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
     for r in recs.values():
         df = data.get(r["ticker"])
         try:
-            S.evaluate_one(r, df.astype("float64"), today)
+            if r.get("strategy") == "level":
+                S.evaluate_level(r, df.astype("float64"), today)
+            else:
+                S.evaluate_one(r, df.astype("float64"), today)
         except Exception as e:
             log.debug("evaluate %s: %s", r["id"], e)
     out = sorted(recs.values(), key=lambda r: r["first_seen"])

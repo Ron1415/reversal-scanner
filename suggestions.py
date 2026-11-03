@@ -269,6 +269,37 @@ def evaluate_one(rec: dict, df: pd.DataFrame, today: dt.date) -> None:
     rec["status"] = "closed" if done else "open"
 
 
+def evaluate_level(rec: dict, df: pd.DataFrame, today: dt.date) -> None:
+    """LEVEL-ENTRY test: a limit order at the level, filled on the signal bar.
+    The fill bar can only stop out (we cannot know whether the stop came after
+    the fill inside that bar, so the conservative answer is used)."""
+    bars = _bars(df, rec["timeframe"])
+    short = rec["side"] == "short"
+    sig_i = int(bars.index.searchsorted(pd.Timestamp(rec["signal_date"])))
+    if sig_i >= len(bars):
+        return
+    if sig_i == len(bars) - 1 and (bars.index[sig_i].date() > today or (
+            bars.index[sig_i].date() == today and dt.datetime.now(NY).time() < dt.time(16, 5))):
+        return
+    entry, stop = float(rec["entry"]), float(rec["stop"])
+    fb = bars.iloc[sig_i]
+    risk = abs(entry - stop) / entry * 100
+    v = dict(entry_rule=f"limit at the level ({rec['level']:.2f}); stop {T['level_stop_label']}", triggered=True,
+             entry=round(entry, 2), entry_date=str(bars.index[sig_i].date()), why="filled at the level",
+             risk_pct=round(risk, 2))
+    if (short and float(fb.High) >= stop) or (not short and float(fb.Low) <= stop):
+        v["plan"] = v["full_t1"] = v["full_t2"] = dict(done=True, ret=round(-risk, 2), r=-1.0, bars=0,
+                                                       exit="stop (same bar as the fill)", exit_date=v["entry_date"],
+                                                       mfe=0.0, mae=round(-risk, 2))
+    else:
+        after = bars.iloc[sig_i + 1:]
+        v["plan"] = simulate(after, short, entry, stop, "plan")
+        v["full_t1"] = simulate(after, short, entry, stop, "t1")
+        v["full_t2"] = simulate(after, short, entry, stop, "t2")
+    rec["outcome"] = {"level": v}
+    rec["status"] = "closed" if v["plan"]["done"] else "open"
+
+
 def evaluate(root: Path, download, today: dt.date) -> list[dict]:
     recs = load(root)
     todo = [r for r in recs if r["status"] != "closed"]
@@ -299,12 +330,13 @@ def mark_overlaps(recs: list[dict]) -> None:
     marked overlap=True and left out of the statistics."""
     busy: dict[str, str] = {}
     for r in sorted(recs, key=lambda x: (x.get("signal_date") or "", x.get("first_seen") or "")):
-        k = f"{r['ticker']}|{r['side']}"
+        k = f"{r['ticker']}|{r['side']}|{r.get('strategy', 'tail')}"
         sig = r.get("signal_date") or ""
         r["overlap"] = bool(busy.get(k) and sig <= busy[k])
         if r["overlap"]:
             continue
-        v = (r.get("outcome") or {}).get("close") or {}
+        oc = r.get("outcome") or {}
+        v = oc.get("close") or oc.get("level") or {}
         if v.get("triggered"):
             p = v.get("plan") or {}
             busy[k] = p.get("exit_date") or "9999-12-31"
@@ -351,7 +383,8 @@ PARAM_FOR = dict(count=("count_min", ">="), tail_pct=("tail_min_pct", ">="), eff
 
 def review(recs: list[dict], now: dt.datetime) -> dict:
     res = dict(generated=now.strftime("%Y-%m-%d %H:%M %Z"), versions={}, proposals=[], notes=[])
-    for version in ("close", "safer"):
+    versions = ["close", "safer"] + (["level"] if any("level" in (r.get("outcome") or {}) for r in recs) else [])
+    for version in versions:
         d = _frame(recs, version)
         if d.empty:
             res["versions"][version] = dict(summary=None, breakdown=[])

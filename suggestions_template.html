@@ -42,18 +42,24 @@
     <div><h2>Entered at the close</h2><div class="tiles" id="tClose"></div></div>
     <div><h2>Safer entry (break of the reversal bar)</h2><div class="tiles" id="tSafer"></div></div>
   </div>
+  <div id="levelBlock" hidden>
+    <h2>Entry at the liquidity line (no tail needed)</h2>
+    <div class="sub">Same setup (time count 7+, orderly move into a strong level) but a limit order at the level the first
+      time price reaches it; stop 1 ATR beyond the level. The fill bar can only stop out.</div>
+    <div class="tiles" id="tLevel"></div>
+  </div>
 
   <h2>Proposed rule changes</h2>
   <div class="box" id="props"></div>
 
   <h2>Breakdown</h2>
-  <div class="bar"><select id="bdVer"><option value="close">Entered at the close</option><option value="safer">Safer entry</option></select></div>
+  <div class="bar"><select id="bdVer"><option value="close">Entered at the close</option><option value="safer">Safer entry</option><option value="level">Entry at the liquidity line</option></select></div>
   <div class="tbl" id="bd"></div>
 
   <h2>All suggestions</h2>
   <div class="bar">
     <select id="fTf"><option value="">All timeframes</option><option>daily</option><option>weekly</option><option>monthly</option></select>
-    <select id="fStage"><option value="">All stages</option><option value="forming">Tail forming</option><option value="day2">Tail 1-2 days ago</option><option value="watch">Watch</option></select>
+    <select id="fStage"><option value="">All stages</option><option value="forming">Tail forming</option><option value="day2">Tail 1-2 days ago</option><option value="watch">Watch</option><option value="level">Level entry</option></select>
     <select id="fStatus"><option value="">Any status</option><option value="pending">Pending</option><option value="open">Open</option><option value="closed">Finished</option></select>
     <input id="fQ" placeholder="Ticker" style="width:110px">
   </div>
@@ -66,7 +72,7 @@ const R = v => v == null ? "–" : `<span class="${v >= 0 ? "pos" : "neg"}">${v 
 const P = v => v == null ? "–" : `<span class="${v >= 0 ? "pos" : "neg"}">${v > 0 ? "+" : ""}${v.toFixed(2)}%</span>`;
 const pc = v => v == null ? "–" : `${Math.round(v * 100)}%`;
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-const STAGE = {forming: "Tail forming", day2: "Tail 1-2 days ago", watch: "Watch"};
+const STAGE = {forming: "Tail forming", day2: "Tail 1-2 days ago", watch: "Watch", level: "Level entry"};
 
 function tiles(el, s){
   if (!s) { el.innerHTML = `<div class="empty">No finished suggestions yet.</div>`; return; }
@@ -88,6 +94,8 @@ function result(v){
 function render(){
   tiles($("tClose"), REV?.versions?.close?.summary);
   tiles($("tSafer"), REV?.versions?.safer?.summary);
+  $("levelBlock").hidden = !REV?.versions?.level;
+  if (REV?.versions?.level) tiles($("tLevel"), REV.versions.level.summary);
   const props = REV?.proposals || [], notes = REV?.notes || [];
   $("props").innerHTML = (props.length ? `<ol>${props.map(p => `<li><b>${esc(p.change)}</b> <span class="sub">(${esc(p.param)}, ${p.version === "close" ? "close entry" : "safer entry"})</span><br>${esc(p.evidence)}</li>`).join("")}</ol>`
     : `<div class="sub">No proposals yet.</div>`) + notes.map(n => `<div class="sub">${esc(n)}</div>`).join("");
@@ -98,11 +106,11 @@ function render(){
   const f = {tf: $("fTf").value, st: $("fStage").value, s: $("fStatus").value, q: $("fQ").value.toUpperCase()};
   const rows = RECS.filter(r => (!f.tf || r.timeframe === f.tf) && (!f.st || r.stage === f.st) && (!f.s || r.status === f.s) && r.ticker.includes(f.q))
                    .sort((a, b) => (b.first_seen || "").localeCompare(a.first_seen || ""));
-  $("list").innerHTML = rows.length ? `<table><tr><th>Seen</th><th>Ticker</th><th>TF</th><th>Trade</th><th>Stage</th><th>Stop</th><th>Earnings</th><th>Entered at the close</th><th>Safer entry</th><th>Idea</th></tr>` +
+  $("list").innerHTML = rows.length ? `<table><tr><th>Seen</th><th>Ticker</th><th>TF</th><th>Trade</th><th>Stage</th><th>Stop</th><th>Earnings</th><th>Entered at the close</th><th>Safer entry</th><th>At the level</th><th>Idea</th></tr>` +
     rows.slice(0, 500).map(r => `<tr><td>${esc((r.first_seen || "").replace("T", " "))}</td><td><b><a href="https://www.tradingview.com/chart/?symbol=${r.ticker}" target="_blank" rel="noopener">${r.ticker}</a></b></td>
       <td>${r.timeframe}</td><td>${r.side}</td><td>${STAGE[r.stage] || "–"}</td><td>${r.stop ?? "–"}</td>
       <td>${r.earnings_blackout ? `<span class="warn">⚠ ${esc(r.earnings_next)} (skip)</span>` : esc(r.earnings_next || "–")}</td>
-      <td class="w">${result(r.outcome?.close)}</td><td class="w">${result(r.outcome?.safer)}</td><td class="w">${esc(r.idea)}</td></tr>`).join("") + `</table>`
+      <td class="w">${result(r.outcome?.close)}</td><td class="w">${result(r.outcome?.safer)}</td><td class="w">${result(r.outcome?.level)}</td><td class="w">${esc(r.idea)}</td></tr>`).join("") + `</table>`
     : `<div class="empty">No suggestions recorded yet. They are added by each scan.</div>`;
 }
 

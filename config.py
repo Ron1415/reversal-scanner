@@ -49,6 +49,7 @@ PARAMS = dict(
     count_tol_atr=0.10,   # ignore new highs / closes smaller than this many ATRs
     # Keep a setup listed for this many days after the tail while price stays
     # within `late_atr` ATRs of the tail's close and has not broken the tail.
+    level_stop_atr=1.0,   # LEVEL-ENTRY test: stop this many ATRs beyond the level (no tail to use)
     carry_days=2,         # DAY 2 stage: tail formed up to this many bars ago
     late_atr=1.0,
     rsi_hi=70, rsi_lo=30,
@@ -73,6 +74,7 @@ TRACK = dict(
     earnings_blackout_days=3,  # skip when earnings fall within this many trading days
     min_group=20,              # trades needed on each side before a change is proposed
     min_edge_r=0.15,           # improvement (in R) needed before a change is proposed
+    level_stop_label="1 ATR beyond the level",
 )
 
 WEIGHTS = dict(
