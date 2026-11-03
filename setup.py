@@ -560,3 +560,144 @@ def evaluate_sweep_intraday(daily: pd.DataFrame, today_bars: pd.DataFrame, tf: d
     if res:
         res["entry_time"] = last_t.strftime("%H:%M")
     return res
+
+
+def armed_levels(ctx: pd.DataFrame, tf: dict, P: dict, B: dict, spy_up: bool | None = None) -> list[dict]:
+    """Daily-chart context for the 5-minute execution (v20).
+
+    ctx = daily bars up to and including YESTERDAY. Returns the liquidity lines that are
+    'armed' for today: the trend and pullback rules of the bot pass, and the line is a
+    strong liquidity level that lines up with other support/resistance (confluence)."""
+    M = B["m5"]
+    n = len(ctx)
+    if n < 210:
+        return []
+    c = ctx["Close"].to_numpy()
+    A = atr(ctx).to_numpy()
+    a = float(A[-1]) if np.isfinite(A[-1]) else float("nan")
+    if not np.isfinite(a) or a <= 0:
+        return []
+    sma = pd.Series(c).rolling(50).mean().to_numpy()
+    sma200 = pd.Series(c).rolling(200).mean().to_numpy()
+    if not (np.isfinite(sma[-1]) and np.isfinite(sma[-11]) and np.isfinite(sma200[-1])):
+        return []
+    dummy = pd.concat([ctx, ctx.iloc[[-1]]])          # liquidity_levels ignores the last row
+    out = []
+    for side in ("long", "short"):
+        up = side == "long"
+        if up:
+            if not (sma[-1] > sma[-11] and sma[-1] > sma200[-1]):
+                continue
+        else:
+            if not (c[-1] < sma[-1] and sma[-1] < sma[-11] and sma[-1] < sma200[-1]):
+                continue
+            if B["short_need_weekly_down"]:
+                s100 = pd.Series(c).rolling(100).mean().to_numpy()
+                if not (np.isfinite(s100[-26]) and c[-1] < s100[-1] and s100[-1] < s100[-26]):
+                    continue
+            if B["short_need_market_down"] and spy_up is True:
+                continue
+        cnt = time_count(ctx, n - 1, not up, P)
+        lo_cnt = B["long_pullback"] if up else B["short_pullback"]
+        hi_cnt = M.get("max_pullback") or 99
+        if cnt < lo_cnt or cnt > hi_cnt:
+            continue
+        lv = [x for x in liquidity_levels(dummy, a, tf, P, "low" if up else "high") if x["strength"] >= 2]
+        for x in lv:
+            p = x["price"]
+            dist = (c[-1] - p) / a if up else (p - c[-1]) / a
+            if dist < 0 or dist > M["max_dist_atr"]:
+                continue                                  # must be on the right side and reachable today
+            # confluence = how many DIFFERENT kinds of support/resistance sit at this line
+            # (e.g. a double bottom + last month's low + a Fib level within 0.5 ATR)
+            kinds = {level_group(z["label"]) for z in lv if abs(z["price"] - p) <= 0.5 * a}
+            confl = max(1, len(kinds))
+            grp = level_group(x["label"])
+            if confl < (M["min_confluence"] if up else max(M["min_confluence"], B["short_confluence"])):
+                continue
+            if not up and grp not in B["short_levels"]:
+                continue
+            if any(y["side"] == side and abs(y["price"] - p) <= 0.1 * a for y in out):
+                continue
+            out.append(dict(side=side, price=float(p), label=x["label"], group=grp, strength=x["strength"],
+                            confluence=confl, atr=a, count=cnt))
+    return out
+
+
+def evaluate_sweep_5m(armed: list[dict], bars5: pd.DataFrame, B: dict, confirm: str = "close") -> dict | None:
+    """5-minute execution (v20): wait for price to take out the liquidity line (trigger the
+    stops resting beyond it), then enter when it moves back the other way.
+
+    For a long line: a 5-minute low trades at least sweep_atr x daily ATR below the line (the
+    stop run). Within reclaim_bars bars of the first break, a 5-minute bar must CLOSE back
+    above the line ('close'), or ('break', a change of character) close above the line in a
+    green candle that also clears the high of every bar since the sweep low. Entry at that close; stop sweep low - long_stop_atr x ATR.
+    Shorts mirror this. The entry must be within max_chase_pct of the line and the risk within
+    max_risk_pct. Returns the first trigger of the day."""
+    M = B["m5"]
+    if not armed or bars5 is None or not len(bars5):
+        return None
+    t0, t1 = M["start"], M["end"]
+    o, h, l, c, v = (bars5[x].to_numpy() for x in ("Open", "High", "Low", "Close", "Volume"))
+    times = [(t + pd.Timedelta(minutes=5)).strftime("%H:%M") for t in bars5.index]   # bar END times
+    best = None
+    for L in armed:
+        up = L["side"] == "long"
+        p, a = L["price"], L["atr"]
+        depth = M["sweep_atr"] * a
+        start = None                                      # index of the first bar through the line
+        ext_i = None                                      # bar holding the sweep extreme
+        for i in range(len(c)):
+            if times[i] > t1:
+                break
+            through = (l[i] < p - depth) if up else (h[i] > p + depth)
+            if start is None:
+                if through:
+                    start, ext_i = i, i
+                else:
+                    continue
+            else:
+                if (l[i] < l[ext_i]) if up else (h[i] > h[ext_i]):
+                    ext_i = i
+            if i - start > M["reclaim_bars"]:
+                break                                     # no reclaim in time: a real breakdown, not a sweep
+            if times[i] < t0:
+                continue
+            back = c[i] > p if up else c[i] < p
+            if confirm == "break" and back:
+                # stronger: a candle in the trade direction that closes beyond every bar since the
+                # sweep extreme (the small 5-minute pullback after the stop run is broken)
+                if i <= ext_i:
+                    back = False
+                elif up:
+                    back = c[i] > o[i] and c[i] > h[ext_i:i].max()
+                else:
+                    back = c[i] < o[i] and c[i] < l[ext_i:i].min()
+            if not back:
+                continue
+            entry = float(c[i])
+            ext = float(l[ext_i] if up else h[ext_i])
+            stop = ext - B["long_stop_atr"] * a if up else ext + B["short_stop_atr"] * a
+            risk = abs(entry - stop) / entry * 100
+            chase = abs(entry - p) / p * 100
+            if chase > B["max_chase_pct"] or risk > B["max_risk_pct"] or risk < 0.2:
+                break
+            base = float(np.median(v[:start])) if start >= 3 else float(np.median(v[:i + 1]))
+            svol = float(v[start:i + 1].max())
+            cand = dict(direction="bullish" if up else "bearish", side=L["side"], stage="sweep5m",
+                        level=round(p, 4), level_label=L["label"], level_group=L["group"], confluence=L["confluence"],
+                        entry=round(entry, 4), stop=round(stop, 4), risk_pct=round(risk, 2), count=L["count"],
+                        atr=round(a, 4), chase_pct=round(chase, 2), entry_time=times[i], sweep_time=times[start],
+                        sweep_depth_atr=round(abs(ext - p) / a, 2), bars_to_reclaim=int(i - start),
+                        vol_ratio=round(svol / base, 2) if base > 0 else None,
+                        keys=["stage_sweep5m", f"liq_{L['label'].split(' (')[0].lower().replace(' ', '_')}"],
+                        factors=[f"Trend {'up' if up else 'down'} (50-day average)", f"{L['count']}-bar pullback",
+                                 f"{L['label']} @ {p:.2f} with {L['confluence']} levels together",
+                                 f"5-min stop run to {ext:.2f} at {times[start]}, back {'above' if up else 'below'} the line at {times[i]}"],
+                        idea=(f"{'BUY' if up else 'SELL'} ~{entry:.2f} at {times[i]}: 5-min swept {L['label'].lower()} "
+                              f"{p:.2f} (low of the run {ext:.2f}) and reclaimed it; stop {stop:.2f} ({risk:.1f}% risk)."),
+                        score=round(L["strength"] + 0.5 * (L["confluence"] - 1), 2), qualified=True)
+            if best is None or cand["entry_time"] < best["entry_time"]:
+                best = cand
+            break
+    return best

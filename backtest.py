@@ -32,7 +32,7 @@ import pandas as pd
 
 import config as C
 import suggestions as S
-from setup import evaluate_level_touch, evaluate_setup, evaluate_sweep, evaluate_sweep_intraday
+from setup import evaluate_level_touch, evaluate_setup, evaluate_sweep, evaluate_sweep_intraday, armed_levels, evaluate_sweep_5m
 
 NY = ZoneInfo("America/New_York")
 log = logging.getLogger("backtest")
@@ -75,24 +75,34 @@ def _past_earnings(tickers: list[str]) -> dict[str, list[dt.date]]:
 
 def _download_hourly(tickers: list[str], days: int) -> dict[str, pd.DataFrame]:
     """Hourly bars (New York time, naive timestamps = bar START). Yahoo keeps ~730 days."""
+    return _download_intraday(tickers, "730d" if days > 230 else "1y", "60m")
+
+
+def _download_5m(tickers: list[str], days: int) -> dict[str, pd.DataFrame]:
+    """5-minute bars (New York time, bar START). Yahoo keeps only the last 60 days."""
+    return _download_intraday(tickers, "60d", "5m")
+
+
+def _download_intraday(tickers: list[str], period: str, interval: str) -> dict[str, pd.DataFrame]:
     out = {}
     try:
         import yfinance as yf
     except Exception:
         return out
-    period = "730d" if days > 230 else "1y"
     for i in range(0, len(tickers), 100):
         batch = tickers[i:i + 100]
         try:
-            raw = yf.download(batch, period=period, interval="60m", group_by="ticker", auto_adjust=True,
+            raw = yf.download(batch, period=period, interval=interval, group_by="ticker", auto_adjust=True,
                               threads=True, progress=False)
         except Exception as e:
-            log.warning("hourly download failed: %s", e)
+            log.warning("%s download failed: %s", interval, e)
             continue
         for t in batch:
             try:
                 df = raw[t] if isinstance(raw.columns, pd.MultiIndex) else raw
                 df = df[["Open", "High", "Low", "Close", "Volume"]].dropna().astype("float64")
+                if interval == "5m":
+                    df = df.between_time("09:30", "15:55") if df.index.tz is None else df
                 idx = pd.to_datetime(df.index)
                 idx = idx.tz_convert(NY) if idx.tz is not None else idx.tz_localize("UTC").tz_convert(NY)
                 df.index = idx.tz_localize(None)
@@ -105,13 +115,15 @@ def _download_hourly(tickers: list[str], days: int) -> dict[str, pd.DataFrame]:
 
 
 def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "weekly"),
-        download_hourly=None) -> dict:
+        download_hourly=None, download_5m=None) -> dict:
     t0 = time.time()
     tickers = load_universe()
     # ~300 bars of history are needed before the first replayed day
     data = download(sorted(set(tickers) | {"SPY"}), "6y" if "weekly" in tfs else ("2y" if days <= 180 else "5y"))
     hourly = (download_hourly or _download_hourly)(sorted(data), days)
     log.info("hourly data for %d tickers", len(hourly))
+    m5 = (download_5m or _download_5m)(sorted(data), days)
+    log.info("5-minute data for %d tickers", len(m5))
     spy = data.pop("SPY", None)
     spy_up = None
     if spy is not None and len(spy) > 60:
@@ -195,6 +207,41 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                                 keys=it["keys"], factors=it["factors"], idea=it["idea"], valid_at_last_scan=True,
                                 last_reason="", status="pending", outcome={}, backtest=True))
                             break                    # first trigger of the day only
+                # ---- THE BOT, 5-minute execution (v20): daily chart arms the line, 5-min times the entry
+                f5 = m5.get(t)
+                if tf == "daily" and f5 is not None and i > 0 and liquid:
+                    d_day = bars.index[i].date()
+                    today5 = f5[f5.index.date == d_day]
+                    if len(today5):
+                        ctx = bars.iloc[max(0, i - 300):i]
+                        mkt = None if spy_up is None else bool(spy_up.get(d_day, True))
+                        try:
+                            armed = armed_levels(ctx, tfc, C.PARAMS, C.BOT, spy_up=mkt)
+                        except Exception as e:
+                            armed = []
+                            log.debug("armed %s %s: %s", t, d_day, e)
+                        lo_d, hi_d = float(bars["Low"].iloc[i]), float(bars["High"].iloc[i])
+                        armed = [x for x in armed if (lo_d < x["price"]) if x["side"] == "long"] + \
+                                [x for x in armed if x["side"] == "short" and hi_d > x["price"]]
+                        for conf in (C.BOT["m5"]["confirm"] if armed else []):
+                            it = evaluate_sweep_5m(armed, today5, C.BOT, confirm=conf)
+                            if not it:
+                                continue
+                            strat = "bot_5m" if conf == "close" else "bot_5m_break"
+                            k5 = f"{t}|daily|{it['direction']}|{d_day}|{strat}"
+                            recs.setdefault(k5, dict(
+                                key=k5, id=f"{t}-{d_day}-{it['side']}-{strat}", ticker=t, timeframe="daily",
+                                strategy=strat, direction=it["direction"], side=it["side"],
+                                rev_date=str(d_day), signal_date=str(d_day), first_seen=f"{d_day}T{it['entry_time']}",
+                                entry_time=it["entry_time"], sweep_time=it["sweep_time"], stage="sweep5m",
+                                stages_seen=["sweep5m"], scan_price=it["entry"], entry=it["entry"], stop=it["stop"],
+                                risk_pct=it["risk_pct"], atr=it["atr"], level=it["level"],
+                                level_label=it["level_label"], level_group=it["level_group"],
+                                confluence=it["confluence"], count=it["count"], chase_pct=it["chase_pct"],
+                                sweep_depth_atr=it["sweep_depth_atr"], bars_to_reclaim=it["bars_to_reclaim"],
+                                vol_ratio=it["vol_ratio"], spy_up=mkt, score=it["score"], keys=it["keys"],
+                                factors=it["factors"], idea=it["idea"], valid_at_last_scan=True,
+                                last_reason="", status="pending", outcome={}, backtest=True))
                 if runs[max(0, i - 3):i + 1].max() < C.PARAMS["count_min"]:
                     continue                         # no time count of 7+: the other strategies cannot qualify
                 # liquidity filter as of that day
@@ -264,6 +311,10 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                 S.evaluate_level(r, df.astype("float64"), today)
             elif r.get("strategy") == "bot":
                 S.evaluate_bot(r, df.astype("float64"), today)
+            elif r.get("strategy") in ("bot_5m", "bot_5m_break"):
+                if m5.get(r["ticker"]) is not None:
+                    S.evaluate_bot_intraday(r, df.astype("float64"), m5[r["ticker"]], today, bar_min=5,
+                                            key=r["strategy"])
             elif r.get("strategy") == "bot_intraday":
                 if hourly.get(r["ticker"]) is not None:
                     S.evaluate_bot_intraday(r, df.astype("float64"), hourly[r["ticker"]], today)

@@ -80,6 +80,13 @@ Rules live in config.py `BOT`. Two entry versions are tested side by side:
   reclaim of the line enters at that price.
 - **No chase** (both versions): the trade is skipped if price is already more than 2% from the
   liquidity line (`BOT["max_chase_pct"]`).
+- **5-minute execution** (`bot_5m`, `bot_5m_break`, v20): the daily chart arms the line (trend,
+  4-6 bar pullback, a strong liquidity line where at least 2 kinds of support/resistance meet, within
+  2 ATRs of yesterday's close). The 5-minute chart times the entry: price must trade through the line
+  (the stop run) and get back across it within 1 hour. `bot_5m` enters on the first 5-minute close back
+  across the line; `bot_5m_break` waits for a candle that also clears every bar since the low of the
+  stop run. Stop: beyond the stop-run extreme plus a small ATR buffer. Settings: `BOT["m5"]`.
+  Yahoo keeps only about 60 days of 5-minute bars, so these two cover the last ~40 trading days.
 The backtest downloads hourly bars (Yahoo keeps about 2 years) and reports both versions.
 
 ## TradingView

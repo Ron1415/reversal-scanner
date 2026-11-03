@@ -112,6 +112,19 @@ BOT = dict(
     max_chase_pct=2.0,        # never enter if price is already more than 2% from the liquidity line
     intraday_checks=["10:30", "11:30", "12:30", "13:30", "14:30", "15:30"],   # hourly checks (New York time)
     long_size=1.25, short_size=0.5,
+    # v20: 5-minute execution. The daily chart picks the line (bot trend + pullback rules, a strong
+    # liquidity line where 2+ support/resistance levels meet); the 5-minute chart times the entry:
+    # price runs the stops beyond the line, then closes back on the right side of it.
+    m5=dict(
+        min_confluence=2,     # liquidity line + at least one more support/resistance level together
+        max_pullback=6,       # pullbacks longer than 6 bars lost money in the 6-month backtest
+        max_dist_atr=2.0,     # only lines within 2 daily ATRs of yesterday's close (reachable today)
+        sweep_atr=0.05,       # the stop run must trade at least 0.05 ATR through the line
+        reclaim_bars=12,      # ...and get back within 12 five-minute bars (1 hour), or it is a breakdown
+        start="09:40",        # no entries in the first 10 minutes
+        end="15:55",
+        confirm=["close", "break"],   # both entry triggers are tested side by side
+    ),
 )
 
 # Closer monitoring for shorts: earlier breakeven and a shorter time stop

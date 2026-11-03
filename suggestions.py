@@ -428,7 +428,8 @@ def evaluate_bot(rec: dict, df: pd.DataFrame, today: dt.date) -> None:
     rec["status"] = "closed" if p["done"] else "open"
 
 
-def evaluate_bot_intraday(rec: dict, daily: pd.DataFrame, hourly: pd.DataFrame, today: dt.date) -> None:
+def evaluate_bot_intraday(rec: dict, daily: pd.DataFrame, hourly: pd.DataFrame, today: dt.date,
+                          bar_min: int = 60, key: str = "bot_intraday") -> None:
     """Intraday entry: the rest of the entry day (hourly bars after the entry hour, merged
     into one bar) and then daily bars, managed exactly like the close-entry bot."""
     B = C.BOT
@@ -436,7 +437,7 @@ def evaluate_bot_intraday(rec: dict, daily: pd.DataFrame, hourly: pd.DataFrame, 
     d0 = pd.Timestamp(rec["signal_date"])
     et = rec.get("entry_time", "15:30")
     hr = hourly[hourly.index.date == d0.date()]
-    rest = hr[[(t + pd.Timedelta(hours=1)).strftime("%H:%M") > et for t in hr.index]]
+    rest = hr[[(t + pd.Timedelta(minutes=bar_min)).strftime("%H:%M") > et for t in hr.index]]
     parts = []
     if len(rest):
         parts.append(pd.DataFrame(dict(Open=[float(rest.Open.iloc[0])], High=[float(rest.High.max())],
@@ -451,7 +452,7 @@ def evaluate_bot_intraday(rec: dict, daily: pd.DataFrame, hourly: pd.DataFrame, 
                    mg, len(path) if len(path) else None, first_is_fill=False)
     if len(path) < hold + (1 if parts else 0) and p.get("exit") == "time stop":
         p["done"], p["exit"] = False, "open"
-    rec["outcome"] = {"bot_intraday": dict(entry_rule=f"intraday at {et} ET", triggered=True, entry=rec["entry"],
+    rec["outcome"] = {key: dict(entry_rule=f"intraday at {et} ET", triggered=True, entry=rec["entry"],
                                            entry_date=rec["signal_date"], why=f"entered at {et}",
                                            risk_pct=rec.get("risk_pct"), plan=p)}
     rec["status"] = "closed" if p["done"] else "open"
@@ -493,7 +494,7 @@ def mark_overlaps(recs: list[dict]) -> None:
         if r["overlap"]:
             continue
         oc = r.get("outcome") or {}
-        v = oc.get("close") or oc.get("level") or oc.get("bot") or oc.get("bot_intraday") or {}
+        v = oc.get("close") or oc.get("level") or oc.get("bot") or oc.get("bot_intraday") or oc.get("bot_5m") or oc.get("bot_5m_break") or {}
         if v.get("triggered"):
             p = v.get("plan") or {}
             busy[k] = p.get("exit_date") or "9999-12-31"
@@ -542,7 +543,7 @@ PARAM_FOR = dict(count=("count_min", ">="), tail_pct=("tail_min_pct", ">="), eff
 
 def review(recs: list[dict], now: dt.datetime) -> dict:
     res = dict(generated=now.strftime("%Y-%m-%d %H:%M %Z"), versions={}, proposals=[], notes=[])
-    versions = ["close", "safer"] + [k for k in ("level", "bot", "bot_intraday") if any(k in (r.get("outcome") or {}) for r in recs)]
+    versions = ["close", "safer"] + [k for k in ("level", "bot", "bot_intraday", "bot_5m", "bot_5m_break") if any(k in (r.get("outcome") or {}) for r in recs)]
     for version in versions:
         d = _frame(recs, version)
         if d.empty:
@@ -624,7 +625,7 @@ def review(recs: list[dict], now: dt.datetime) -> dict:
         var_rows.append(row)
     res["level_variants"] = var_rows
     # ---- THE BOT: headline, long vs short, halves, trades per week (close entry and intraday entry)
-    for bot_key in ("bot", "bot_intraday"):
+    for bot_key in ("bot", "bot_intraday", "bot_5m", "bot_5m_break"):
         _bot_summary(res, recs, bot_key)
     res["bot_policy"] = C.BOT_POLICY
     res["side_rules"] = C.SIDE_RULES
