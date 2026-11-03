@@ -66,7 +66,7 @@
   <div class="box" id="props"></div>
 
   <h2>Breakdown</h2>
-  <div class="bar"><select id="bdVer"><option value="close">Entered at the close</option><option value="safer">Safer entry</option><option value="level">Entry at the liquidity line</option><option value="bot">The bot</option><option value="bot_intraday">The bot (intraday entry)</option></select></div>
+  <div class="bar"><select id="bdVer"><option value="close">Entered at the close</option><option value="safer">Safer entry</option><option value="level">Entry at the liquidity line</option><option value="bot">The bot</option><option value="bot_intraday">The bot (intraday entry)</option><option value="bot_5m">The bot (5-min, close back)</option><option value="bot_5m_break">The bot (5-min, confirmed break)</option></select></div>
   <div class="tbl" id="bd"></div>
 
   <h2>All suggestions</h2>
@@ -105,13 +105,15 @@ function result(v){
 }
 
 function render(){
-  const bot = REV?.bot, boti = REV?.bot_intraday;
-  $("botBlock").hidden = !(bot || boti);
-  if (bot || boti) {
+  const bot = REV?.bot, boti = REV?.bot_intraday, bot5 = REV?.bot_5m, bot5b = REV?.bot_5m_break;
+  $("botBlock").hidden = !(bot || boti || bot5 || bot5b);
+  if (bot || boti || bot5 || bot5b) {
     const part = (title, b) => !b ? [] : [[`<i>${title}</i>`, null],
       ["All (sized: longs 1.25x, shorts 0.5x)", b.all], ["Longs", b.long], ["Shorts", b.short],
       ["First half of the period", b.first_half], ["Second half of the period", b.second_half]];
-    const rowsB = [...part("Entry at the 3:30 PM close", bot), ...part("Entry during the day (hourly checks, no chase beyond 2%)", boti)];
+    const rowsB = [...part("Entry at the 3:30 PM close", bot), ...part("Entry during the day (hourly checks, no chase beyond 2%)", boti),
+      ...part("5-minute stop run, entry on the first close back across the line (last ~60 days only)", bot5),
+      ...part("5-minute stop run, entry on a confirmed break (last ~60 days only)", bot5b)];
     $("botTbl").innerHTML = `<table><tr><th></th><th>Trades</th><th>Per week</th><th>Win rate</th><th>Average</th><th>Average %</th><th>Avg days held</th><th>Reached +5%</th><th>Total % (sized)</th></tr>` +
       rowsB.map(([k, b]) => !b ? `<tr><td colspan="9"><b>${k}</b></td></tr>` : `<tr><td>${k}</td><td>${b.n}</td><td>${b.per_week ?? "–"}</td><td>${pc(b.win)}</td><td>${R(b.avg_R)}</td><td>${P(b.avg_ret)}</td><td>${b.avg_days ?? "–"}</td><td>${pc(b.hit_5pct)}</td><td>${b.total_ret_sized ?? "–"}</td></tr>`).join("") + `</table>`;
   }
