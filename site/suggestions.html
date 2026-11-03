@@ -45,6 +45,7 @@
       market (SPY) below its 50-day, 5+ bar rally, sweep of a strong level with a second level in the same place, weak close on 1.2x volume;
       breakeven after 0.5 ATR, then the stop trails each prior bar's high; exit by day 3. Exits: 1/2 at +5% (stop then locks +2.5%), 1/4 at +7.5%, rest at +10%.</div>
     <div class="tbl" id="botTbl" style="margin-top:8px"></div>
+    <div id="botTests"></div>
   </div>
   <div class="cols">
     <div><h2>Entered at the close</h2><div class="tiles" id="tClose"></div></div>
@@ -66,7 +67,6 @@
   <div class="box" id="props"></div>
 
   <h2>Breakdown</h2>
-  <div class="bar"><select id="bdVer"><option value="close">Entered at the close</option><option value="safer">Safer entry</option><option value="level">Entry at the liquidity line</option><option value="bot">The bot</option><option value="bot_intraday">The bot (intraday entry)</option><option value="bot_5m">The bot (5-min, close back)</option><option value="bot_5m_break">The bot (5-min, confirmed break)</option></select></div>
   <div class="tbl" id="bd"></div>
 
   <h2>All suggestions</h2>
@@ -117,6 +117,18 @@ function render(){
     $("botTbl").innerHTML = `<table><tr><th></th><th>Trades</th><th>Per week</th><th>Win rate</th><th>Average</th><th>Average %</th><th>Avg days held</th><th>Reached +5%</th><th>Total % (sized)</th></tr>` +
       rowsB.map(([k, b]) => !b ? `<tr><td colspan="9"><b>${k}</b></td></tr>` : `<tr><td>${k}</td><td>${b.n}</td><td>${b.per_week ?? "–"}</td><td>${pc(b.win)}</td><td>${R(b.avg_R)}</td><td>${P(b.avg_ret)}</td><td>${b.avg_days ?? "–"}</td><td>${pc(b.hit_5pct)}</td><td>${b.total_ret_sized ?? "–"}</td></tr>`).join("") + `</table>`;
   }
+  const BT = REV?.bot_tests || {}, FL = {all: "All trades", spy: "SPY above 50-day", noon: "Before noon",
+    strong: "Strongest levels", combined: "All filters", combined_h1: "All filters, 1st half", combined_h2: "All filters, 2nd half"};
+  const BN = {bot: "Entry at the 3:30 PM close", bot_5m: "5-minute entry, close back across the line", bot_5m_break: "5-minute entry, confirmed break"};
+  const tc = g => !g || !g.n ? "–" : `${P(g.avg_ret)} ${R(g.avg_R)}<br><span class="sub">${pc(g.win)} win · ${pc(g.stopped)} stopped · ${g.n}</span>`;
+  $("botTests").innerHTML = Object.keys(BN).filter(k => BT[k]).map(k => {
+    const T = BT[k];
+    return `<h3 style="margin:16px 0 4px">Improvement tests: ${BN[k]}</h3><div class="sub">Rows: stop and target choices. Columns: filters
+      (strongest levels = ${esc(T.strong_levels.join(", "))}${T.filters.includes("noon") ? `; before noon = entries before ${T.before}` : ""}).
+      Each cell: average % per trade, average R, win rate, share stopped out, trades. Compare the % figures, because R depends on the stop width.</div>
+      <div class="tbl"><table><tr><th>Stop; targets</th>${T.filters.map(f => `<th>${FL[f] || f}</th>`).join("")}</tr>` +
+      T.rows.map(r => `<tr><td><b>${esc(r.label)}</b></td>${T.filters.map(f => `<td>${tc(r[f])}</td>`).join("")}</tr>`).join("") + `</table></div>`;
+  }).join("");
   tiles($("tClose"), REV?.versions?.close?.summary);
   tiles($("tSafer"), REV?.versions?.safer?.summary);
   $("levelBlock").hidden = !REV?.versions?.level;
@@ -141,10 +153,15 @@ function render(){
   const props = REV?.proposals || [], notes = REV?.notes || [];
   $("props").innerHTML = (props.length ? `<ol>${props.map(p => `<li><b>${esc(p.change)}</b> <span class="sub">(${esc(p.param)}, ${p.version === "close" ? "close entry" : "safer entry"})</span><br>${esc(p.evidence)}</li>`).join("")}</ol>`
     : `<div class="sub">No proposals yet.</div>`) + notes.map(n => `<div class="sub">${esc(n)}</div>`).join("");
-  const bd = REV?.versions?.[$("bdVer").value]?.breakdown || [];
-  $("bd").innerHTML = bd.length ? `<table><tr><th>Group</th><th>Suggested</th><th>Triggered</th><th>Finished</th><th>Win rate</th><th>Avg</th><th>Avg %</th><th>All at +5%</th><th>All at +10%</th><th>Reached +5%</th></tr>` +
-    bd.map(b => `<tr><td>${esc(b.group)}</td><td>${b.suggested}</td><td>${b.triggered} (${pc(b.trigger_rate)})</td><td>${b.closed}</td><td>${pc(b.win_rate)}</td><td>${R(b.avg_R)}</td><td>${P(b.avg_ret)}</td><td>${R(b.avg_R_full_t1)}</td><td>${R(b.avg_R_full_t2)}</td><td>${pc(b.hit_5pct)}</td></tr>`).join("") + `</table>`
-    : `<div class="empty">Breakdowns appear once suggestions finish.</div>`;
+  const VN = {close: "Entered at the close", safer: "Safer entry", level: "Entry at the liquidity line", bot: "The bot (3:30 PM close)",
+              bot_intraday: "The bot (hourly, during the day)", bot_5m: "The bot (5-min, close back across the line)",
+              bot_5m_break: "The bot (5-min, confirmed break)"};
+  const bdHtml = Object.keys(VN).filter(k => (REV?.versions?.[k]?.breakdown || []).length).map(k => {
+    const bd = REV.versions[k].breakdown;
+    return `<h3 style="margin:14px 10px 6px">${VN[k]}</h3><table><tr><th>Group</th><th>Suggested</th><th>Triggered</th><th>Finished</th><th>Win rate</th><th>Avg</th><th>Avg %</th><th>All at +5%</th><th>All at +10%</th><th>Reached +5%</th></tr>` +
+      bd.map(b => `<tr><td>${esc(b.group)}</td><td>${b.suggested}</td><td>${b.triggered} (${pc(b.trigger_rate)})</td><td>${b.closed}</td><td>${pc(b.win_rate)}</td><td>${R(b.avg_R)}</td><td>${P(b.avg_ret)}</td><td>${R(b.avg_R_full_t1)}</td><td>${R(b.avg_R_full_t2)}</td><td>${pc(b.hit_5pct)}</td></tr>`).join("") + `</table>`;
+  }).join("");
+  $("bd").innerHTML = bdHtml || `<div class="empty">Breakdowns appear once suggestions finish.</div>`;
   const f = {tf: $("fTf").value, st: $("fStage").value, s: $("fStatus").value, q: $("fQ").value.toUpperCase()};
   const rows = RECS.filter(r => (!f.tf || r.timeframe === f.tf) && (!f.st || r.stage === f.st) && (!f.s || r.status === f.s) && r.ticker.includes(f.q))
                    .sort((a, b) => (b.first_seen || "").localeCompare(a.first_seen || ""));
@@ -159,14 +176,16 @@ function render(){
 async function load(){
   const bt = $("src").value === "bt", pre = bt ? "backtest_" : "";
   RECS = []; REV = null;
-  try { RECS = await (await fetch(`data/${pre}suggestions.json?t=${Date.now()}`, {cache: "no-store"})).json(); } catch (e) {}
-  try { REV = await (await fetch(`data/${pre}review.json?t=${Date.now()}`, {cache: "no-store"})).json(); } catch (e) {}
+  // older files may contain NaN, which is not valid JSON: read as text and turn it into null
+  const get = async f => JSON.parse((await (await fetch(`data/${pre}${f}?t=${Date.now()}`, {cache: "no-store"})).text()).replace(/\bNaN\b|-?Infinity\b/g, "null"));
+  try { RECS = await get("suggestions.json"); } catch (e) {}
+  try { REV = await get("review.json"); } catch (e) {}
   $("gen").textContent = REV ? `Updated ${REV.generated}` : (bt ? "No backtest yet: run the workflow with mode backtest" : "No review yet");
   const b = REV?.backtest;
   $("btInfo").textContent = bt && b ? `${b.setups} setups from ${b.stocks} stocks over ${b.days} trading days (${b.timeframes.join(", ")}). ${b.limits}` : "";
   render();
 }
-["bdVer", "fTf", "fStage", "fStatus"].forEach(id => $(id).onchange = render);
+["fTf", "fStage", "fStatus"].forEach(id => $(id).onchange = render);
 $("fQ").oninput = render;
 $("src").onchange = load;
 if (location.hash === "#backtest") $("src").value = "bt";
