@@ -164,6 +164,12 @@ HYG STX SOXS LQD WDC LLY DELL GLD AMAT TLT NFLX LRCX GEV MSTR EWZ V UNH WMT NOW 
 PANW GS KLAC MA JNJ HOOD XLF QCOM IBIT XLK SQQQ BA CSCO DIA XLV CVX CRM GDX PG VRT GE ADI KO ABBV XBI MRK SNOW HD
 EEM EFA COIN SHOP PEP XLP VZ MCD WFC IBM XLI SMCI T ARM MS C XLU ANET RKLB IEF TMUS UBER RTX""".split()
 
+# v27: live paper bot settings
+BOT_LIVE = dict(
+    trade_shorts=False,   # Ron, Nov 3: shorts lost money even with SPY below its 50-day. Short signals are
+                          # still logged and followed as "watch only" (strategy bot_5m_watch), not as trades.
+)
+
 # Closer monitoring for shorts: earlier breakeven and a shorter time stop
 SHORT_MONITORING = dict(be_trigger_atr=0.5, max_hold_bars=8)
 

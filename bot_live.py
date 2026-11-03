@@ -4,7 +4,8 @@ Approved rules (Ron, November 3, 2026):
   daily chart   bot trend + 4-6 bar pullback; a liquidity line where 2+ kinds of support/resistance
                 meet, within 2 ATRs of yesterday's close; no earnings within 3 trading days
   longs         SPY above its 50-day average; strongest levels only (major swing, prior week/month)
-  shorts        SPY below its 50-day average (looser short rules otherwise); paper only, half size
+  shorts        SPY below its 50-day average (looser short rules otherwise); PAUSED Nov 3 (v27): logged
+                as watch only (bot_5m_watch) until they show an edge
   5-minute      price runs the stops through the line, then the first 5-minute close back across it
                 (within 1 hour) is the entry, before noon ET; stop beyond the stop-run extreme and at
                 least 1.5% away; no entry more than 2% from the line; swing exits, 1-5 days
@@ -107,7 +108,7 @@ def check(root: Path, armed: dict, download_intraday, now: dt.datetime) -> list[
         return []
     recs = S.load(root)
     keys = {r["key"] for r in recs}
-    busy = {r["ticker"] for r in recs if r.get("strategy") == "bot_5m" and r.get("status") != "closed"}
+    busy = {r["ticker"] for r in recs if r.get("strategy") in ("bot_5m", "bot_5m_watch") and r.get("status") != "closed"}
     bars = download_intraday(sorted(lines), today)
     new = []
     for t, ls in lines.items():
@@ -124,11 +125,13 @@ def check(root: Path, armed: dict, download_intraday, now: dt.datetime) -> list[
         risk = abs(it["entry"] - stop) / it["entry"] * 100
         if risk > C.BOT["max_risk_pct"]:
             continue
-        key = f"{t}|daily|{it['direction']}|{today}|bot_5m"
+        watch = short and not C.BOT_LIVE.get("trade_shorts", False)
+        strat = "bot_5m_watch" if watch else "bot_5m"
+        key = f"{t}|daily|{it['direction']}|{today}|{strat}"
         if key in keys:
             continue
-        size = C.BOT["short_size"] if short else C.BOT["long_size"]
-        rec = dict(key=key, id=f"{t}-{today}-{it['side']}-bot_5m", ticker=t, timeframe="daily", strategy="bot_5m",
+        size = 0.0 if watch else (C.BOT["short_size"] if short else C.BOT["long_size"])
+        rec = dict(key=key, id=f"{t}-{today}-{it['side']}-{strat}", ticker=t, timeframe="daily", strategy=strat,
                    direction=it["direction"], side=it["side"], rev_date=str(today), signal_date=str(today),
                    first_seen=f"{today}T{it['entry_time']}", entry_time=it["entry_time"], sweep_time=it["sweep_time"],
                    stage="sweep5m", stages_seen=["sweep5m"], scan_price=it["entry"], entry=it["entry"],
@@ -137,8 +140,10 @@ def check(root: Path, armed: dict, download_intraday, now: dt.datetime) -> list[
                    count=it["count"], chase_pct=it["chase_pct"], spy_up=armed.get("spy_up"), size=size,
                    journal=t in getattr(C, "JOURNAL_UNIVERSE", []), keys=it["keys"], factors=it["factors"],
                    idea=it["idea"].replace(f"stop {it['stop']:.2f}", f"stop {stop:.2f}")
-                   .replace(f"({it['risk_pct']:.1f}% risk)", f"({risk:.1f}% risk)") + f" Size {size}x. Paper trade.",
-                   valid_at_last_scan=True, last_reason="", status="open", outcome={}, paper=True, live=True)
+                   .replace(f"({it['risk_pct']:.1f}% risk)", f"({risk:.1f}% risk)")
+                   + (" Watch only (shorts are paused)." if watch else f" Size {size}x. Paper trade."),
+                   valid_at_last_scan=True, last_reason="", status="open", outcome={}, paper=not watch,
+                   watch=watch, live=True)
         recs.append(rec)
         keys.add(key)
         new.append(rec)
@@ -150,7 +155,7 @@ def check(root: Path, armed: dict, download_intraday, now: dt.datetime) -> list[
 def follow(root: Path, download, download_intraday, today: dt.date) -> None:
     """Manage open bot trades exactly as the backtest does (entry-day remainder, then daily bars)."""
     recs = S.load(root)
-    todo = [r for r in recs if r.get("strategy") == "bot_5m" and r.get("status") != "closed"]
+    todo = [r for r in recs if r.get("strategy") in ("bot_5m", "bot_5m_watch") and r.get("status") != "closed"]
     if not todo:
         return
     daily = download(sorted({r["ticker"] for r in todo}), "3mo")
@@ -163,7 +168,7 @@ def follow(root: Path, download, download_intraday, today: dt.date) -> None:
         m5 = m5.copy()
         m5.index = m5.index.tz_localize(None) if m5.index.tz is not None else m5.index
         try:
-            S.evaluate_bot_intraday(r, df.astype("float64"), m5, today, bar_min=5, key="bot_5m")
+            S.evaluate_bot_intraday(r, df.astype("float64"), m5, today, bar_min=5, key=r["strategy"])
         except Exception as e:
             log.warning("follow %s: %s", r["id"], e)
     S.save(root, recs)
@@ -172,7 +177,8 @@ def follow(root: Path, download, download_intraday, today: dt.date) -> None:
 def summary(new: list[dict], armed: dict) -> str:
     lines = [f"### Bot (paper) {armed.get('date')}: {armed.get('n', 0)} armed lines, SPY above 50-day: {armed.get('spy_up')}"]
     lines += [f"- **{r['ticker']}** {r['side'].upper()} {r['entry']:.2f} at {r['entry_time']} ET, stop {r['stop']:.2f} "
-              f"({r['risk_pct']}% risk), line {r['level']:.2f} ({r['level_label']})" for r in new] or ["- No new signals this run."]
+              f"({r['risk_pct']}% risk), line {r['level']:.2f} ({r['level_label']})"
+              + (" - watch only, shorts paused" if r.get("watch") else "") for r in new] or ["- No new signals this run."]
     return "\n".join(lines)
 
 
