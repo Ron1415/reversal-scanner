@@ -13,14 +13,11 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "full = scan every stock, quick = re-check today's list, analyze = update the trackers, backtest = replay the last 60 trading days"
+        description: "full = scan every stock, quick = re-check today's list, analyze = update the trackers, backtest = replay past trading days (set the length below)"
         default: "full"
-      check_tickers:
-        description: "Optional: check tickers instead of scanning (e.g. TPR AAPL)"
-        default: ""
-      check_date:
-        description: "Date for the check, YYYY-MM-DD (blank = today)"
-        default: ""
+      backtest_days:
+        description: "Backtest length in trading days (125 = about 6 months, 250 = about 1 year)"
+        default: "125"
 
 permissions:
   contents: write
@@ -32,7 +29,7 @@ concurrency: reversal-scan
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 50
+    timeout-minutes: 120
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -46,28 +43,15 @@ jobs:
       - name: Install
         run: pip install -r requirements.txt
 
-      - name: Check tickers (results appear on this run's summary page)
-        if: ${{ inputs.check_tickers }}
-        env:
-          TICKERS: ${{ inputs.check_tickers }}
-          DAY: ${{ inputs.check_date }}
-        run: |
-          python scanner.py --explain --tickers $TICKERS ${DAY:+--asof $DAY}
-          git config user.name "reversal-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add checks
-          git diff --cached --quiet || git commit -q -m "Check $TICKERS ${DAY:-today}"
-          for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
-
       - name: Scan
-        if: ${{ !inputs.check_tickers }}
         env:
           MODE: ${{ github.event.inputs.mode }}
+          BT_DAYS: ${{ github.event.inputs.backtest_days }}
         run: |
           if [ "$MODE" = "analyze" ]; then
             python scanner.py --analyze
           elif [ "$MODE" = "backtest" ]; then
-            python scanner.py --backtest 60
+            python scanner.py --backtest "${BT_DAYS:-125}"
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             python scanner.py --refresh "${MODE:-full}"
           else
@@ -77,7 +61,6 @@ jobs:
           [ -f site/index.html ] || python -c "from pathlib import Path; import report; report.write_pages(Path('.'))"
 
       - name: Save results
-        if: ${{ !inputs.check_tickers }}
         run: |
           git config user.name "reversal-bot"
           git config user.email "actions@users.noreply.github.com"
@@ -88,14 +71,11 @@ jobs:
           # trades may have been saved from the dashboard during the run
           for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
 
-      - if: ${{ !inputs.check_tickers }}
-        uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v5
 
-      - if: ${{ !inputs.check_tickers }}
-        uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
       - id: deploy
-        if: ${{ !inputs.check_tickers }}
         uses: actions/deploy-pages@v4
