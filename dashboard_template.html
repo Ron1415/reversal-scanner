@@ -42,6 +42,7 @@
   .score{font-variant-numeric:tabular-nums;font-weight:700}
   .conf{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--st)}
   .idea{font-size:13px;font-weight:600;line-height:1.35}
+  .earn{font-size:12px;font-weight:700;color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent);border-radius:6px;padding:3px 8px}
   .meter{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
   .meter i{display:block;height:100%;background:var(--st)}
   .checks{font-size:12px;margin:0;padding:0;list-style:none} .checks li{display:flex;gap:6px} .checks .d{color:var(--mute)}
@@ -98,7 +99,7 @@
   <label>Min score <input type="range" id="min" min="0" max="10" step="0.5" value="0"> <span id="minv">0</span></label>
   <input type="search" id="q" placeholder="Filter ticker">
   <a href="reversal_signals.xlsx">Download Excel</a>
-  <nav><a href="tracker.html">Trade tracker →</a></nav>
+  <nav><a href="tracker.html">My trades →</a> · <a href="suggestions.html">Suggestions tracker →</a></nav>
 </div>
 <div class="check">
   <details id="ckBox">
@@ -177,6 +178,7 @@ function card(r){
     </div>
     <div class="conf"><span>● ${label}</span></div>
     ${r.qualifies === false ? `<div class="why">Why: ${r.reason || "no longer passes all three requirements"}</div>` : ""}
+    ${r.earnings_soon && r.qualifies !== false ? `<div class="earn">⚠ Earnings ${r.earnings_next} (in ${r.earnings_days} trading day${r.earnings_days === 1 ? "" : "s"}): the bot skips this one</div>` : ""}
     ${r.idea && r.qualifies !== false ? `<div class="idea">${r.idea}</div>` : ""}
     ${chart(r.bars, r.levels, r.direction, r.qualifies === false ? null : r.stop)}
     ${r.qualifies === false ? "" : `<ul class="f">${r.factors.map(f => `<li>${f}</li>`).join("")}</ul>`}

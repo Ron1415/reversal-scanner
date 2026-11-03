@@ -65,6 +65,16 @@ PARAMS = dict(
 
 # Factor weights. Candles and exhaustion counts are the "trigger"; the rest
 # are location / context confluence.
+# Suggestions tracker (suggestions.py): how every suggestion is followed forward
+TRACK = dict(
+    trigger_bars=3,            # safer entry: reversal bar must be broken within this many bars
+    max_hold_bars=15,          # time stop: exit at the close after this many bars
+    t1_pct=5.0, t2_pct=10.0,   # half off at T1, stop to breakeven, rest at T2
+    earnings_blackout_days=3,  # skip when earnings fall within this many trading days
+    min_group=20,              # trades needed on each side before a change is proposed
+    min_edge_r=0.15,           # improvement (in R) needed before a change is proposed
+)
+
 WEIGHTS = dict(
     stage_forming=2.0, stage_day2=1.5, stage_watch=0.5,
     count=1.5, count_9=2.0,

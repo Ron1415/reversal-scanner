@@ -23,6 +23,7 @@ scans run automatically on the last trading day of the week or month.
 | setup.py | The three-requirement reversal engine |
 | confirm.py | Intraday checks stored with each trade for the analysis |
 | analysis.py | Trade-journal analysis for the tracker |
+| suggestions.py, suggestions_template.html | Suggestions tracker: every suggestion followed forward (close entry and safer entry), earnings flags, weekly review and proposed rule changes |
 | store.js, tracker_template.html | Trade journal and tracker page |
 | report.py | Builds the web page and the Excel file |
 | config.py | All settings and thresholds |
@@ -43,3 +44,26 @@ set `UNIVERSE = "watchlist.txt"` and edit that file.
 Prices come from Yahoo Finance via the free `yfinance` library. The 3:05 PM candle is still forming.
 The confirmation odds are a heuristic, not a calibrated probability. This is a screening tool, not
 investment advice.
+
+## Suggestions tracker
+
+Every listed setup (all timeframes) is saved to `suggestions.json` and followed forward:
+- Entry versions: at the close of the signal bar, and the safer break of the reversal bar (3 bars).
+- Management: half at +5%, stop to breakeven, rest at +10%; time stop after 15 bars; stop first on
+  a bar that touches both.
+- Earnings: next earnings date stored; within 3 trading days = flagged and skipped by the bot.
+- Review (`suggestions.html`): results by timeframe, stage, side and level type, plus proposed rule
+  changes (need 20+ finished trades on each side and a 0.15R edge). Proposals are never applied
+  automatically.
+
+## Backtest
+
+Run the workflow with mode `backtest` to replay the scanner over the last 60 trading days (daily and
+weekly). Every setup it would have listed is followed forward with the same rules as the live tracker.
+Results: `suggestions.html#backtest`. Limits: uses each day's closing bar, today's S&P 500 list,
+no commissions or slippage, and repeat signals while a trade in the same stock is open are excluded.
+
+## TradingView
+
+- `reversal_setups.pine`: indicator that draws the trade plan (separate download).
+- `reversal_strategy.pine`: the same rules as a strategy for backtesting and, later, bot alerts.

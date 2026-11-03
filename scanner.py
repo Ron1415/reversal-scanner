@@ -31,6 +31,7 @@ from confirm import assess
 from indicators import atr
 from setup import STAGE_RANK, evaluate_setup
 import analysis
+import suggestions
 from report import write_outputs, write_pages
 
 NY = ZoneInfo("America/New_York")
@@ -177,6 +178,7 @@ def build_row(t: str, tf_name: str, raw: pd.DataFrame, now: dt.datetime,
     if not res or (not ok and t not in keep):
         return None
     reasons = list(res.get("why", [])) or (["WATCH setups are hidden (SHOW_WATCH = False)"] if not ok else [])
+    res["rev_date"] = str(df.index[res["ext_pos"]].date()) if "ext_pos" in res else None
     res = {k: v for k, v in res.items() if k not in ("hits", "alternatives", "why", "ext_pos")}
     res["reason"] = "" if ok else "; ".join(reasons)
     last, prev = df.iloc[-1], df.iloc[-2]
@@ -315,6 +317,7 @@ def main(argv=None) -> int:
     ap.add_argument("--force", action="store_true", help="ignore the ET time window in --auto mode")
     ap.add_argument("--tickers", nargs="+", help="override the universe")
     ap.add_argument("--analyze", action="store_true", help="only update the trade-tracker analysis")
+    ap.add_argument("--backtest", type=int, metavar="DAYS", help="replay the scanner over the last DAYS trading days")
     ap.add_argument("--explain", action="store_true",
                     help="explain why --tickers were or were not flagged (use with --asof)")
     ap.add_argument("--asof", help="date to check, YYYY-MM-DD (default today)")
@@ -330,7 +333,18 @@ def main(argv=None) -> int:
         day = dt.date.fromisoformat(a.asof) if a.asof else dt.datetime.now(NY).date()
         return explain([t.upper() for t in a.tickers], day, dt.time.fromisoformat(a.at))
 
+    if a.backtest:
+        import backtest
+        rev = backtest.run(ROOT, download, load_universe, days=a.backtest)
+        write_pages(ROOT)
+        log.info("backtest summary (close entry): %s", rev["versions"].get("close", {}).get("summary"))
+        return 0
+
     if a.analyze:
+        try:
+            suggestions.run(ROOT, download, dt.datetime.now(NY))
+        except Exception as e:
+            log.warning("suggestions tracker failed: %s", e)
         analysis.run(ROOT, download)
         write_pages(ROOT)
         return 0
@@ -372,9 +386,24 @@ def main(argv=None) -> int:
         intra = download_intraday([r["ticker"] for r in rows], now.date())
         rows = scan(tf, {r["ticker"]: data[r["ticker"]] for r in rows}, now, keep=keep[tf] | {r["ticker"] for r in rows},
                     intraday=intra)
-        log.info("%s: %d candidates (%d green)", tf, len(rows),
-                 sum(r["confirm"]["status"] == "green" for r in rows))
+        log.info("%s: %d candidates (%d valid)", tf, len(rows), sum(bool(r["qualifies"]) for r in rows))
+        # earnings: flag anything reporting within the blackout window
+        try:
+            nxt = suggestions.next_earnings([r["ticker"] for r in rows], ROOT, now.date())
+            for r in rows:
+                soon, ndays = suggestions.earnings_flag(dt.date.fromisoformat(r["bar_date"]), nxt.get(r["ticker"]))
+                r.update(earnings_next=nxt.get(r["ticker"]), earnings_soon=soon, earnings_days=ndays)
+        except Exception as e:
+            log.warning("earnings lookup failed: %s", e)
         write_outputs(tf, rows, now, ROOT, mode)
+        try:
+            log.info("%s: %d new suggestions recorded", tf, suggestions.record(ROOT, tf, rows, now))
+        except Exception as e:
+            log.warning("recording suggestions failed: %s", e)
+    try:
+        suggestions.run(ROOT, download, now)
+    except Exception as e:
+        log.warning("suggestions tracker failed: %s", e)
     try:
         analysis.run(ROOT, download, now)
     except Exception as e:   # the scan results still publish if the analysis fails

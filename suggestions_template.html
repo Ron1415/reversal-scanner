@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suggestions Tracker</title>
+<style>
+  :root{--bg:#f7f7f5;--card:#fff;--ink:#1c1c1a;--mute:#6b6b66;--line:#e4e4df;--up:#15803d;--down:#c2410c;--accent:#1d4ed8;--soft:#f0f0ec;--amber:#b45309}
+  @media (prefers-color-scheme:dark){:root{--bg:#141413;--card:#1d1d1b;--ink:#ecece8;--mute:#9a9a93;--line:#2f2f2c;--up:#4ade80;--down:#fb923c;--accent:#93b4ff;--soft:#262624;--amber:#f59e0b}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+  .wrap{max-width:1250px;margin:auto;padding:20px 16px 48px}
+  h1{margin:0;font-size:22px} h2{font-size:16px;margin:26px 0 8px}
+  .sub{color:var(--mute);font-size:13px} a{color:var(--accent)}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:10px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .tile .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums} .tile .k{font-size:12px;color:var(--mute)}
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px}
+  .tbl{width:100%;overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+  table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+  th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;white-space:nowrap}
+  th{font-size:12px;color:var(--mute);font-weight:600;background:var(--soft)}
+  td.w{white-space:normal;min-width:200px;color:var(--mute);font-size:12px}
+  .pos{color:var(--up);font-weight:600} .neg{color:var(--down);font-weight:600} .warn{color:var(--amber);font-weight:600}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+  select,input{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+  .box li{margin:5px 0} .empty{color:var(--mute);padding:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Suggestions Tracker</h1>
+  <div class="bar"><select id="src"><option value="live">Live tracker (from today on)</option><option value="bt">Backtest: last 60 trading days</option></select>
+    <span class="sub" id="btInfo"></span></div>
+  <div class="sub"><a href="index.html">← Scanner</a> · <a href="tracker.html">My trades</a> · <span id="gen"></span></div>
+  <div class="sub" style="margin-top:6px">Every setup the scanner suggested, on every timeframe, followed forward with real prices.
+    Two entries are tested for each: <b>at the close</b> of the signal bar, and the <b>safer entry</b> on a break of the reversal bar.
+    Exits: half at +5%, stop to breakeven, rest at +10%; time stop after 15 bars. Results in R (1R = the amount risked).</div>
+
+  <div class="cols">
+    <div><h2>Entered at the close</h2><div class="tiles" id="tClose"></div></div>
+    <div><h2>Safer entry (break of the reversal bar)</h2><div class="tiles" id="tSafer"></div></div>
+  </div>
+
+  <h2>Proposed rule changes</h2>
+  <div class="box" id="props"></div>
+
+  <h2>Breakdown</h2>
+  <div class="bar"><select id="bdVer"><option value="close">Entered at the close</option><option value="safer">Safer entry</option></select></div>
+  <div class="tbl" id="bd"></div>
+
+  <h2>All suggestions</h2>
+  <div class="bar">
+    <select id="fTf"><option value="">All timeframes</option><option>daily</option><option>weekly</option><option>monthly</option></select>
+    <select id="fStage"><option value="">All stages</option><option value="forming">Tail forming</option><option value="day2">Tail 1-2 days ago</option><option value="watch">Watch</option></select>
+    <select id="fStatus"><option value="">Any status</option><option value="pending">Pending</option><option value="open">Open</option><option value="closed">Finished</option></select>
+    <input id="fQ" placeholder="Ticker" style="width:110px">
+  </div>
+  <div class="tbl" id="list"></div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+let RECS = [], REV = null;
+const R = v => v == null ? "–" : `<span class="${v >= 0 ? "pos" : "neg"}">${v > 0 ? "+" : ""}${v.toFixed(2)}R</span>`;
+const P = v => v == null ? "–" : `<span class="${v >= 0 ? "pos" : "neg"}">${v > 0 ? "+" : ""}${v.toFixed(2)}%</span>`;
+const pc = v => v == null ? "–" : `${Math.round(v * 100)}%`;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const STAGE = {forming: "Tail forming", day2: "Tail 1-2 days ago", watch: "Watch"};
+
+function tiles(el, s){
+  if (!s) { el.innerHTML = `<div class="empty">No finished suggestions yet.</div>`; return; }
+  const T = [["Suggested", s.suggested], ["Triggered", `${s.triggered} (${pc(s.trigger_rate)})`], ["Finished", s.closed],
+             ["Win rate", pc(s.win_rate)], ["Average", R(s.avg_R)], ["Average %", P(s.avg_ret)],
+             ["If all at +5%", R(s.avg_R_full_t1)], ["If all at +10%", R(s.avg_R_full_t2)],
+             ["Reached +5% at some point", pc(s.hit_5pct)], ["Average bars held", s.avg_bars ?? "–"]];
+  el.innerHTML = T.map(([k, v]) => `<div class="tile"><div class="v">${v}</div><div class="k">${k}</div></div>`).join("");
+}
+
+function result(v){
+  if (!v) return "–";
+  if (v.triggered === null || v.triggered === undefined) return `<span class="sub">${esc(v.why || "waiting")}</span>`;
+  if (!v.triggered) return `<span class="sub">✗ ${esc(v.why)}</span>`;
+  const p = v.plan || {};
+  return `✓ ${v.entry} → ${esc(p.exit)} ${R(p.r)} ${P(p.ret)}${p.done ? "" : " <span class='sub'>(open)</span>"}`;
+}
+
+function render(){
+  tiles($("tClose"), REV?.versions?.close?.summary);
+  tiles($("tSafer"), REV?.versions?.safer?.summary);
+  const props = REV?.proposals || [], notes = REV?.notes || [];
+  $("props").innerHTML = (props.length ? `<ol>${props.map(p => `<li><b>${esc(p.change)}</b> <span class="sub">(${esc(p.param)}, ${p.version === "close" ? "close entry" : "safer entry"})</span><br>${esc(p.evidence)}</li>`).join("")}</ol>`
+    : `<div class="sub">No proposals yet.</div>`) + notes.map(n => `<div class="sub">${esc(n)}</div>`).join("");
+  const bd = REV?.versions?.[$("bdVer").value]?.breakdown || [];
+  $("bd").innerHTML = bd.length ? `<table><tr><th>Group</th><th>Suggested</th><th>Triggered</th><th>Finished</th><th>Win rate</th><th>Avg</th><th>Avg %</th><th>All at +5%</th><th>All at +10%</th><th>Reached +5%</th></tr>` +
+    bd.map(b => `<tr><td>${esc(b.group)}</td><td>${b.suggested}</td><td>${b.triggered} (${pc(b.trigger_rate)})</td><td>${b.closed}</td><td>${pc(b.win_rate)}</td><td>${R(b.avg_R)}</td><td>${P(b.avg_ret)}</td><td>${R(b.avg_R_full_t1)}</td><td>${R(b.avg_R_full_t2)}</td><td>${pc(b.hit_5pct)}</td></tr>`).join("") + `</table>`
+    : `<div class="empty">Breakdowns appear once suggestions finish.</div>`;
+  const f = {tf: $("fTf").value, st: $("fStage").value, s: $("fStatus").value, q: $("fQ").value.toUpperCase()};
+  const rows = RECS.filter(r => (!f.tf || r.timeframe === f.tf) && (!f.st || r.stage === f.st) && (!f.s || r.status === f.s) && r.ticker.includes(f.q))
+                   .sort((a, b) => (b.first_seen || "").localeCompare(a.first_seen || ""));
+  $("list").innerHTML = rows.length ? `<table><tr><th>Seen</th><th>Ticker</th><th>TF</th><th>Trade</th><th>Stage</th><th>Stop</th><th>Earnings</th><th>Entered at the close</th><th>Safer entry</th><th>Idea</th></tr>` +
+    rows.slice(0, 500).map(r => `<tr><td>${esc((r.first_seen || "").replace("T", " "))}</td><td><b><a href="https://www.tradingview.com/chart/?symbol=${r.ticker}" target="_blank" rel="noopener">${r.ticker}</a></b></td>
+      <td>${r.timeframe}</td><td>${r.side}</td><td>${STAGE[r.stage] || "–"}</td><td>${r.stop ?? "–"}</td>
+      <td>${r.earnings_blackout ? `<span class="warn">⚠ ${esc(r.earnings_next)} (skip)</span>` : esc(r.earnings_next || "–")}</td>
+      <td class="w">${result(r.outcome?.close)}</td><td class="w">${result(r.outcome?.safer)}</td><td class="w">${esc(r.idea)}</td></tr>`).join("") + `</table>`
+    : `<div class="empty">No suggestions recorded yet. They are added by each scan.</div>`;
+}
+
+async function load(){
+  const bt = $("src").value === "bt", pre = bt ? "backtest_" : "";
+  RECS = []; REV = null;
+  try { RECS = await (await fetch(`data/${pre}suggestions.json?t=${Date.now()}`, {cache: "no-store"})).json(); } catch (e) {}
+  try { REV = await (await fetch(`data/${pre}review.json?t=${Date.now()}`, {cache: "no-store"})).json(); } catch (e) {}
+  $("gen").textContent = REV ? `Updated ${REV.generated}` : (bt ? "No backtest yet: run the workflow with mode backtest" : "No review yet");
+  const b = REV?.backtest;
+  $("btInfo").textContent = bt && b ? `${b.setups} setups from ${b.stocks} stocks over ${b.days} trading days (${b.timeframes.join(", ")}). ${b.limits}` : "";
+  render();
+}
+["bdVer", "fTf", "fStage", "fStatus"].forEach(id => $(id).onchange = render);
+$("fQ").oninput = render;
+$("src").onchange = load;
+if (location.hash === "#backtest") $("src").value = "bt";
+load();
+</script>
+</body>
+</html>

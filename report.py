@@ -12,7 +12,7 @@ from openpyxl.utils import get_column_letter
 
 TFS = ("daily", "weekly", "monthly")
 COLS = ["ticker", "direction", "stage", "idea", "score", "count", "close", "change_pct", "entry", "stop",
-        "risk_pct", "moved_pct", "rsi", "factors", "reason", "bar_date", "chart"]
+        "risk_pct", "moved_pct", "rsi", "earnings_next", "earnings_soon", "factors", "reason", "bar_date", "chart"]
 STAGE_NAMES = {"forming": "Tail forming now", "day2": "Tail 1-2 days ago", "watch": "Watch: into a level"}
 
 
@@ -107,3 +107,4 @@ def write_pages(root: Path, latest: dict | None = None) -> None:
     tpl = (root / "tracker_template.html").read_text()
     (site / "tracker.html").write_text(tpl.replace("/*__CFG__*/null", cfg))
     (site / "store.js").write_text((root / "store.js").read_text())
+    (site / "suggestions.html").write_text((root / "suggestions_template.html").read_text())
