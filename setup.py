@@ -450,7 +450,10 @@ def short_trend_ok(sf: dict, B: dict) -> bool:
     below the 200-day, a falling ~20-week average and SPY below its 50-day."""
     if not sf["downtrend"]:
         return False
-    return True if loose_shorts(B) else (sf["below_200"]
+    if loose_shorts(B):
+        # approved Nov 3: looser shorts, but only while SPY is below its 50-day average
+        return sf["market_down"] or not B.get("short_loose_need_market_down", True)
+    return (sf["below_200"]
             and (sf["weekly_down"] or not B["short_need_weekly_down"])
             and (sf["market_down"] or not B["short_need_market_down"]))
 
@@ -751,7 +754,8 @@ def find_fvg(h, l, i0: int, i1: int, up: bool):
     return None
 
 
-def evaluate_fvg_5m(armed: list[dict], bars5: pd.DataFrame, B: dict, mode: str = "limit") -> dict | None:
+def evaluate_fvg_5m(armed: list[dict], bars5: pd.DataFrame, B: dict, mode: str = "limit",
+                    entry_at: str = "edge") -> dict | None:
     """v24: FVG timing for the SWING entry (the trade is still held 1-5 days with swing exits).
 
     Same daily line and 5-minute stop run as evaluate_sweep_5m. Then:
@@ -816,7 +820,15 @@ def evaluate_fvg_5m(armed: list[dict], bars5: pd.DataFrame, B: dict, mode: str =
             if gap is None:
                 continue
             k, bot, top = gap
-            px = top if up else bot                        # near edge of the gap
+            edge = top if up else bot                      # near edge of the gap (where it starts)
+            hi0 = float(h[ext_i:k + 1].max()) if up else float(l[ext_i:k + 1].min())
+            ote618 = hi0 - 0.618 * (hi0 - ext) if up else hi0 + 0.618 * (ext - hi0)
+            if entry_at == "ote":
+                px = ote618                                # the 61.8% retracement of the leg
+            elif entry_at == "half":
+                px = (edge + ote618) / 2                   # Ron, Nov 3: halfway between the gap's edge and OTE
+            else:
+                px = edge
             for j in range(k + 1, len(c)):
                 if times[j] > F["cutoff"]:
                     break
@@ -840,7 +852,7 @@ def evaluate_fvg_5m(armed: list[dict], bars5: pd.DataFrame, B: dict, mode: str =
         leg = abs(hi_leg - ext)
         ote_lo, ote_hi = (hi_leg - 0.786 * leg, hi_leg - 0.618 * leg) if up else (hi_leg + 0.618 * leg, hi_leg + 0.786 * leg)
         ote = bool(leg > 0 and bot <= ote_hi and top >= ote_lo)
-        cand = dict(direction="bullish" if up else "bearish", side=L["side"], stage=f"fvg_{mode}",
+        cand = dict(direction="bullish" if up else "bearish", side=L["side"], stage=f"fvg_{mode}_{entry_at}",
                     level=round(p, 4), level_label=L["label"], level_group=L["group"], confluence=L["confluence"],
                     entry=round(entry, 4), stop=round(stop, 4), risk_pct=round(risk, 2), count=L["count"],
                     atr=round(a, 4), chase_pct=round(chase, 2), entry_time=times[fill_i], sweep_time=times[start],

@@ -322,6 +322,8 @@ def main(argv=None) -> int:
                     help="explain why --tickers were or were not flagged (use with --asof)")
     ap.add_argument("--asof", help="date to check, YYYY-MM-DD (default today)")
     ap.add_argument("--at", default="15:30", help="time of day for --explain, HH:MM ET")
+    ap.add_argument("--bot", action="store_true",
+                    help="THE BOT (paper): arm the daily lines and check the 5-minute chart (9:40 AM-noon ET)")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args(argv)
     logging.basicConfig(level=logging.DEBUG if a.verbose else logging.INFO,
@@ -332,6 +334,16 @@ def main(argv=None) -> int:
             ap.error("--explain needs --tickers")
         day = dt.date.fromisoformat(a.asof) if a.asof else dt.datetime.now(NY).date()
         return explain([t.upper() for t in a.tickers], day, dt.time.fromisoformat(a.at))
+
+    if a.bot:
+        import bot_live
+        try:
+            rc = bot_live.run(ROOT, download, download_intraday, load_universe, force=a.force)
+        except Exception as e:      # never block the afternoon scan
+            log.warning("bot run failed: %s", e)
+            rc = 0
+        write_pages(ROOT)
+        return rc
 
     if a.backtest:
         import backtest

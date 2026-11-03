@@ -38,6 +38,13 @@
     Two entries are tested for each: <b>at the close</b> of the signal bar, and the <b>safer entry</b> on a break of the reversal bar.
     Exits: half at +5%, stop to breakeven, rest at +10%; time stop after 15 bars. Results in R (1R = the amount risked).</div>
 
+  <div id="paperBlock" hidden>
+    <h2>THE BOT: paper trades (live)</h2>
+    <div class="sub">Approved rules: 5-minute stop run through a daily liquidity line, entry on the first close back across it
+      before noon; longs with SPY above its 50-day at the strongest levels, shorts only with SPY below its 50-day (half size);
+      stop at least 1.5% away; exits 1/2 at +5% (stop then locks +2.5%), 1/4 at +7.5%, rest at +10%, 1-5 days.</div>
+    <div class="tbl" id="paperTbl" style="margin-top:8px"></div>
+  </div>
   <div id="botBlock" hidden>
     <h2>THE BOT: trend pullback + liquidity sweep (daily, 1-5 day holds)</h2>
     <div class="sub">Longs: uptrend (above a rising 50-day average), 4+ bar pullback, sweep of a liquidity level that closes back above it,
@@ -105,6 +112,14 @@ function result(v){
 }
 
 function render(){
+  const paper = RECS.filter(r => r.strategy === "bot_5m" && r.live).sort((a, b) => (b.first_seen || "").localeCompare(a.first_seen || ""));
+  $("paperBlock").hidden = !paper.length && $("src").value === "bt";
+  $("paperTbl").innerHTML = paper.length ? `<table><tr><th>Entered</th><th>Ticker</th><th>Side</th><th>Entry</th><th>Stop</th><th>Risk</th><th>Line</th><th>Size</th><th>Status</th><th>Result</th></tr>` +
+    paper.map(r => { const p = (r.outcome?.bot_5m || {}).plan || {};
+      return `<tr><td>${esc((r.first_seen || "").replace("T", " "))}</td><td><b><a href="https://www.tradingview.com/chart/?symbol=${r.ticker}" target="_blank" rel="noopener">${r.ticker}</a></b></td>
+      <td>${r.side}</td><td>${r.entry?.toFixed(2)}</td><td>${r.stop?.toFixed(2)}</td><td>${r.risk_pct}%</td><td>${r.level?.toFixed(2)} <span class="sub">${esc(r.level_label)}</span></td>
+      <td>${r.size}x</td><td>${r.status}</td><td>${p.ret == null ? "–" : `${esc(p.exit || "")} ${P(p.ret)} ${R(p.r)}`}</td></tr>`; }).join("") + `</table>`
+    : `<div class="empty">No bot signals yet. The bot checks every 10 minutes from 9:40 AM to noon ET on trading days.</div>`;
   const bot = REV?.bot, boti = REV?.bot_intraday, bot5 = REV?.bot_5m, bot5b = REV?.bot_5m_break;
   $("botBlock").hidden = !(bot || boti || bot5 || bot5b || REV?.bot_fvg_limit);
   if (bot || boti || bot5 || bot5b) {
@@ -115,14 +130,17 @@ function render(){
       ...part("5-minute stop run, entry on the first close back across the line (last ~60 days only)", bot5),
       ...part("5-minute stop run, entry on a confirmed break (last ~60 days only)", bot5b),
       ...part("FVG pullback after the stop run (limit in the gap, swing hold)", REV?.bot_fvg_limit),
-      ...part("Close back across the line, only with an FVG (swing hold)", REV?.bot_fvg_confirm)];
+      ...part("Close back across the line, only with an FVG (swing hold)", REV?.bot_fvg_confirm),
+      ...part("FVG pullback, limit halfway between the gap edge and OTE (swing hold)", REV?.bot_fvg_half),
+      ...part("FVG pullback, limit at OTE 61.8% (swing hold)", REV?.bot_fvg_ote)];
     $("botTbl").innerHTML = `<table><tr><th></th><th>Trades</th><th>Per week</th><th>Win rate</th><th>Average</th><th>Average %</th><th>Avg days held</th><th>Reached +5%</th><th>Total % (sized)</th></tr>` +
       rowsB.map(([k, b]) => !b ? `<tr><td colspan="9"><b>${k}</b></td></tr>` : `<tr><td>${k}</td><td>${b.n}</td><td>${b.per_week ?? "–"}</td><td>${pc(b.win)}</td><td>${R(b.avg_R)}</td><td>${P(b.avg_ret)}</td><td>${b.avg_days ?? "–"}</td><td>${pc(b.hit_5pct)}</td><td>${b.total_ret_sized ?? "–"}</td></tr>`).join("") + `</table>`;
   }
   const BT = REV?.bot_tests || {}, FL = {all: "All trades", spy: "SPY above 50-day", noon: "Before noon",
     strong: "Strongest levels", combined: "All filters", combined_h1: "All filters, 1st half", combined_h2: "All filters, 2nd half", combined_top110: "All filters, top-110 list only"};
   const BN = {bot: "Entry at the 3:30 PM close", bot_5m: "5-minute entry, close back across the line", bot_5m_break: "5-minute entry, confirmed break", bot_fvg_limit: "FVG pullback entry (limit in the gap)",
-    bot_fvg_confirm: "5-minute close back, only with an FVG"};
+    bot_fvg_confirm: "5-minute close back, only with an FVG",
+    bot_fvg_half: "FVG pullback, limit halfway between the gap edge and OTE", bot_fvg_ote: "FVG pullback, limit at OTE (61.8%)"};
   const tc = g => !g || !g.n ? "–" : `${P(g.avg_ret)} ${R(g.avg_R)}<br><span class="sub">${pc(g.win)} win · ${pc(g.stopped)} stopped · ${g.n}</span>`;
   $("botTests").innerHTML = Object.keys(BN).filter(k => BT[k]).map(k => {
     const T = BT[k];
@@ -165,7 +183,7 @@ function render(){
     : `<div class="sub">No proposals yet.</div>`) + notes.map(n => `<div class="sub">${esc(n)}</div>`).join("");
   const VN = {close: "Entered at the close", safer: "Safer entry", level: "Entry at the liquidity line", bot: "The bot (3:30 PM close)",
               bot_intraday: "The bot (hourly, during the day)", bot_5m: "The bot (5-min, close back across the line)",
-              bot_5m_break: "The bot (5-min, confirmed break)", bot_fvg_limit: "FVG pullback entry", bot_fvg_confirm: "Close back with an FVG"};
+              bot_5m_break: "The bot (5-min, confirmed break)", bot_fvg_limit: "FVG pullback entry", bot_fvg_confirm: "Close back with an FVG", bot_fvg_half: "FVG halfway to OTE", bot_fvg_ote: "FVG at OTE"};
   const bdHtml = Object.keys(VN).filter(k => (REV?.versions?.[k]?.breakdown || []).length).map(k => {
     const bd = REV.versions[k].breakdown;
     return `<h3 style="margin:14px 10px 6px">${VN[k]}</h3><table><tr><th>Group</th><th>Suggested</th><th>Triggered</th><th>Finished</th><th>Win rate</th><th>Avg</th><th>Avg %</th><th>All at +5%</th><th>All at +10%</th><th>Reached +5%</th></tr>` +

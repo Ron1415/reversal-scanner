@@ -94,6 +94,16 @@ Rules live in config.py `BOT`. Two entry versions are tested side by side:
   lows), and all filters together, split into halves.
 The backtest downloads hourly bars (Yahoo keeps about 2 years) and reports both versions.
 
+## THE BOT, live paper trading (v26, `bot_live.py`)
+
+Runs every 10 minutes from 9:40 AM to noon ET (scan.yml cron; `python scanner.py --bot`, or mode `bot`
+to run it by hand). The first run of the day arms the daily lines (bot/armed-DATE.json); each run then
+checks the 5-minute chart of the armed tickers only. Approved rules: longs with SPY above its 50-day at
+major swing / prior week-month lines; shorts only with SPY below its 50-day (half size); first 5-minute
+close back across the line before noon; stop beyond the stop run and at least 1.5% away; swing exits.
+Universe: S&P 500 + the FVG journal's top-110 list. Signals appear at the top of suggestions.html and on
+each run's summary page in Actions. Paper only: nothing is sent to a broker.
+
 ## TradingView
 
 - `reversal_setups.pine`: indicator that draws the trade plan (separate download).

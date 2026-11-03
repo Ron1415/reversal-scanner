@@ -225,10 +225,14 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                         armed = [x for x in armed if (lo_d < x["price"]) if x["side"] == "long"] + \
                                 [x for x in armed if x["side"] == "short" and hi_d > x["price"]]
                         tries = [(c_, "bot_5m" if c_ == "close" else "bot_5m_break") for c_ in C.BOT["m5"]["confirm"]]
-                        tries += [("fvg_limit", "bot_fvg_limit"), ("fvg_confirm", "bot_fvg_confirm")]
+                        tries += [("fvg_limit", "bot_fvg_limit"), ("fvg_confirm", "bot_fvg_confirm"),
+                                  ("fvg_half", "bot_fvg_half"), ("fvg_ote", "bot_fvg_ote")]
                         for conf, strat in (tries if armed else []):
                             if conf.startswith("fvg_"):
-                                it = evaluate_fvg_5m(armed, today5, C.BOT, mode=conf[4:])
+                                if conf in ("fvg_half", "fvg_ote"):
+                                    it = evaluate_fvg_5m(armed, today5, C.BOT, mode="limit", entry_at=conf[4:])
+                                else:
+                                    it = evaluate_fvg_5m(armed, today5, C.BOT, mode=conf[4:])
                             else:
                                 it = evaluate_sweep_5m(armed, today5, C.BOT, confirm=conf)
                             if not it:
@@ -319,7 +323,7 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                 S.evaluate_level(r, df.astype("float64"), today)
             elif r.get("strategy") == "bot":
                 S.evaluate_bot(r, df.astype("float64"), today)
-            elif r.get("strategy") in ("bot_5m", "bot_5m_break", "bot_fvg_limit", "bot_fvg_confirm"):
+            elif r.get("strategy") in ("bot_5m", "bot_5m_break", "bot_fvg_limit", "bot_fvg_confirm", "bot_fvg_half", "bot_fvg_ote"):
                 if m5.get(r["ticker"]) is not None:
                     S.evaluate_bot_intraday(r, df.astype("float64"), m5[r["ticker"]], today, bar_min=5,
                                             key=r["strategy"])

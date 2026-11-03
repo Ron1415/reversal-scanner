@@ -516,7 +516,8 @@ def evaluate_bot_intraday(rec: dict, daily: pd.DataFrame, hourly: pd.DataFrame, 
 
 def evaluate(root: Path, download, today: dt.date) -> list[dict]:
     recs = load(root)
-    todo = [r for r in recs if r["status"] != "closed"]
+    # bot trades are followed by bot_live.follow (5-minute entry day + daily bars)
+    todo = [r for r in recs if r["status"] != "closed" and not str(r.get("strategy", "")).startswith("bot")]
     if todo:
         oldest = min(dt.date.fromisoformat(r["rev_date"]) for r in todo)
         days = (today - oldest).days + 40
@@ -550,7 +551,7 @@ def mark_overlaps(recs: list[dict]) -> None:
         if r["overlap"]:
             continue
         oc = r.get("outcome") or {}
-        v = oc.get("close") or oc.get("level") or oc.get("bot") or oc.get("bot_intraday") or oc.get("bot_5m") or oc.get("bot_5m_break") or oc.get("bot_fvg_limit") or oc.get("bot_fvg_confirm") or {}
+        v = oc.get("close") or oc.get("level") or oc.get("bot") or oc.get("bot_intraday") or oc.get("bot_5m") or oc.get("bot_5m_break") or oc.get("bot_fvg_limit") or oc.get("bot_fvg_confirm") or oc.get("bot_fvg_half") or oc.get("bot_fvg_ote") or {}
         if v.get("triggered"):
             p = v.get("plan") or {}
             busy[k] = p.get("exit_date") or "9999-12-31"
@@ -599,7 +600,7 @@ PARAM_FOR = dict(count=("count_min", ">="), tail_pct=("tail_min_pct", ">="), eff
 
 def review(recs: list[dict], now: dt.datetime) -> dict:
     res = dict(generated=now.strftime("%Y-%m-%d %H:%M %Z"), versions={}, proposals=[], notes=[])
-    versions = ["close", "safer"] + [k for k in ("level", "bot", "bot_intraday", "bot_5m", "bot_5m_break", "bot_fvg_limit", "bot_fvg_confirm") if any(k in (r.get("outcome") or {}) for r in recs)]
+    versions = ["close", "safer"] + [k for k in ("level", "bot", "bot_intraday", "bot_5m", "bot_5m_break", "bot_fvg_limit", "bot_fvg_confirm", "bot_fvg_half", "bot_fvg_ote") if any(k in (r.get("outcome") or {}) for r in recs)]
     for version in versions:
         d = _frame(recs, version)
         if d.empty:
@@ -681,7 +682,7 @@ def review(recs: list[dict], now: dt.datetime) -> dict:
         var_rows.append(row)
     res["level_variants"] = var_rows
     # ---- THE BOT: headline, long vs short, halves, trades per week (close entry and intraday entry)
-    for bot_key in ("bot", "bot_intraday", "bot_5m", "bot_5m_break", "bot_fvg_limit", "bot_fvg_confirm"):
+    for bot_key in ("bot", "bot_intraday", "bot_5m", "bot_5m_break", "bot_fvg_limit", "bot_fvg_confirm", "bot_fvg_half", "bot_fvg_ote"):
         _bot_summary(res, recs, bot_key)
         if bot_key != "bot_intraday":
             _bot_tests(res, recs, bot_key)
@@ -736,7 +737,9 @@ def _bot_tests(res: dict, recs: list[dict], bot_key: str) -> None:
     if intraday:
         filters.append(("noon", f_noon))
     filters += [("strong", f_strong)]
-    allf = (lambda r: f_spy(r) and f_noon(r) and f_strong(r)) if intraday else (lambda r: f_spy(r) and f_strong(r))
+    # "All filters" = the approved long rules (shorts are reported separately in the short tests)
+    allf = (lambda r: r["side"] == "long" and f_spy(r) and f_noon(r) and f_strong(r)) if intraday else \
+        (lambda r: r["side"] == "long" and f_spy(r) and f_strong(r))
     filters += [("combined", allf), ("combined_h1", lambda r: allf(r) and r["signal_date"] < mid),
                 ("combined_h2", lambda r: allf(r) and r["signal_date"] >= mid)]
     if intraday:

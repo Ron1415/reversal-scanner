@@ -103,6 +103,7 @@ BOT = dict(
     # in the lower half. The strict checks below are still recorded on every short so the backtest shows
     # what each one adds. Short management stays tight (breakeven after 0.5 ATR, trailing stop, 3 days, 0.5x size).
     short_loose=True,
+    short_loose_need_market_down=True,   # approved Nov 3: shorts only while SPY is below its 50-day average
     short_pullback_loose=4,
     short_need_weekly_down=True,
     short_need_market_down=True,   # SPY below its 50-day average
