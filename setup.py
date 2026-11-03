@@ -425,6 +425,36 @@ def evaluate_level_touch(df: pd.DataFrame, tf: dict, P: dict, tf_name: str = "da
 # --------------------------------------------------------------------------- #
 # THE BOT: trend pullback + liquidity sweep (accumulation -> manipulation -> distribution)
 # --------------------------------------------------------------------------- #
+
+def loose_shorts(B: dict) -> bool:
+    return bool(B.get("short_loose"))
+
+
+def short_min_pullback(B: dict) -> int:
+    return B["short_pullback_loose"] if loose_shorts(B) else B["short_pullback"]
+
+
+def short_flags(c, sma, sma200, spy_up) -> dict:
+    """The strict short checks, recorded one by one so the backtest can show what each costs."""
+    s100 = pd.Series(c).rolling(100).mean().to_numpy()
+    return dict(
+        downtrend=bool(c[-1] < sma[-1] and sma[-1] < sma[-11]),                # always required
+        below_200=bool(sma[-1] < sma200[-1]),                                   # 50-day below the 200-day
+        weekly_down=bool(np.isfinite(s100[-26]) and c[-1] < s100[-1] and s100[-1] < s100[-26]),
+        market_down=spy_up is not True,                                         # SPY below its 50-day
+    )
+
+
+def short_trend_ok(sf: dict, B: dict) -> bool:
+    """Loose (v23): price below a falling 50-day average is enough. Strict: also the 50-day
+    below the 200-day, a falling ~20-week average and SPY below its 50-day."""
+    if not sf["downtrend"]:
+        return False
+    return True if loose_shorts(B) else (sf["below_200"]
+            and (sf["weekly_down"] or not B["short_need_weekly_down"])
+            and (sf["market_down"] or not B["short_need_market_down"]))
+
+
 def evaluate_sweep(df: pd.DataFrame, tf: dict, P: dict, B: dict, spy_up: bool | None = None,
                    weekly_down: bool | None = None) -> dict | None:
     """Simple, trend-following reversal off a liquidity sweep, daily bars, hold 1-5 days.
@@ -467,26 +497,25 @@ def evaluate_sweep(df: pd.DataFrame, tf: dict, P: dict, B: dict, spy_up: bool | 
             if not (sma[-1] > sma[-11] and sma[-1] > sma200[-1]):
                 continue
         else:
-            if not (c[-1] < sma[-1] and sma[-1] < sma[-11] and sma[-1] < sma200[-1]):
-                continue
-            if B["short_need_weekly_down"]:
-                s100 = pd.Series(c).rolling(100).mean().to_numpy()        # ~20-week average
-                if not (np.isfinite(s100[-1]) and np.isfinite(s100[-26]) and c[-1] < s100[-1] and s100[-1] < s100[-26]):
-                    continue
-            if B["short_need_market_down"] and spy_up is True:
+            sf = short_flags(c, sma, sma200, spy_up)
+            if not short_trend_ok(sf, B):
                 continue
         # 2. pullback count into today (bars before today, small opposite bars are noise)
         cnt = time_count(df.iloc[:n - 1], n - 2, not up_trade, P)
-        if cnt < (B["long_pullback"] if up_trade else B["short_pullback"]):
+        if cnt < (B["long_pullback"] if up_trade else short_min_pullback(B)):
             continue
         # 4. rejection (cheap checks before the level map)
         if up_trade and pos < 0.5:
             continue
         if not up_trade:
-            if pos > B["short_close_pos"]:
-                continue
             avg_v = v[-21:-1].mean()
-            if avg_v <= 0 or v[-1] < B["short_vol_mult"] * avg_v:
+            sf["rally_5"] = cnt >= B["short_pullback"]
+            sf["weak_close"] = pos <= B["short_close_pos"]
+            sf["volume"] = bool(avg_v > 0 and v[-1] >= B["short_vol_mult"] * avg_v)
+            if loose_shorts(B):
+                if pos > 0.5:                     # loose: close in the lower half
+                    continue
+            elif not (sf["weak_close"] and sf["volume"]):
                 continue
         # 3. sweep of a liquidity level (levels built from bars before today)
         lv = liquidity_levels(df, a, tf, P, "low" if up_trade else "high")
@@ -511,8 +540,12 @@ def evaluate_sweep(df: pd.DataFrame, tf: dict, P: dict, B: dict, spy_up: bool | 
             if z["strength"] >= 2 and abs(z["price"] - x["price"]) <= 0.5 * a and all(abs(z["price"] - q) > 0.1 * a for q in near):
                 near.append(z["price"])
         confl = max(1, len(near))
-        if not up_trade and (grp not in B["short_levels"] or confl < B["short_confluence"]):
-            continue
+        if not up_trade:
+            sf["strong_level"] = grp in B["short_levels"]
+            if confl < B["short_confluence"]:
+                continue                          # shorts always need 2+ levels together
+            if not loose_shorts(B) and not sf["strong_level"]:
+                continue
         entry = float(c[-1])
         # don't chase: skip if price is already more than max_chase_pct away from the liquidity line
         chase = (entry - x["price"]) / x["price"] * 100 if up_trade else (x["price"] - entry) / x["price"] * 100
@@ -532,6 +565,9 @@ def evaluate_sweep(df: pd.DataFrame, tf: dict, P: dict, B: dict, spy_up: bool | 
                           f"{cnt}-bar pullback swept {x['label'].lower()} {x['price']:.2f} and reclaimed it; stop {stop:.2f} "
                           f"({risk:.1f}% risk)."),
                     score=round(x["strength"] + 0.5 * (confl - 1) + (0.5 if cnt >= 7 else 0), 2), qualified=True)
+        if not up_trade:
+            cand["short_flags"] = sf
+            cand["short_strict"] = all(sf.values())
         if best is None or (cand["side"] == "long" and best["side"] == "short") or cand["score"] > best["score"]:
             best = cand
     return best
@@ -589,16 +625,11 @@ def armed_levels(ctx: pd.DataFrame, tf: dict, P: dict, B: dict, spy_up: bool | N
             if not (sma[-1] > sma[-11] and sma[-1] > sma200[-1]):
                 continue
         else:
-            if not (c[-1] < sma[-1] and sma[-1] < sma[-11] and sma[-1] < sma200[-1]):
-                continue
-            if B["short_need_weekly_down"]:
-                s100 = pd.Series(c).rolling(100).mean().to_numpy()
-                if not (np.isfinite(s100[-26]) and c[-1] < s100[-1] and s100[-1] < s100[-26]):
-                    continue
-            if B["short_need_market_down"] and spy_up is True:
+            sf = short_flags(c, sma, sma200, spy_up)
+            if not short_trend_ok(sf, B):
                 continue
         cnt = time_count(ctx, n - 1, not up, P)
-        lo_cnt = B["long_pullback"] if up else B["short_pullback"]
+        lo_cnt = B["long_pullback"] if up else short_min_pullback(B)
         hi_cnt = M.get("max_pullback") or 99
         if cnt < lo_cnt or cnt > hi_cnt:
             continue
@@ -615,12 +646,15 @@ def armed_levels(ctx: pd.DataFrame, tf: dict, P: dict, B: dict, spy_up: bool | N
             grp = level_group(x["label"])
             if confl < (M["min_confluence"] if up else max(M["min_confluence"], B["short_confluence"])):
                 continue
-            if not up and grp not in B["short_levels"]:
-                continue
+            flags = None
+            if not up:
+                flags = dict(sf, rally_5=cnt >= B["short_pullback"], strong_level=grp in B["short_levels"])
+                if not loose_shorts(B) and not flags["strong_level"]:
+                    continue
             if any(y["side"] == side and abs(y["price"] - p) <= 0.1 * a for y in out):
                 continue
             out.append(dict(side=side, price=float(p), label=x["label"], group=grp, strength=x["strength"],
-                            confluence=confl, atr=a, count=cnt))
+                            confluence=confl, atr=a, count=cnt, short_flags=flags))
     return out
 
 
@@ -697,7 +731,130 @@ def evaluate_sweep_5m(armed: list[dict], bars5: pd.DataFrame, B: dict, confirm: 
                         idea=(f"{'BUY' if up else 'SELL'} ~{entry:.2f} at {times[i]}: 5-min swept {L['label'].lower()} "
                               f"{p:.2f} (low of the run {ext:.2f}) and reclaimed it; stop {stop:.2f} ({risk:.1f}% risk)."),
                         score=round(L["strength"] + 0.5 * (L["confluence"] - 1), 2), qualified=True)
+            if L.get("short_flags") is not None:
+                cand["short_flags"] = L["short_flags"]
+                cand["short_strict"] = all(L["short_flags"].values())
             if best is None or cand["entry_time"] < best["entry_time"]:
                 best = cand
             break
+    return best
+
+
+def find_fvg(h, l, i0: int, i1: int, up: bool):
+    """Most recent fair value gap (3-bar imbalance) formed between bars i0..i1 in the trade
+    direction. Long: low[k] > high[k-2] -> zone (high[k-2], low[k]). Returns (k, bottom, top) or None."""
+    for k in range(i1, max(i0 + 2, 2) - 1, -1):
+        if up and l[k] > h[k - 2]:
+            return k, float(h[k - 2]), float(l[k])
+        if not up and h[k] < l[k - 2]:
+            return k, float(h[k]), float(l[k - 2])
+    return None
+
+
+def evaluate_fvg_5m(armed: list[dict], bars5: pd.DataFrame, B: dict, mode: str = "limit") -> dict | None:
+    """v24: FVG timing for the SWING entry (the trade is still held 1-5 days with swing exits).
+
+    Same daily line and 5-minute stop run as evaluate_sweep_5m. Then:
+      mode 'confirm'  enter on the first close back across the line, but only if the move off the
+                      stop-run extreme left a fair value gap (displacement)
+      mode 'limit'    after price closes back across the line, wait for the FVG left by that move and
+                      buy the first pullback into it (limit at the gap's near edge), until F['cutoff']
+    Stop: beyond the stop-run extreme (+ buffer), at least min_risk_pct away. OTE overlap
+    (61.8-78.6% of the leg) is recorded, not required."""
+    M, F = B["m5"], B["fvg"]
+    if not armed or bars5 is None or not len(bars5):
+        return None
+    o, h, l, c, v = (bars5[x].to_numpy() for x in ("Open", "High", "Low", "Close", "Volume"))
+    times = [(t + pd.Timedelta(minutes=5)).strftime("%H:%M") for t in bars5.index]
+    best = None
+    for L in armed:
+        up = L["side"] == "long"
+        p, a = L["price"], L["atr"]
+        start = ext_i = rec_i = None
+        for i in range(len(c)):
+            if times[i] > M["end"]:
+                break
+            through = (l[i] < p - M["sweep_atr"] * a) if up else (h[i] > p + M["sweep_atr"] * a)
+            if start is None:
+                if through:
+                    start = ext_i = i
+                continue
+            if (l[i] < l[ext_i]) if up else (h[i] > h[ext_i]):
+                ext_i = i
+            if i - start > M["reclaim_bars"]:
+                break
+            if times[i] >= M["start"] and (c[i] > p if up else c[i] < p):
+                rec_i = i
+                break
+        if rec_i is None:
+            continue
+        ext = float(l[ext_i] if up else h[ext_i])
+        entry = fill_i = None
+        if mode == "confirm":
+            # the displacement gap usually completes one bar after the reclaim: enter at the close of
+            # the bar that completes it (if price is still across the line)
+            gap = None
+            for j in range(rec_i, min(len(c), rec_i + F["form_bars"] + 1)):
+                g = find_fvg(h, l, ext_i, j, up)
+                if g is not None:
+                    gap = g
+                    break
+            if gap is None or times[max(rec_i, gap[0])] > F["cutoff"]:
+                continue
+            fill_i = max(rec_i, gap[0])
+            if not (c[fill_i] > p if up else c[fill_i] < p):
+                continue
+            entry = float(c[fill_i])
+        else:
+            # watch for the gap to form within F['form_bars'] bars after the reclaim, then a pullback into it
+            gap = None
+            for j in range(rec_i, min(len(c), rec_i + F["form_bars"] + 1)):
+                g = find_fvg(h, l, ext_i, j, up)
+                if g is not None:
+                    gap = g
+                    break
+            if gap is None:
+                continue
+            k, bot, top = gap
+            px = top if up else bot                        # near edge of the gap
+            for j in range(k + 1, len(c)):
+                if times[j] > F["cutoff"]:
+                    break
+                if (l[j] <= ext) if up else (h[j] >= ext):
+                    break                                  # stop-run extreme lost before a fill: no trade
+                if (l[j] <= px) if up else (h[j] >= px):
+                    fill_i, entry = j, (min(px, float(o[j])) if up else max(px, float(o[j])))
+                    break
+            if fill_i is None:
+                continue
+        k, bot, top = gap
+        stop = ext - B["long_stop_atr"] * a if up else ext + B["short_stop_atr"] * a
+        mr = F.get("min_risk_pct")
+        if mr:
+            stop = min(stop, entry * (1 - mr / 100)) if up else max(stop, entry * (1 + mr / 100))
+        risk = abs(entry - stop) / entry * 100
+        chase = abs(entry - p) / p * 100
+        if chase > B["max_chase_pct"] or risk > B["max_risk_pct"]:
+            continue
+        hi_leg = float(h[ext_i:max(k, rec_i) + 1].max()) if up else float(l[ext_i:max(k, rec_i) + 1].min())
+        leg = abs(hi_leg - ext)
+        ote_lo, ote_hi = (hi_leg - 0.786 * leg, hi_leg - 0.618 * leg) if up else (hi_leg + 0.618 * leg, hi_leg + 0.786 * leg)
+        ote = bool(leg > 0 and bot <= ote_hi and top >= ote_lo)
+        cand = dict(direction="bullish" if up else "bearish", side=L["side"], stage=f"fvg_{mode}",
+                    level=round(p, 4), level_label=L["label"], level_group=L["group"], confluence=L["confluence"],
+                    entry=round(entry, 4), stop=round(stop, 4), risk_pct=round(risk, 2), count=L["count"],
+                    atr=round(a, 4), chase_pct=round(chase, 2), entry_time=times[fill_i], sweep_time=times[start],
+                    sweep_depth_atr=round(abs(ext - p) / a, 2), bars_to_reclaim=int(rec_i - start),
+                    fvg=[round(bot, 4), round(top, 4)], fvg_ote=ote, short_flags=L.get("short_flags"),
+                    vol_ratio=None,
+                    short_strict=all(L["short_flags"].values()) if L.get("short_flags") else None,
+                    keys=["stage_fvg", f"liq_{L['label'].split(' (')[0].lower().replace(' ', '_')}"],
+                    factors=[f"{L['label']} @ {p:.2f} ({L['confluence']} levels)",
+                             f"5-min stop run to {ext:.2f} at {times[start]}, back across at {times[rec_i]}",
+                             f"FVG {bot:.2f}-{top:.2f}{' in OTE' if ote else ''}"],
+                    idea=(f"{'BUY' if up else 'SELL'} ~{entry:.2f} at {times[fill_i]} ({'FVG pullback' if mode == 'limit' else 'reclaim with FVG'}): "
+                          f"stop run through {L['label'].lower()} {p:.2f}; stop {stop:.2f} ({risk:.1f}% risk); swing hold 1-5 days."),
+                    score=round(L["strength"] + 0.5 * (L["confluence"] - 1), 2), qualified=True)
+        if best is None or cand["entry_time"] < best["entry_time"]:
+            best = cand
     return best

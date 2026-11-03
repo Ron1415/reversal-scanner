@@ -550,7 +550,7 @@ def mark_overlaps(recs: list[dict]) -> None:
         if r["overlap"]:
             continue
         oc = r.get("outcome") or {}
-        v = oc.get("close") or oc.get("level") or oc.get("bot") or oc.get("bot_intraday") or oc.get("bot_5m") or oc.get("bot_5m_break") or {}
+        v = oc.get("close") or oc.get("level") or oc.get("bot") or oc.get("bot_intraday") or oc.get("bot_5m") or oc.get("bot_5m_break") or oc.get("bot_fvg_limit") or oc.get("bot_fvg_confirm") or {}
         if v.get("triggered"):
             p = v.get("plan") or {}
             busy[k] = p.get("exit_date") or "9999-12-31"
@@ -599,7 +599,7 @@ PARAM_FOR = dict(count=("count_min", ">="), tail_pct=("tail_min_pct", ">="), eff
 
 def review(recs: list[dict], now: dt.datetime) -> dict:
     res = dict(generated=now.strftime("%Y-%m-%d %H:%M %Z"), versions={}, proposals=[], notes=[])
-    versions = ["close", "safer"] + [k for k in ("level", "bot", "bot_intraday", "bot_5m", "bot_5m_break") if any(k in (r.get("outcome") or {}) for r in recs)]
+    versions = ["close", "safer"] + [k for k in ("level", "bot", "bot_intraday", "bot_5m", "bot_5m_break", "bot_fvg_limit", "bot_fvg_confirm") if any(k in (r.get("outcome") or {}) for r in recs)]
     for version in versions:
         d = _frame(recs, version)
         if d.empty:
@@ -681,10 +681,11 @@ def review(recs: list[dict], now: dt.datetime) -> dict:
         var_rows.append(row)
     res["level_variants"] = var_rows
     # ---- THE BOT: headline, long vs short, halves, trades per week (close entry and intraday entry)
-    for bot_key in ("bot", "bot_intraday", "bot_5m", "bot_5m_break"):
+    for bot_key in ("bot", "bot_intraday", "bot_5m", "bot_5m_break", "bot_fvg_limit", "bot_fvg_confirm"):
         _bot_summary(res, recs, bot_key)
         if bot_key != "bot_intraday":
             _bot_tests(res, recs, bot_key)
+            _short_tests(res, recs, bot_key)
     res["bot_policy"] = C.BOT_POLICY
     res["side_rules"] = C.SIDE_RULES
     # level families by side (the evidence behind SIDE_RULES)
@@ -738,6 +739,8 @@ def _bot_tests(res: dict, recs: list[dict], bot_key: str) -> None:
     allf = (lambda r: f_spy(r) and f_noon(r) and f_strong(r)) if intraday else (lambda r: f_spy(r) and f_strong(r))
     filters += [("combined", allf), ("combined_h1", lambda r: allf(r) and r["signal_date"] < mid),
                 ("combined_h2", lambda r: allf(r) and r["signal_date"] >= mid)]
+    if intraday:
+        filters.append(("combined_top110", lambda r: allf(r) and r.get("journal") is True))
     out = []
     for si, (slab, _, _) in enumerate(X["stops"]):
         for ti, (tlab, _) in enumerate(X["targets"]):
@@ -756,6 +759,41 @@ def _bot_tests(res: dict, recs: list[dict], bot_key: str) -> None:
             out.append(row)
     res.setdefault("bot_tests", {})[bot_key] = dict(rows=out, filters=[f for f, _ in filters],
                                                     strong_levels=X["strong_levels"], before=X["before"])
+
+
+
+SHORT_CHECKS = [("below_200", "50-day below the 200-day"), ("weekly_down", "falling ~20-week average"),
+                ("market_down", "SPY below its 50-day"), ("rally_5", "5+ bar rally (not 4)"),
+                ("strong_level", "major swing / prior swing / prior week-month level"),
+                ("weak_close", "close in the lower 40% (close entry)"), ("volume", "1.2x volume (close entry)")]
+
+
+def _short_tests(res: dict, recs: list[dict], bot_key: str) -> None:
+    """v23: loose shorts, and what each of the old strict checks would have added."""
+    mark_overlaps(recs)
+    g = []
+    for r in recs:
+        v = (r.get("outcome") or {}).get(bot_key)
+        if r.get("side") != "short" or not v or r.get("overlap") or r.get("earnings_blackout"):
+            continue
+        p = v.get("plan") or {}
+        if p.get("done"):
+            g.append((r.get("short_flags") or {}, p))
+    def blk(rows):
+        if not rows:
+            return dict(n=0)
+        R = np.array([p["r"] for _, p in rows], float); ret = np.array([p["ret"] for _, p in rows], float)
+        return dict(n=len(rows), win=round(float((R > 0).mean()), 3), avg_R=round(float(R.mean()), 2),
+                    avg_ret=round(float(ret.mean()), 2), stopped=round(float(np.mean([p.get("exit") == "stop" for _, p in rows])), 3))
+    out = [dict(label="All loose shorts", with_=blk(g), without=dict(n=0))]
+    for k, lab in SHORT_CHECKS:
+        has = [x for x in g if k in x[0]]
+        if not has:
+            continue
+        out.append(dict(label=lab, with_=blk([x for x in has if x[0][k]]), without=blk([x for x in has if not x[0][k]])))
+    out.append(dict(label="Passes every old strict check", with_=blk([x for x in g if x[0] and all(x[0].values())]),
+                    without=blk([x for x in g if not (x[0] and all(x[0].values()))])))
+    res.setdefault("short_tests", {})[bot_key] = out
 
 
 def _bot_summary(res: dict, recs: list[dict], bot_key: str) -> None:

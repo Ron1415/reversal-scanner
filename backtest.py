@@ -32,7 +32,7 @@ import pandas as pd
 
 import config as C
 import suggestions as S
-from setup import evaluate_level_touch, evaluate_setup, evaluate_sweep, evaluate_sweep_intraday, armed_levels, evaluate_sweep_5m
+from setup import evaluate_level_touch, evaluate_setup, evaluate_sweep, evaluate_sweep_intraday, armed_levels, evaluate_sweep_5m, evaluate_fvg_5m
 
 NY = ZoneInfo("America/New_York")
 log = logging.getLogger("backtest")
@@ -117,7 +117,7 @@ def _download_intraday(tickers: list[str], period: str, interval: str) -> dict[s
 def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "weekly"),
         download_hourly=None, download_5m=None) -> dict:
     t0 = time.time()
-    tickers = load_universe()
+    tickers = sorted(set(load_universe()) | set(getattr(C, "JOURNAL_UNIVERSE", [])))
     # ~300 bars of history are needed before the first replayed day
     data = download(sorted(set(tickers) | {"SPY"}), "6y" if "weekly" in tfs else ("2y" if days <= 180 else "5y"))
     hourly = (download_hourly or _download_hourly)(sorted(data), days)
@@ -172,7 +172,8 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                                 scan_price=bt["entry"], entry=bt["entry"], stop=bt["stop"], risk_pct=bt["risk_pct"],
                                 atr=bt["atr"], level=bt["level"], level_label=bt["level_label"],
                                 level_group=bt["level_group"], confluence=bt["confluence"], count=bt["count"],
-                                vol_ratio=bt["vol_ratio"], spy_up=mkt, score=bt["score"], keys=bt["keys"], factors=bt["factors"],
+                                vol_ratio=bt["vol_ratio"], spy_up=mkt, short_flags=bt.get("short_flags"),
+                                short_strict=bt.get("short_strict"), score=bt["score"], keys=bt["keys"], factors=bt["factors"],
                                 idea=bt["idea"], valid_at_last_scan=True, last_reason="", status="pending",
                                 outcome={}, backtest=True))
                 # ---- THE BOT, intraday: hourly checks during the day with yesterday's daily context
@@ -223,11 +224,15 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                         lo_d, hi_d = float(bars["Low"].iloc[i]), float(bars["High"].iloc[i])
                         armed = [x for x in armed if (lo_d < x["price"]) if x["side"] == "long"] + \
                                 [x for x in armed if x["side"] == "short" and hi_d > x["price"]]
-                        for conf in (C.BOT["m5"]["confirm"] if armed else []):
-                            it = evaluate_sweep_5m(armed, today5, C.BOT, confirm=conf)
+                        tries = [(c_, "bot_5m" if c_ == "close" else "bot_5m_break") for c_ in C.BOT["m5"]["confirm"]]
+                        tries += [("fvg_limit", "bot_fvg_limit"), ("fvg_confirm", "bot_fvg_confirm")]
+                        for conf, strat in (tries if armed else []):
+                            if conf.startswith("fvg_"):
+                                it = evaluate_fvg_5m(armed, today5, C.BOT, mode=conf[4:])
+                            else:
+                                it = evaluate_sweep_5m(armed, today5, C.BOT, confirm=conf)
                             if not it:
                                 continue
-                            strat = "bot_5m" if conf == "close" else "bot_5m_break"
                             k5 = f"{t}|daily|{it['direction']}|{d_day}|{strat}"
                             recs.setdefault(k5, dict(
                                 key=k5, id=f"{t}-{d_day}-{it['side']}-{strat}", ticker=t, timeframe="daily",
@@ -239,7 +244,10 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                                 level_label=it["level_label"], level_group=it["level_group"],
                                 confluence=it["confluence"], count=it["count"], chase_pct=it["chase_pct"],
                                 sweep_depth_atr=it["sweep_depth_atr"], bars_to_reclaim=it["bars_to_reclaim"],
-                                vol_ratio=it["vol_ratio"], spy_up=mkt, score=it["score"], keys=it["keys"],
+                                fvg=it.get("fvg"), fvg_ote=it.get("fvg_ote"),
+                                journal=t in getattr(C, "JOURNAL_UNIVERSE", []),
+                                vol_ratio=it["vol_ratio"], spy_up=mkt, short_flags=it.get("short_flags"),
+                                short_strict=it.get("short_strict"), score=it["score"], keys=it["keys"],
                                 factors=it["factors"], idea=it["idea"], valid_at_last_scan=True,
                                 last_reason="", status="pending", outcome={}, backtest=True))
                 if runs[max(0, i - 3):i + 1].max() < C.PARAMS["count_min"]:
@@ -311,7 +319,7 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                 S.evaluate_level(r, df.astype("float64"), today)
             elif r.get("strategy") == "bot":
                 S.evaluate_bot(r, df.astype("float64"), today)
-            elif r.get("strategy") in ("bot_5m", "bot_5m_break"):
+            elif r.get("strategy") in ("bot_5m", "bot_5m_break", "bot_fvg_limit", "bot_fvg_confirm"):
                 if m5.get(r["ticker"]) is not None:
                     S.evaluate_bot_intraday(r, df.astype("float64"), m5[r["ticker"]], today, bar_min=5,
                                             key=r["strategy"])

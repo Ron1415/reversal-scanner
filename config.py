@@ -97,7 +97,13 @@ BOT = dict(
     long_stop_atr=0.2,        # longs: stop this far below the sweep low
     long_max_hold=5,          # longs: exit after 5 days
     long_mgmt=dict(be_trigger_atr=1.0, targets=[(5.0, 0.5), (7.5, 0.25), (10.0, 0.25)], lock_pct=2.5),
-    short_pullback=5,         # shorts: at least this many bars up into the sweep
+    short_pullback=5,         # shorts (strict): at least this many bars up into the sweep
+    # v23: LOOSER shorts (Ron, Nov 3: 3 shorts in 6 months is too few). Entry needs only: price below a
+    # falling 50-day average, a 4+ bar rally, 2+ levels together at the line, and (close entry) a close
+    # in the lower half. The strict checks below are still recorded on every short so the backtest shows
+    # what each one adds. Short management stays tight (breakeven after 0.5 ATR, trailing stop, 3 days, 0.5x size).
+    short_loose=True,
+    short_pullback_loose=4,
     short_need_weekly_down=True,
     short_need_market_down=True,   # SPY below its 50-day average
     short_levels=["Major swing", "Prior swing", "Prior week/month"],
@@ -125,6 +131,12 @@ BOT = dict(
         end="15:55",
         confirm=["close", "break"],   # both entry triggers are tested side by side
     ),
+    # v24: FVG timing for the swing entry (tested side by side; the FVG day-trading system stays separate)
+    fvg=dict(
+        form_bars=6,          # the gap must form within 30 minutes of the reclaim
+        cutoff="12:00",       # unfilled pullback orders cancel at noon (matches the approved before-noon rule)
+        min_risk_pct=1.5,     # same as the approved rule: stop at least 1.5% away
+    ),
 )
 
 # v22: improvements tested SIDE BY SIDE on the bot's trades (close entry and both 5-minute entries).
@@ -143,6 +155,13 @@ BOT_TESTS = dict(
     before="12:00",                                    # 5-minute entries only before noon
     strong_levels=["Major swing", "Prior week/month"],  # the level types that held up best
 )
+
+# v24: the top-110 most-traded list from the FVG journal (stocks + ETFs; futures left out). Added to the
+# backtest so results can be shown for this list on its own.
+JOURNAL_UNIVERSE = """SPY QQQ MU NVDA META AAPL TSLA AMD MSFT INTC GOOGL AMZN SOXL AVGO IWM MRVL SMH TSM SOXX PLTR ORCL TQQQ
+HYG STX SOXS LQD WDC LLY DELL GLD AMAT TLT NFLX LRCX GEV MSTR EWZ V UNH WMT NOW CAT JPM CRWD XLE TXN COST XOM BAC
+PANW GS KLAC MA JNJ HOOD XLF QCOM IBIT XLK SQQQ BA CSCO DIA XLV CVX CRM GDX PG VRT GE ADI KO ABBV XBI MRK SNOW HD
+EEM EFA COIN SHOP PEP XLP VZ MCD WFC IBM XLI SMCI T ARM MS C XLU ANET RKLB IEF TMUS UBER RTX""".split()
 
 # Closer monitoring for shorts: earlier breakeven and a shorter time stop
 SHORT_MONITORING = dict(be_trigger_atr=0.5, max_hold_bars=8)
