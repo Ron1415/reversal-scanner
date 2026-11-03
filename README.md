@@ -87,6 +87,11 @@ Rules live in config.py `BOT`. Two entry versions are tested side by side:
   across the line; `bot_5m_break` waits for a candle that also clears every bar since the low of the
   stop run. Stop: beyond the stop-run extreme plus a small ATR buffer. Settings: `BOT["m5"]`.
   Yahoo keeps only about 60 days of 5-minute bars, so these two cover the last ~40 trading days.
+- **Improvement tests** (v22, `BOT_TESTS` in config.py): every bot trade (close entry and both
+  5-minute entries) is re-run with three stops (current, 0.5 ATR wider, at least 1.5% risk) and two
+  target sets (fixed +5/+7.5/+10%, or 1/1.5/2 ATR). Filters shown as columns: SPY above its 50-day
+  (longs), entries before noon (5-minute only), strongest levels (major swings, prior week/month
+  lows), and all filters together, split into halves.
 The backtest downloads hourly bars (Yahoo keeps about 2 years) and reports both versions.
 
 ## TradingView

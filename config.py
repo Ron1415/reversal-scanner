@@ -127,6 +127,23 @@ BOT = dict(
     ),
 )
 
+# v22: improvements tested SIDE BY SIDE on the bot's trades (close entry and both 5-minute entries).
+# Every trade is re-run with each stop x target combination; the filters are applied on top.
+BOT_TESTS = dict(
+    stops=[  # (label, ATRs beyond the stop-run extreme (None = the bot's own setting), minimum risk %)
+        ("Current stop (0.2 ATR beyond the stop run)", None, None),
+        ("Wider stop (0.5 ATR beyond the stop run)", 0.5, None),
+        ("Current stop, but at least 1.5% risk", None, 1.5),
+    ],
+    targets=[  # (label, None = the fixed % targets, or ATR multiples for 1/2, 1/4, 1/4 of the position)
+        ("fixed +5 / +7.5 / +10%", None),
+        ("ATR targets 1 / 1.5 / 2 ATR", [1.0, 1.5, 2.0]),
+    ],
+    spy_filter=True,                                   # longs only while SPY is above its 50-day average
+    before="12:00",                                    # 5-minute entries only before noon
+    strong_levels=["Major swing", "Prior week/month"],  # the level types that held up best
+)
+
 # Closer monitoring for shorts: earlier breakeven and a shorter time stop
 SHORT_MONITORING = dict(be_trigger_atr=0.5, max_hold_bars=8)
 

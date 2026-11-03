@@ -172,7 +172,7 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                                 scan_price=bt["entry"], entry=bt["entry"], stop=bt["stop"], risk_pct=bt["risk_pct"],
                                 atr=bt["atr"], level=bt["level"], level_label=bt["level_label"],
                                 level_group=bt["level_group"], confluence=bt["confluence"], count=bt["count"],
-                                vol_ratio=bt["vol_ratio"], score=bt["score"], keys=bt["keys"], factors=bt["factors"],
+                                vol_ratio=bt["vol_ratio"], spy_up=mkt, score=bt["score"], keys=bt["keys"], factors=bt["factors"],
                                 idea=bt["idea"], valid_at_last_scan=True, last_reason="", status="pending",
                                 outcome={}, backtest=True))
                 # ---- THE BOT, intraday: hourly checks during the day with yesterday's daily context
@@ -331,7 +331,7 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                                   "indication, not proof.")
     d = root / "site" / "data"
     d.mkdir(parents=True, exist_ok=True)
-    (d / "backtest_suggestions.json").write_text(json.dumps(out, default=float))
-    (d / "backtest_review.json").write_text(json.dumps(rev, default=float))
-    (root / "backtest_suggestions.json").write_text(json.dumps(out, default=float))
+    (d / "backtest_suggestions.json").write_text(S.jdump(out))
+    (d / "backtest_review.json").write_text(S.jdump(rev))
+    (root / "backtest_suggestions.json").write_text(S.jdump(out))
     return rev

@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import math
 import logging
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -40,6 +41,26 @@ T = C.TRACK
 # --------------------------------------------------------------------------- #
 # Earnings dates
 # --------------------------------------------------------------------------- #
+
+def _clean(o):
+    """JSON for the browser: NaN/Infinity are not valid JSON, so they become null."""
+    if isinstance(o, dict):
+        return {k: _clean(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple, set)):
+        return [_clean(v) for v in o]
+    if isinstance(o, float):
+        return o if math.isfinite(o) else None
+    if hasattr(o, "item") and not isinstance(o, (str, bytes)):
+        try:
+            return _clean(o.item())
+        except Exception:
+            return o
+    return o
+
+
+def jdump(o, **kw) -> str:
+    return json.dumps(_clean(o), default=float, **kw)
+
 def next_earnings(tickers: list[str], root: Path, today: dt.date) -> dict[str, str | None]:
     """Next earnings date per ticker (cached for a day in earnings_cache.json)."""
     f = root / "earnings_cache.json"
@@ -90,7 +111,7 @@ def load(root: Path) -> list[dict]:
 
 
 def save(root: Path, recs: list[dict]) -> None:
-    (root / "suggestions.json").write_text(json.dumps(recs, indent=0, default=float))
+    (root / "suggestions.json").write_text(jdump(recs, indent=0))
 
 
 def record(root: Path, tf: str, rows: list[dict], now: dt.datetime) -> int:
@@ -409,6 +430,39 @@ def evaluate_level(rec: dict, df: pd.DataFrame, today: dt.date) -> None:
     rec["status"] = "closed" if v["plan"]["done"] else "open"
 
 
+
+def bot_variants(rec: dict, path: pd.DataFrame, short: bool, hold: int) -> dict:
+    """v22: re-run one bot trade with every stop x target combination in C.BOT_TESTS."""
+    B, X = C.BOT, C.BOT_TESTS
+    entry, stop0, a = float(rec["entry"]), float(rec["stop"]), float(rec.get("atr") or 0)
+    own = B["short_stop_atr"] if short else B["long_stop_atr"]
+    ext = stop0 - own * a if short else stop0 + own * a          # the stop-run extreme
+    base = B["short_mgmt"] if short else B["long_mgmt"]
+    out = {}
+    for si, (slab, k, min_risk) in enumerate(X["stops"]):
+        kk = own if k is None else k
+        stop = ext + kk * a if short else ext - kk * a
+        if min_risk:
+            far = entry * (1 + min_risk / 100) if short else entry * (1 - min_risk / 100)
+            stop = max(stop, far) if short else min(stop, far)
+        risk = abs(entry - stop) / entry * 100
+        for ti, (tlab, mult) in enumerate(X["targets"]):
+            mg = dict(base)
+            if mult and a > 0:
+                pcts = [m * a / entry * 100 for m in mult]
+                mg["targets"] = [(pcts[0], 0.5), (pcts[1], 0.25), (pcts[2], 0.25)]
+                mg["lock_pct"] = pcts[0] / 2
+            if risk > B["max_risk_pct"]:
+                out[f"s{si}t{ti}"] = dict(skip=True)
+                continue
+            p = sim_scaled(path, short, entry, stop, None, 1.0, 0.0, a, mg, hold, first_is_fill=False)
+            if p.get("exit") == "time stop" and len(path) < hold:
+                p["done"] = False                              # still open: not enough bars yet
+            out[f"s{si}t{ti}"] = dict(r=p.get("r"), ret=p.get("ret"), done=bool(p.get("done")),
+                                     exit=p.get("exit"), risk=round(risk, 2))
+    return out
+
+
 def evaluate_bot(rec: dict, df: pd.DataFrame, today: dt.date) -> None:
     """THE BOT: entered at the close of the sweep bar; managed from the next bar."""
     B = C.BOT
@@ -423,7 +477,8 @@ def evaluate_bot(rec: dict, df: pd.DataFrame, today: dt.date) -> None:
     p = sim_scaled(after, short, entry, stop, None, 1.0, 0.0, float(rec.get("atr") or 0), mg,
                    B["short_max_hold"] if short else B["long_max_hold"], first_is_fill=False)
     v = dict(entry_rule="at the close of the sweep bar", triggered=True, entry=round(entry, 2),
-             entry_date=rec["signal_date"], why="entered at the close", risk_pct=rec.get("risk_pct"), plan=p)
+             entry_date=rec["signal_date"], why="entered at the close", risk_pct=rec.get("risk_pct"), plan=p,
+             variants=bot_variants(rec, after, short, B["short_max_hold"] if short else B["long_max_hold"]))
     rec["outcome"] = {"bot": v}
     rec["status"] = "closed" if p["done"] else "open"
 
@@ -454,7 +509,8 @@ def evaluate_bot_intraday(rec: dict, daily: pd.DataFrame, hourly: pd.DataFrame, 
         p["done"], p["exit"] = False, "open"
     rec["outcome"] = {key: dict(entry_rule=f"intraday at {et} ET", triggered=True, entry=rec["entry"],
                                            entry_date=rec["signal_date"], why=f"entered at {et}",
-                                           risk_pct=rec.get("risk_pct"), plan=p)}
+                                           risk_pct=rec.get("risk_pct"), plan=p,
+                                           variants=bot_variants(rec, path, short, hold + (1 if parts else 0)) if len(path) else {})}
     rec["status"] = "closed" if p["done"] else "open"
 
 
@@ -627,6 +683,8 @@ def review(recs: list[dict], now: dt.datetime) -> dict:
     # ---- THE BOT: headline, long vs short, halves, trades per week (close entry and intraday entry)
     for bot_key in ("bot", "bot_intraday", "bot_5m", "bot_5m_break"):
         _bot_summary(res, recs, bot_key)
+        if bot_key != "bot_intraday":
+            _bot_tests(res, recs, bot_key)
     res["bot_policy"] = C.BOT_POLICY
     res["side_rules"] = C.SIDE_RULES
     # level families by side (the evidence behind SIDE_RULES)
@@ -645,6 +703,59 @@ def review(recs: list[dict], now: dt.datetime) -> dict:
     res["notes"].append("Proposals are never applied automatically. Approve them and the scanner and the "
                         "TradingView script are updated together.")
     return res
+
+
+
+def _bot_tests(res: dict, recs: list[dict], bot_key: str) -> None:
+    """v22: stop x target variants (rows) under the proposed filters (columns)."""
+    X = C.BOT_TESTS
+    mark_overlaps(recs)
+    rows = []
+    for r in recs:
+        v = (r.get("outcome") or {}).get(bot_key)
+        if not v or r.get("overlap") or r.get("earnings_blackout"):
+            continue
+        rows.append(dict(r=r, var=v.get("variants") or {}))
+    if not rows:
+        return
+    dates = sorted(x["r"]["signal_date"] for x in rows)
+    mid = dates[len(dates) // 2]
+    intraday = bot_key != "bot"
+
+    def f_spy(r):
+        return r["side"] == "short" or r.get("spy_up") is not False
+
+    def f_noon(r):
+        return (r.get("entry_time") or "15:30") < X["before"]
+
+    def f_strong(r):
+        return r.get("level_group") in X["strong_levels"]
+
+    filters = [("all", lambda r: True), ("spy", f_spy)]
+    if intraday:
+        filters.append(("noon", f_noon))
+    filters += [("strong", f_strong)]
+    allf = (lambda r: f_spy(r) and f_noon(r) and f_strong(r)) if intraday else (lambda r: f_spy(r) and f_strong(r))
+    filters += [("combined", allf), ("combined_h1", lambda r: allf(r) and r["signal_date"] < mid),
+                ("combined_h2", lambda r: allf(r) and r["signal_date"] >= mid)]
+    out = []
+    for si, (slab, _, _) in enumerate(X["stops"]):
+        for ti, (tlab, _) in enumerate(X["targets"]):
+            k = f"s{si}t{ti}"
+            row = dict(label=f"{slab}; {tlab}", key=k)
+            for fname, fn in filters:
+                g = [x["var"][k] for x in rows if k in x["var"] and not x["var"][k].get("skip")
+                     and x["var"][k].get("done") and fn(x["r"])]
+                if not g:
+                    row[fname] = dict(n=0)
+                    continue
+                rr = np.array([z["r"] for z in g], float)
+                rt = np.array([z["ret"] for z in g], float)
+                row[fname] = dict(n=len(g), avg_R=round(float(rr.mean()), 2), avg_ret=round(float(rt.mean()), 2),
+                                  win=round(float((rr > 0).mean()), 3), stopped=round(float(np.mean([z["exit"] == "stop" for z in g])), 3))
+            out.append(row)
+    res.setdefault("bot_tests", {})[bot_key] = dict(rows=out, filters=[f for f, _ in filters],
+                                                    strong_levels=X["strong_levels"], before=X["before"])
 
 
 def _bot_summary(res: dict, recs: list[dict], bot_key: str) -> None:
@@ -678,7 +789,7 @@ def run(root: Path, download, now: dt.datetime) -> None:
     out = root / "site" / "data"
     out.mkdir(parents=True, exist_ok=True)
     lean = [{k: v for k, v in r.items() if k not in ("levels",)} for r in recs[-3000:]]
-    (out / "suggestions.json").write_text(json.dumps(lean, default=float))
-    (out / "review.json").write_text(json.dumps(rev, default=float))
+    (out / "suggestions.json").write_text(jdump(lean))
+    (out / "review.json").write_text(jdump(rev))
     log.info("suggestions: %d tracked, %d closed, %d proposals", len(recs),
              sum(r["status"] == "closed" for r in recs), len(rev["proposals"]))
