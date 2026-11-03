@@ -63,6 +63,25 @@ weekly). Every setup it would have listed is followed forward with the same rule
 Results: `suggestions.html#backtest`. Limits: uses each day's closing bar, today's S&P 500 list,
 no commissions or slippage, and repeat signals while a trade in the same stock is open are excluded.
 
+## Level entry (current choice for the bot)
+
+Limit order at the liquidity line the first time price reaches it (same setup: time count, orderly
+move, liquidity map). Exits (config.py `TRACK["mgmt"]`): stop to breakeven after a 1-ATR move in
+favour; 1/2 off at +5% and the stop moves to lock +2.5%; 1/4 at +7.5%; the rest at +10%. The backtest
+compares stop widths, add-on entries and breakeven triggers side by side (`TRACK["level_variants"]`).
+
+## The bot: trend pullback + liquidity sweep (daily, 1-5 day holds)
+
+Rules live in config.py `BOT`. Two entry versions are tested side by side:
+- **Close entry** (`bot`): checked on the daily bar at 3:30 PM.
+- **Intraday entry** (`bot_intraday`, v19): the same rules checked on the hourly chart at
+  10:30, 11:30, 12:30, 1:30, 2:30 and 3:30 PM ET (`BOT["intraday_checks"]`), using yesterday's daily
+  context and today's bar built from the hourly bars so far. The first check that sees a sweep and
+  reclaim of the line enters at that price.
+- **No chase** (both versions): the trade is skipped if price is already more than 2% from the
+  liquidity line (`BOT["max_chase_pct"]`).
+The backtest downloads hourly bars (Yahoo keeps about 2 years) and reports both versions.
+
 ## TradingView
 
 - `reversal_setups.pine`: indicator that draws the trade plan (separate download).

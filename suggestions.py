@@ -269,6 +269,91 @@ def evaluate_one(rec: dict, df: pd.DataFrame, today: dt.date) -> None:
     rec["status"] = "closed" if done else "open"
 
 
+def sim_scaled(bars: pd.DataFrame, short: bool, entry: float, stop: float, add_px: float | None,
+               first: float = 1.0, add: float = 0.0, atr_v: float = 0.0, mgmt: dict | None = None,
+               max_hold: int | None = None, first_is_fill: bool = True) -> dict:
+    """Level entry with an optional add-on and staged exits, bar by bar starting
+    WITH the fill bar.
+
+    mgmt (default = T["mgmt"]):
+      be_trigger_atr  move the stop to breakeven once price has gone this many ATRs
+                      in favour (None = only after the first target)
+      targets         [(pct, share), ...] e.g. 5% half, 7.5% quarter, 10% the rest
+      lock_pct        after the FIRST target the stop moves to lock this % profit
+    Conservative bar order: adverse first (add-on fill, then the stop), then targets;
+    a stop moved on a bar only takes effect from the next bar; the fill bar cannot
+    reach a target. Profits are measured against the average price; targets are %
+    from the first entry. R = profit / maximum planned risk (all entries filled)."""
+    mg = mgmt or T["mgmt"]
+    sgn = -1 if short else 1
+    tgts = [(entry * (1 + sgn * pct / 100), share) for pct, share in mg["targets"]]
+    max_risk = first * abs(entry - stop) + (add * abs(add_px - stop) if add_px is not None and add else 0.0)
+    pos, cost, realized = first, first * entry, 0.0
+    added, cur, next_stop = False, stop, stop
+    hit = 0                                   # targets taken so far
+    be_done = False
+    start_size = first
+    mfe = mae = 0.0
+    adverse = lambda b, px: (b.High >= px) if short else (b.Low <= px)
+    favour = lambda b, px: (b.Low <= px) if short else (b.High >= px)
+    label = lambda: ("locked-profit stop" if hit else "breakeven stop" if be_done else "stop")
+    def out(done, exitn, i, ts):
+        return dict(done=done, ret=round(realized / entry * 100, 2), r=round(realized / max_risk, 2) if max_risk else None,
+                    bars=i, exit=exitn, exit_date=str(ts.date()) if ts is not None else None, added=added,
+                    targets_hit=hit, mfe=round(mfe, 2), mae=round(mae, 2))
+    ts = None
+    for i, (ts, b) in enumerate(bars.iterrows()):
+        cur = next_stop                        # stops moved on the previous bar apply now
+        mfe = max(mfe, sgn * ((b.Low if short else b.High) - entry) / entry * 100)
+        mae = min(mae, sgn * ((b.High if short else b.Low) - entry) / entry * 100)
+        if add_px is not None and add and not added and hit == 0 and not be_done and adverse(b, add_px):
+            px = add_px if (first_is_fill and i == 0) else (max(b.Open, add_px) if short else min(b.Open, add_px))
+            pos += add
+            cost += add * px
+            start_size += add
+            added = True
+        if adverse(b, cur):
+            px = cur if (first_is_fill and i == 0) else (max(b.Open, cur) if short else min(b.Open, cur))
+            realized += sgn * (px * pos - cost)
+            return out(True, "stop (same bar as the fill)" if (first_is_fill and i == 0) else label(), i + (0 if first_is_fill else 1), ts)
+        if first_is_fill and i == 0:
+            continue
+        avg = cost / pos
+        # staged targets (share of the position size at the time of the first target)
+        while hit < len(tgts) and favour(b, tgts[hit][0]):
+            px, share = tgts[hit]
+            qty = pos if hit == len(tgts) - 1 else min(pos, start_size * share)
+            realized += sgn * (px - avg) * qty
+            pos -= qty
+            cost = avg * pos
+            hit += 1
+            if pos <= 1e-12:
+                return out(True, f"final target {mg['targets'][-1][0]:g}%", i + (0 if first_is_fill else 1), ts)
+        # stop management for the NEXT bar
+        if hit >= 1:
+            lock = avg * (1 + sgn * mg["lock_pct"] / 100)
+            next_stop = max(next_stop, lock) if not short else min(next_stop, lock)
+        elif mg.get("be_trigger_atr") is not None and atr_v > 0 and not be_done and \
+                favour(b, avg + sgn * mg["be_trigger_atr"] * atr_v):
+            be_done = True
+            next_stop = max(next_stop, avg) if not short else min(next_stop, avg)
+        if mg.get("be_trigger_atr") is None and hit >= 1 and not be_done:
+            be_done = True
+        if mg.get("trail_prev_bar") and (be_done or hit >= 1) and atr_v > 0:
+            trail = (b.High + 0.1 * atr_v) if short else (b.Low - 0.1 * atr_v)
+            next_stop = min(next_stop, trail) if short else max(next_stop, trail)
+        if (i + (0 if first_is_fill else 1)) >= (max_hold or T["max_hold_bars"]):
+            realized += sgn * (b.Close * pos - cost)
+            return out(True, "time stop", i + (0 if first_is_fill else 1), ts)
+    if len(bars):
+        last = float(bars["Close"].iloc[-1])
+        r = out(False, "open", len(bars) - 1, None)
+        ro = realized + sgn * (last * pos - cost)
+        r["ret"], r["r"] = round(ro / entry * 100, 2), (round(ro / max_risk, 2) if max_risk else None)
+        return r
+    return out(False, "open", 0, None)
+
+
 def evaluate_level(rec: dict, df: pd.DataFrame, today: dt.date) -> None:
     """LEVEL-ENTRY test: a limit order at the level, filled on the signal bar.
     The fill bar can only stop out (we cannot know whether the stop came after
@@ -293,11 +378,83 @@ def evaluate_level(rec: dict, df: pd.DataFrame, today: dt.date) -> None:
                                                        mfe=0.0, mae=round(-risk, 2))
     else:
         after = bars.iloc[sig_i + 1:]
-        v["plan"] = simulate(after, short, entry, stop, "plan")
         v["full_t1"] = simulate(after, short, entry, stop, "t1")
         v["full_t2"] = simulate(after, short, entry, stop, "t2")
+    # headline result = Ron's management (breakeven after a sharp move, 1/2 at 5% then lock 2.5%,
+    # 1/4 at 7.5%, rest at 10%), with the default 1-ATR stop
+    mg0 = dict(T["mgmt"], **({"be_trigger_atr": C.SHORT_MONITORING["be_trigger_atr"]} if short else {}))
+    v["plan"] = sim_scaled(bars.iloc[sig_i:], short, entry, stop, None, 1.0, 0.0,
+                           abs(stop - float(rec["level"])) / C.PARAMS["level_stop_atr"], mg0,
+                           C.SHORT_MONITORING["max_hold_bars"] if short else None)
     rec["outcome"] = {"level": v}
+    # ---- variants: different stop distances and add-on entries
+    short_ = short
+    level = float(rec["level"])
+    a = abs(stop - level) / C.PARAMS["level_stop_atr"]          # ATR at the signal
+    path = bars.iloc[sig_i:]
+    for var in T["level_variants"]:
+        sgn = 1 if short_ else -1
+        vstop = level + sgn * var["stop_atr"] * a
+        add_px = level + sgn * var["add_atr"] * a if var.get("add") else None
+        if (short_ and entry >= vstop) or (not short_ and entry <= vstop):
+            continue
+        mg = dict(T["mgmt"], **var.get("mgmt", {}))
+        hold = None
+        if short_:                                  # closer monitoring for shorts
+            mg["be_trigger_atr"] = C.SHORT_MONITORING["be_trigger_atr"] if mg.get("be_trigger_atr") is not None else None
+            hold = C.SHORT_MONITORING["max_hold_bars"]
+        p = sim_scaled(path, short_, entry, vstop, add_px, var.get("first", 1.0), var.get("add", 0.0), a, mg, hold)
+        rec["outcome"][f"level:{var['name']}"] = dict(triggered=True, entry=round(entry, 2), why=var["label"],
+                                                       risk_pct=round(abs(entry - vstop) / entry * 100, 2), plan=p)
     rec["status"] = "closed" if v["plan"]["done"] else "open"
+
+
+def evaluate_bot(rec: dict, df: pd.DataFrame, today: dt.date) -> None:
+    """THE BOT: entered at the close of the sweep bar; managed from the next bar."""
+    B = C.BOT
+    bars = _bars(df, rec["timeframe"])
+    short = rec["side"] == "short"
+    sig_i = int(bars.index.searchsorted(pd.Timestamp(rec["signal_date"])))
+    if sig_i >= len(bars):
+        return
+    entry, stop = float(rec["entry"]), float(rec["stop"])
+    after = bars.iloc[sig_i + 1:]
+    mg = B["short_mgmt"] if short else B["long_mgmt"]
+    p = sim_scaled(after, short, entry, stop, None, 1.0, 0.0, float(rec.get("atr") or 0), mg,
+                   B["short_max_hold"] if short else B["long_max_hold"], first_is_fill=False)
+    v = dict(entry_rule="at the close of the sweep bar", triggered=True, entry=round(entry, 2),
+             entry_date=rec["signal_date"], why="entered at the close", risk_pct=rec.get("risk_pct"), plan=p)
+    rec["outcome"] = {"bot": v}
+    rec["status"] = "closed" if p["done"] else "open"
+
+
+def evaluate_bot_intraday(rec: dict, daily: pd.DataFrame, hourly: pd.DataFrame, today: dt.date) -> None:
+    """Intraday entry: the rest of the entry day (hourly bars after the entry hour, merged
+    into one bar) and then daily bars, managed exactly like the close-entry bot."""
+    B = C.BOT
+    short = rec["side"] == "short"
+    d0 = pd.Timestamp(rec["signal_date"])
+    et = rec.get("entry_time", "15:30")
+    hr = hourly[hourly.index.date == d0.date()]
+    rest = hr[[(t + pd.Timedelta(hours=1)).strftime("%H:%M") > et for t in hr.index]]
+    parts = []
+    if len(rest):
+        parts.append(pd.DataFrame(dict(Open=[float(rest.Open.iloc[0])], High=[float(rest.High.max())],
+                                       Low=[float(rest.Low.min())], Close=[float(rest.Close.iloc[-1])]),
+                                  index=[d0]))
+    after = daily[daily.index > d0][["Open", "High", "Low", "Close"]]
+    path = pd.concat(parts + [after]) if parts else after
+    hold = B["short_max_hold"] if short else B["long_max_hold"]
+    path = path.iloc[:hold + (1 if parts else 0)]                  # entry-day remainder + N days
+    mg = B["short_mgmt"] if short else B["long_mgmt"]
+    p = sim_scaled(path, short, float(rec["entry"]), float(rec["stop"]), None, 1.0, 0.0, float(rec.get("atr") or 0),
+                   mg, len(path) if len(path) else None, first_is_fill=False)
+    if len(path) < hold + (1 if parts else 0) and p.get("exit") == "time stop":
+        p["done"], p["exit"] = False, "open"
+    rec["outcome"] = {"bot_intraday": dict(entry_rule=f"intraday at {et} ET", triggered=True, entry=rec["entry"],
+                                           entry_date=rec["signal_date"], why=f"entered at {et}",
+                                           risk_pct=rec.get("risk_pct"), plan=p)}
+    rec["status"] = "closed" if p["done"] else "open"
 
 
 def evaluate(root: Path, download, today: dt.date) -> list[dict]:
@@ -336,7 +493,7 @@ def mark_overlaps(recs: list[dict]) -> None:
         if r["overlap"]:
             continue
         oc = r.get("outcome") or {}
-        v = oc.get("close") or oc.get("level") or {}
+        v = oc.get("close") or oc.get("level") or oc.get("bot") or oc.get("bot_intraday") or {}
         if v.get("triggered"):
             p = v.get("plan") or {}
             busy[k] = p.get("exit_date") or "9999-12-31"
@@ -358,7 +515,9 @@ def _frame(recs: list[dict], version: str) -> pd.DataFrame:
                          mfe=p.get("mfe"), bars=p.get("bars"), blackout=r.get("earnings_blackout", False),
                          count=r.get("count"), score=r.get("score"), moved_pct=r.get("moved_pct"),
                          tail_pct=r.get("tail_pct"), efficiency=r.get("efficiency"), move_atr=r.get("move_atr"),
-                         risk_pct=v.get("risk_pct"), keys=set(r.get("keys") or [])))
+                         risk_pct=v.get("risk_pct"), keys=set(r.get("keys") or []),
+                         passes=bool(r.get("passes_side_rules", True)), signal_date=r.get("signal_date"),
+                         group=r.get("level_group"), confluence=r.get("confluence")))
     return pd.DataFrame(rows)
 
 
@@ -383,7 +542,7 @@ PARAM_FOR = dict(count=("count_min", ">="), tail_pct=("tail_min_pct", ">="), eff
 
 def review(recs: list[dict], now: dt.datetime) -> dict:
     res = dict(generated=now.strftime("%Y-%m-%d %H:%M %Z"), versions={}, proposals=[], notes=[])
-    versions = ["close", "safer"] + (["level"] if any("level" in (r.get("outcome") or {}) for r in recs) else [])
+    versions = ["close", "safer"] + [k for k in ("level", "bot", "bot_intraday") if any(k in (r.get("outcome") or {}) for r in recs)]
     for version in versions:
         d = _frame(recs, version)
         if d.empty:
@@ -430,6 +589,52 @@ def review(recs: list[dict], now: dt.datetime) -> dict:
                         version=version, param=f"{col} = {v}", change=f"drop {col} '{v}' from the bot",
                         evidence=f"{len(g)} trades averaged {g.R.mean():+.2f}R vs {rest.R.mean():+.2f}R for the rest",
                         gain_R=round(float(rest.R.mean() - g.R.mean()), 2)))
+    # ---- level-entry variants side by side (overall, long, short, daily, weekly)
+    var_rows = []
+    for var in T["level_variants"]:
+        d = _frame(recs, f"level:{var['name']}")
+        if d.empty:
+            continue
+        d = d[(~d.blackout) & (d.triggered == True) & d.done]   # noqa: E712
+        row = dict(name=var["name"], label=var["label"])
+        rules = d[d.passes]
+        dates = sorted(d.signal_date.dropna())
+        mid = dates[len(dates) // 2] if dates else ""
+        for gname, g in (("all", d), ("long", d[d.side == "long"]), ("short", d[d.side == "short"]),
+                         ("new rules", rules), ("new rules long", rules[rules.side == "long"]),
+                         ("new rules short", rules[rules.side == "short"]),
+                         ("new rules 1st half", rules[rules.signal_date < mid]),
+                         ("new rules 2nd half", rules[rules.signal_date >= mid]),
+                         ("daily", d[d.tf == "daily"]), ("weekly", d[d.tf == "weekly"]),
+                         ("weekly long", d[(d.tf == "weekly") & (d.side == "long")]),
+                         ("daily long", d[(d.tf == "daily") & (d.side == "long")])):
+            row[gname] = dict(n=int(len(g)), win=round(float((g.R > 0).mean()), 3) if len(g) else None,
+                              avg_R=round(float(g.R.mean()), 2) if len(g) else None,
+                              avg_ret=round(float(g.ret.mean()), 2) if len(g) else None)
+        # the bot policy: long bias (sizes per side, optional skip of daily shorts)
+        bp = C.BOT_POLICY
+        pol = d[d.passes] if bp.get("use_side_rules") else d
+        pol = pol if bp["daily_shorts"] else pol[~((pol.tf == "daily") & (pol.side == "short"))]
+        size = np.where(pol.side == "long", bp["long_size"], bp["short_size"])
+        w = pol.ret * size
+        row["policy"] = dict(n=int(len(pol)), win=round(float((pol.R > 0).mean()), 3) if len(pol) else None,
+                             avg_R=round(float((pol.R * size).sum() / size.sum()), 2) if len(pol) else None,
+                             avg_ret=round(float(w.mean()), 2) if len(pol) else None,
+                             total_ret=round(float(w.sum()), 1))
+        var_rows.append(row)
+    res["level_variants"] = var_rows
+    # ---- THE BOT: headline, long vs short, halves, trades per week (close entry and intraday entry)
+    for bot_key in ("bot", "bot_intraday"):
+        _bot_summary(res, recs, bot_key)
+    res["bot_policy"] = C.BOT_POLICY
+    res["side_rules"] = C.SIDE_RULES
+    # level families by side (the evidence behind SIDE_RULES)
+    d0 = _frame(recs, "level")
+    if not d0.empty:
+        d0 = d0[(~d0.blackout) & (d0.triggered == True) & d0.done & d0.group.notna()]   # noqa: E712
+        res["level_groups"] = [dict(group=g, side=sd, n=int(len(x)), avg_R=round(float(x.R.mean()), 2),
+                                    win=round(float((x.R > 0).mean()), 3))
+                               for (g, sd), x in d0.groupby(["group", "side"])]
     res["proposals"].sort(key=lambda p: -p["gain_R"])
     n_closed = sum(1 for r in recs if r["status"] == "closed")
     if n_closed < 2 * T["min_group"]:
@@ -439,6 +644,31 @@ def review(recs: list[dict], now: dt.datetime) -> dict:
     res["notes"].append("Proposals are never applied automatically. Approve them and the scanner and the "
                         "TradingView script are updated together.")
     return res
+
+
+def _bot_summary(res: dict, recs: list[dict], bot_key: str) -> None:
+    d = _frame(recs, bot_key)
+    if d.empty:
+        return
+    d = d[(~d.blackout) & (d.triggered == True) & d.done]   # noqa: E712
+    if d.empty:
+        return
+    dates = sorted(d.signal_date.dropna())
+    mid = dates[len(dates) // 2] if dates else ""
+    weeks = max(1.0, (pd.Timestamp(dates[-1]) - pd.Timestamp(dates[0])).days / 7) if dates else 1.0
+    size = np.where(d.side == "long", C.BOT["long_size"], C.BOT["short_size"])
+
+    def blk(g, sz=None):
+        if not len(g):
+            return dict(n=0)
+        w = g.ret * (sz if sz is not None else 1)
+        return dict(n=int(len(g)), per_week=round(len(g) / weeks, 1), win=round(float((g.R > 0).mean()), 3),
+                    avg_R=round(float(g.R.mean()), 2), avg_ret=round(float(g.ret.mean()), 2),
+                    avg_days=round(float(g.bars.mean()), 1), hit_5pct=round(float((g.mfe >= T["t1_pct"]).mean()), 3),
+                    total_ret_sized=round(float(w.sum()), 1))
+    res[bot_key] = dict(all=blk(d, size), long=blk(d[d.side == "long"]), short=blk(d[d.side == "short"]),
+                        first_half=blk(d[d.signal_date < mid]), second_half=blk(d[d.signal_date >= mid]),
+                        rules=C.BOT)
 
 
 def run(root: Path, download, now: dt.datetime) -> None:

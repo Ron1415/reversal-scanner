@@ -66,6 +66,57 @@ PARAMS = dict(
 
 # Factor weights. Candles and exhaustion counts are the "trigger"; the rest
 # are location / context confluence.
+# Bot policy (long bias): position size per side, and whether daily shorts are traded at all.
+# The backtest table shows each level-entry variant under this policy.
+BOT_POLICY = dict(
+    strategy="level",      # enter at the liquidity line (no tail needed)
+    long_size=1.25,        # longs: a bit more risk (1.25 x a normal position)
+    short_size=0.5,        # shorts: half a position (markets drift up over time)
+    daily_shorts=False,    # daily shorts were the weakest group in the 60-day backtest
+    use_side_rules=True,   # apply SIDE_RULES below
+)
+
+# Which levels each side may trade (from the 60-day backtest, Aug-Oct 2026, level entry):
+#   longs:  major swing lows (+0.08R), rising trend lines (+0.04R) and deeper Fibs (61.8/78.6, 50)
+#           held up best; double bottoms, prior swings, prior week/month lows and volume zones
+#           were weak alone, so they need another level in the same place (confluence).
+#   shorts: almost everything lost; only swing highs and prior week/month highs held up, so shorts
+#           need one of those AND confluence, weekly charts only, and a time count of 9+.
+SIDE_RULES = dict(
+    long=dict(timeframes=["daily", "weekly"], min_count=7, min_confluence=2,
+              levels_alone=["Major swing", "Trendline", "Fib 61.8", "Fib 78.6", "Fib 50"],
+              levels_with_confluence=["Double top/bottom", "Prior swing", "Prior week/month", "Volume zone",
+                                      "Fib 38.2", "Fib ext"]),
+    short=dict(timeframes=["weekly"], min_count=9, min_confluence=2,
+               levels_alone=[],
+               levels_with_confluence=["Major swing", "Prior swing", "Prior week/month"]),
+)
+# THE BOT (setup.evaluate_sweep): trend pullback + liquidity sweep, daily bars, 1-5 day holds.
+BOT = dict(
+    long_pullback=4,          # longs: at least this many bars down into the sweep
+    long_stop_atr=0.2,        # longs: stop this far below the sweep low
+    long_max_hold=5,          # longs: exit after 5 days
+    long_mgmt=dict(be_trigger_atr=1.0, targets=[(5.0, 0.5), (7.5, 0.25), (10.0, 0.25)], lock_pct=2.5),
+    short_pullback=5,         # shorts: at least this many bars up into the sweep
+    short_need_weekly_down=True,
+    short_need_market_down=True,   # SPY below its 50-day average
+    short_levels=["Major swing", "Prior swing", "Prior week/month"],
+    short_confluence=2,
+    short_close_pos=0.4,      # close in the lower 40% of the bar
+    short_vol_mult=1.2,       # sweep-bar volume vs the 20-day average
+    short_stop_atr=0.1,       # shorts: stop this far above the sweep high
+    short_max_hold=3,         # shorts: exit after 3 days
+    short_mgmt=dict(be_trigger_atr=0.5, targets=[(5.0, 0.5), (7.5, 0.25), (10.0, 0.25)], lock_pct=2.5,
+                    trail_prev_bar=True),   # after breakeven, trail the stop to the prior bar's high
+    max_risk_pct=5.0,         # skip setups whose stop is further than this
+    max_chase_pct=2.0,        # never enter if price is already more than 2% from the liquidity line
+    intraday_checks=["10:30", "11:30", "12:30", "13:30", "14:30", "15:30"],   # hourly checks (New York time)
+    long_size=1.25, short_size=0.5,
+)
+
+# Closer monitoring for shorts: earlier breakeven and a shorter time stop
+SHORT_MONITORING = dict(be_trigger_atr=0.5, max_hold_bars=8)
+
 # Suggestions tracker (suggestions.py): how every suggestion is followed forward
 TRACK = dict(
     trigger_bars=3,            # safer entry: reversal bar must be broken within this many bars
@@ -75,6 +126,26 @@ TRACK = dict(
     min_group=20,              # trades needed on each side before a change is proposed
     min_edge_r=0.15,           # improvement (in R) needed before a change is proposed
     level_stop_label="1 ATR beyond the level",
+    # LEVEL-ENTRY variants tested side by side in the backtest (stop and add-on distances in ATRs
+    # beyond the level; sizes are fractions of one normal position)
+    # Trade management for LEVEL entries (Ron, Nov 3): stop to breakeven after a sharp move off the
+    # level (be_trigger_atr ATRs in favour); 1/2 off at +5%, 1/4 at +7.5%, the rest at +10%;
+    # after +5% the stop moves to lock in +2.5%.
+    mgmt=dict(be_trigger_atr=1.0, targets=[(5.0, 0.5), (7.5, 0.25), (10.0, 0.25)], lock_pct=2.5),
+    # LEVEL-ENTRY variants tested side by side (stop / add-on distances in ATRs beyond the level;
+    # sizes are fractions of one normal position). All use `mgmt` unless they override it.
+    level_variants=[
+        dict(name="s1",        label="Stop 1 ATR",                                            stop_atr=1.0),
+        dict(name="s1.5",      label="Stop 1.5 ATR",                                          stop_atr=1.5),
+        dict(name="s2",        label="Stop 2 ATR",                                            stop_atr=2.0),
+        dict(name="half_add",  label="Half at the level + half 1 ATR against; stop 2 ATR",    stop_atr=2.0, first=0.5, add_atr=1.0, add=0.5),
+        dict(name="half_add2", label="Half at the level + half 0.75 ATR against; stop 1.5 ATR", stop_atr=1.5, first=0.5, add_atr=0.75, add=0.5),
+        dict(name="double",    label="Full at the level + DOUBLE 1 ATR against; stop 2 ATR",  stop_atr=2.0, first=1.0, add_atr=1.0, add=1.0),
+        dict(name="s2_be05",   label="Stop 2 ATR, breakeven after 0.5 ATR",                   stop_atr=2.0, mgmt=dict(be_trigger_atr=0.5)),
+        dict(name="s2_be15",   label="Stop 2 ATR, breakeven after 1.5 ATR",                   stop_atr=2.0, mgmt=dict(be_trigger_atr=1.5)),
+        dict(name="s2_old",    label="Stop 2 ATR, OLD exits (half at 5%, rest at 10%)",       stop_atr=2.0,
+             mgmt=dict(be_trigger_atr=None, targets=[(5.0, 0.5), (10.0, 0.5)], lock_pct=0.0)),
+    ],
 )
 
 WEIGHTS = dict(

@@ -13,8 +13,11 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "full = scan every stock, quick = re-check today's list, analyze = update the trackers, backtest = replay the last 60 trading days"
+        description: "full = scan every stock, quick = re-check today's list, analyze = update the trackers, backtest = replay past trading days (see backtest_days)"
         default: "full"
+      backtest_days:
+        description: "Backtest length in trading days (125 = about 6 months, 250 = about 1 year)"
+        default: "125"
       check_tickers:
         description: "Optional: check tickers instead of scanning (e.g. TPR AAPL)"
         default: ""
@@ -32,7 +35,7 @@ concurrency: reversal-scan
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 50
+    timeout-minutes: 120
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -63,11 +66,12 @@ jobs:
         if: ${{ !inputs.check_tickers }}
         env:
           MODE: ${{ github.event.inputs.mode }}
+          BT_DAYS: ${{ github.event.inputs.backtest_days }}
         run: |
           if [ "$MODE" = "analyze" ]; then
             python scanner.py --analyze
           elif [ "$MODE" = "backtest" ]; then
-            python scanner.py --backtest 60
+            python scanner.py --backtest "${BT_DAYS:-125}"
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             python scanner.py --refresh "${MODE:-full}"
           else

@@ -32,7 +32,7 @@ import pandas as pd
 
 import config as C
 import suggestions as S
-from setup import evaluate_level_touch, evaluate_setup
+from setup import evaluate_level_touch, evaluate_setup, evaluate_sweep, evaluate_sweep_intraday
 
 NY = ZoneInfo("America/New_York")
 log = logging.getLogger("backtest")
@@ -73,10 +73,51 @@ def _past_earnings(tickers: list[str]) -> dict[str, list[dt.date]]:
     return out
 
 
-def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "weekly")) -> dict:
+def _download_hourly(tickers: list[str], days: int) -> dict[str, pd.DataFrame]:
+    """Hourly bars (New York time, naive timestamps = bar START). Yahoo keeps ~730 days."""
+    out = {}
+    try:
+        import yfinance as yf
+    except Exception:
+        return out
+    period = "730d" if days > 230 else "1y"
+    for i in range(0, len(tickers), 100):
+        batch = tickers[i:i + 100]
+        try:
+            raw = yf.download(batch, period=period, interval="60m", group_by="ticker", auto_adjust=True,
+                              threads=True, progress=False)
+        except Exception as e:
+            log.warning("hourly download failed: %s", e)
+            continue
+        for t in batch:
+            try:
+                df = raw[t] if isinstance(raw.columns, pd.MultiIndex) else raw
+                df = df[["Open", "High", "Low", "Close", "Volume"]].dropna().astype("float64")
+                idx = pd.to_datetime(df.index)
+                idx = idx.tz_convert(NY) if idx.tz is not None else idx.tz_localize("UTC").tz_convert(NY)
+                df.index = idx.tz_localize(None)
+                if len(df):
+                    out[t] = df
+            except Exception:
+                pass
+        time.sleep(2)
+    return out
+
+
+def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "weekly"),
+        download_hourly=None) -> dict:
     t0 = time.time()
     tickers = load_universe()
-    data = download(tickers, "6y" if "weekly" in tfs else "2y")
+    # ~300 bars of history are needed before the first replayed day
+    data = download(sorted(set(tickers) | {"SPY"}), "6y" if "weekly" in tfs else ("2y" if days <= 180 else "5y"))
+    hourly = (download_hourly or _download_hourly)(sorted(data), days)
+    log.info("hourly data for %d tickers", len(hourly))
+    spy = data.pop("SPY", None)
+    spy_up = None
+    if spy is not None and len(spy) > 60:
+        sc = spy["Close"].astype("float64")
+        spy_up = (sc > sc.rolling(50).mean())
+        spy_up.index = spy_up.index.date
     today = dt.datetime.now(NY).date()
     recs: dict[str, dict] = {}
     n_eval = 0
@@ -97,9 +138,65 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
             if tf != "daily" and idx and bars.index[idx[-1]].date() > today:
                 idx = idx[:-1]                       # the current week is not finished
             for i in idx:
-                if runs[max(0, i - 3):i + 1].max() < C.PARAMS["count_min"]:
-                    continue                         # no time count of 7+: nothing can qualify
                 sub = bars.iloc[max(0, i - 300):i + 1]
+                # ---- THE BOT (daily only): trend pullback + liquidity sweep
+                if tf == "daily":
+                    tail_ = sub.iloc[-20:]
+                    liquid = tail_["Close"].iloc[-1] >= C.MIN_PRICE and (tail_["Close"] * tail_["Volume"]).mean() >= C.MIN_AVG_DOLLAR_VOLUME
+                    if liquid:
+                        sig_d = sub.index[-1].date()
+                        mkt = None if spy_up is None else bool(spy_up.get(sig_d, True))
+                        try:
+                            bt = evaluate_sweep(sub, tfc, C.PARAMS, C.BOT, spy_up=mkt)
+                        except Exception as e:
+                            bt = None
+                            log.debug("bot %s %s: %s", t, sig_d, e)
+                        if bt:
+                            k3 = f"{t}|daily|{bt['direction']}|{sig_d}|bot"
+                            recs.setdefault(k3, dict(
+                                key=k3, id=f"{t}-{sig_d}-{bt['side']}-bot", ticker=t, timeframe="daily", strategy="bot",
+                                direction=bt["direction"], side=bt["side"], rev_date=str(sig_d), signal_date=str(sig_d),
+                                first_seen=f"{sig_d}T15:30", stage="sweep", stages_seen=["sweep"],
+                                scan_price=bt["entry"], entry=bt["entry"], stop=bt["stop"], risk_pct=bt["risk_pct"],
+                                atr=bt["atr"], level=bt["level"], level_label=bt["level_label"],
+                                level_group=bt["level_group"], confluence=bt["confluence"], count=bt["count"],
+                                vol_ratio=bt["vol_ratio"], score=bt["score"], keys=bt["keys"], factors=bt["factors"],
+                                idea=bt["idea"], valid_at_last_scan=True, last_reason="", status="pending",
+                                outcome={}, backtest=True))
+                # ---- THE BOT, intraday: hourly checks during the day with yesterday's daily context
+                hr = hourly.get(t)
+                if tf == "daily" and hr is not None and i > 0 and liquid and \
+                        runs[i - 1] >= min(C.BOT["long_pullback"], C.BOT["short_pullback"]):
+                    d_day = bars.index[i].date()
+                    today_h = hr[hr.index.date == d_day]
+                    ctx = bars.iloc[max(0, i - 300):i]
+                    mkt = None if spy_up is None else bool(spy_up.get(d_day, True))
+                    for k in range(1, len(today_h) + 1):
+                        tb = today_h.iloc[:k]
+                        end_t = (tb.index[-1] + pd.Timedelta(hours=1)).strftime("%H:%M")
+                        if end_t not in C.BOT["intraday_checks"]:
+                            continue
+                        try:
+                            it = evaluate_sweep_intraday(ctx, tb, tfc, C.PARAMS, C.BOT, spy_up=mkt)
+                        except Exception as e:
+                            it = None
+                            log.debug("intraday %s %s: %s", t, d_day, e)
+                        if it:
+                            k4 = f"{t}|daily|{it['direction']}|{d_day}|bot_intraday"
+                            recs.setdefault(k4, dict(
+                                key=k4, id=f"{t}-{d_day}-{it['side']}-botI", ticker=t, timeframe="daily",
+                                strategy="bot_intraday", direction=it["direction"], side=it["side"],
+                                rev_date=str(d_day), signal_date=str(d_day), first_seen=f"{d_day}T{it['entry_time']}",
+                                entry_time=it["entry_time"], stage="sweep", stages_seen=["sweep"],
+                                scan_price=it["entry"], entry=it["entry"], stop=it["stop"], risk_pct=it["risk_pct"],
+                                atr=it["atr"], level=it["level"], level_label=it["level_label"],
+                                level_group=it["level_group"], confluence=it["confluence"], count=it["count"],
+                                chase_pct=it.get("chase_pct"), vol_ratio=it["vol_ratio"], score=it["score"],
+                                keys=it["keys"], factors=it["factors"], idea=it["idea"], valid_at_last_scan=True,
+                                last_reason="", status="pending", outcome={}, backtest=True))
+                            break                    # first trigger of the day only
+                if runs[max(0, i - 3):i + 1].max() < C.PARAMS["count_min"]:
+                    continue                         # no time count of 7+: the other strategies cannot qualify
                 # liquidity filter as of that day
                 tail = raw[raw.index <= sub.index[-1]].iloc[-20:]
                 if tail["Close"].iloc[-1] < C.MIN_PRICE or (tail["Close"] * tail["Volume"]).mean() < C.MIN_AVG_DOLLAR_VOLUME:
@@ -108,7 +205,7 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                 sig = str(sub.index[-1].date())
                 # ---- alternative strategy: enter at the liquidity level, no tail needed
                 try:
-                    lv = evaluate_level_touch(sub, tfc, C.PARAMS)
+                    lv = evaluate_level_touch(sub, tfc, C.PARAMS, tf, C.SIDE_RULES)
                 except Exception as e:
                     lv = None
                     log.debug("level %s %s: %s", t, sig, e)
@@ -124,6 +221,9 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
                             level=lv["level"], level_label=lv["level_label"], score=lv["score"], count=lv["count"],
                             efficiency=lv["efficiency"], move_atr=lv["move_atr"], keys=lv["keys"],
                             factors=lv["factors"], idea=lv["idea"], valid_at_last_scan=True, last_reason="",
+                            level_group=lv["level_group"], confluence=lv["confluence"],
+                            confluence_groups=lv["confluence_groups"], vol_ratio=lv["vol_ratio"],
+                            passes_side_rules=lv["passes_side_rules"], side_rule_reason=lv["side_rule_reason"],
                             status="pending", outcome={}, backtest=True)
                 try:
                     res = evaluate_setup(sub, tfc, C.PARAMS, C.WEIGHTS)
@@ -162,6 +262,11 @@ def run(root: Path, download, load_universe, days: int = 60, tfs=("daily", "week
         try:
             if r.get("strategy") == "level":
                 S.evaluate_level(r, df.astype("float64"), today)
+            elif r.get("strategy") == "bot":
+                S.evaluate_bot(r, df.astype("float64"), today)
+            elif r.get("strategy") == "bot_intraday":
+                if hourly.get(r["ticker"]) is not None:
+                    S.evaluate_bot_intraday(r, df.astype("float64"), hourly[r["ticker"]], today)
             else:
                 S.evaluate_one(r, df.astype("float64"), today)
         except Exception as e:

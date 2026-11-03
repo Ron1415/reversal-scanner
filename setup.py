@@ -310,7 +310,34 @@ def evaluate_setup(df: pd.DataFrame, tf: dict, P: dict, W: dict) -> dict | None:
 # --------------------------------------------------------------------------- #
 # Alternative strategy: enter AT the liquidity level (no reversal bar needed)
 # --------------------------------------------------------------------------- #
-def evaluate_level_touch(df: pd.DataFrame, tf: dict, P: dict) -> dict | None:
+def level_group(label: str) -> str:
+    """Level family used by the side rules (config.SIDE_RULES)."""
+    for key, grp in (("38.2", "Fib 38.2"), ("50.0", "Fib 50"), ("61.8", "Fib 61.8"), ("78.6", "Fib 78.6"),
+                     ("extension", "Fib ext"), ("Trendline", "Trendline"), ("Equal", "Double top/bottom"),
+                     ("Major swing", "Major swing"), ("pivot zone", "Volume zone"), ("Prior swing", "Prior swing"),
+                     ("Prior week", "Prior week/month"), ("Prior month", "Prior week/month")):
+        if key in label:
+            return grp
+    return label
+
+
+def side_rules_check(side: str, tf_name: str, group: str, confluence: int, count: int, rules: dict) -> tuple[bool, str]:
+    """Stricter rules for shorts, a bit more room for longs (config.SIDE_RULES)."""
+    r = rules[side]
+    if tf_name not in r["timeframes"]:
+        return False, f"{side}s are not traded on the {tf_name} chart"
+    if count < r["min_count"]:
+        return False, f"{side}s need a time count of {r['min_count']}+ (have {count})"
+    if group in r["levels_alone"]:
+        return True, f"{group} is allowed on its own for {side}s"
+    if group in r["levels_with_confluence"] and confluence >= r["min_confluence"]:
+        return True, f"{group} allowed for {side}s with {confluence} levels together"
+    if group in r["levels_with_confluence"]:
+        return False, f"{group} needs {r['min_confluence']}+ levels together for {side}s (have {confluence})"
+    return False, f"{group} is not used for {side}s"
+
+
+def evaluate_level_touch(df: pd.DataFrame, tf: dict, P: dict, tf_name: str = "daily", rules: dict | None = None) -> dict | None:
     """Same setup as evaluate_setup (time count, orderly move of min_move_atr,
     liquidity map) but the trade is entered the moment the newest bar FIRST
     reaches a strong level: a limit order at the level, no tail required.
@@ -363,6 +390,17 @@ def evaluate_level_touch(df: pd.DataFrame, tf: dict, P: dict) -> dict | None:
         # the first level price meets on the way (nearest to yesterday's close), strongest on ties
         x = min(cands, key=lambda z: (abs(z["price"] - c[-2]), -z["strength"]))
         p = x["price"]
+        # confluence: distinct levels within 0.5 ATR of the chosen one (all levels, any strength >= 2)
+        near = []
+        for z in lv:
+            if z["strength"] >= 2 and abs(z["price"] - p) <= 0.5 * a and all(abs(z["price"] - q) > 0.1 * a for q in near):
+                near.append(z["price"])
+        confl = max(1, len(near))
+        groups = sorted({level_group(z["label"]) for z in lv if z["strength"] >= 2 and abs(z["price"] - p) <= 0.5 * a})
+        side = "short" if up else "long"
+        ok_rules, why_rules = side_rules_check(side, tf_name, level_group(x["label"]), confl, cnt, rules) if rules else (True, "")
+        vol = df["Volume"].to_numpy()
+        vol_ratio = float(vol[-4:-1].mean() / vol[-24:-4].mean()) if vol[-24:-4].mean() > 0 else None
         entry = max(o[-1], p) if up else min(o[-1], p)          # gap through the level fills at the open
         stop = p + P["level_stop_atr"] * a if up else p - P["level_stop_atr"] * a
         if (up and entry >= stop) or (not up and entry <= stop):
@@ -375,7 +413,150 @@ def evaluate_level_touch(df: pd.DataFrame, tf: dict, P: dict) -> dict | None:
                     factors=[f"Time count {cnt} into the level", f"{x['label']} @ {p:.2f} reached today"],
                     idea=(f"Level entry: {'sell' if up else 'buy'} at {x['label'].lower()} {p:.2f} after a "
                           f"{cnt}-bar {'rally' if up else 'decline'}; stop {stop:.2f}."),
-                    score=round(x["strength"] + (1 if cnt >= 9 else 0), 2), qualified=True)
+                    score=round(x["strength"] + (1 if cnt >= 9 else 0) + 0.5 * (confl - 1), 2), qualified=True,
+                    level_group=level_group(x["label"]), confluence=confl, confluence_groups=groups,
+                    vol_ratio=round(vol_ratio, 2) if vol_ratio else None,
+                    passes_side_rules=ok_rules, side_rule_reason=why_rules)
         if best is None or cand["score"] > best["score"]:
             best = cand
     return best
+
+
+# --------------------------------------------------------------------------- #
+# THE BOT: trend pullback + liquidity sweep (accumulation -> manipulation -> distribution)
+# --------------------------------------------------------------------------- #
+def evaluate_sweep(df: pd.DataFrame, tf: dict, P: dict, B: dict, spy_up: bool | None = None,
+                   weekly_down: bool | None = None) -> dict | None:
+    """Simple, trend-following reversal off a liquidity sweep, daily bars, hold 1-5 days.
+
+    LONG (moderate)                               SHORT (strict)
+    1 trend  rising 50-day SMA above the 200-day   close < falling 50-day SMA below the 200-day,
+                                                   and the market (SPY) below its 50-day SMA
+    2 pullback  >= long_pullback bars down         >= short_pullback bars up (time count rules)
+    3 sweep  today trades through a liquidity      the same, at strong levels only (short_levels)
+             level and closes back beyond it       and with confluence >= short_confluence
+    4 rejection close in the upper half            close in the lower short_close_pos, volume on the
+                                                   sweep bar >= short_vol_mult x the 20-day average
+    entry at the close; stop beyond the sweep extreme (long_stop_atr / short_stop_atr);
+    skip when the risk is above max_risk_pct.
+    """
+    n = len(df)
+    if n < 80:
+        return None
+    o, h, l, c, v = (df[x].to_numpy() for x in ("Open", "High", "Low", "Close", "Volume"))
+    A = atr(df).to_numpy()
+    a = float(A[-1]) if np.isfinite(A[-1]) else float("nan")
+    if not np.isfinite(a) or a <= 0:
+        return None
+    sma = pd.Series(c).rolling(50).mean().to_numpy()
+    sma200 = pd.Series(c).rolling(200).mean().to_numpy()
+    if not np.isfinite(sma[-1]) or not np.isfinite(sma[-11]):
+        return None
+    rng = h[-1] - l[-1]
+    if rng <= 0:
+        return None
+    pos = (c[-1] - l[-1]) / rng
+    best = None
+    for side in ("long", "short"):
+        up_trade = side == "long"
+        # 1. trend: longs = rising 50-day above the 200-day (price may dip below the 50-day on the
+        #    pullback); shorts = price below a falling 50-day that is below the 200-day
+        if not np.isfinite(sma200[-1]):
+            continue
+        if up_trade:
+            if not (sma[-1] > sma[-11] and sma[-1] > sma200[-1]):
+                continue
+        else:
+            if not (c[-1] < sma[-1] and sma[-1] < sma[-11] and sma[-1] < sma200[-1]):
+                continue
+            if B["short_need_weekly_down"]:
+                s100 = pd.Series(c).rolling(100).mean().to_numpy()        # ~20-week average
+                if not (np.isfinite(s100[-1]) and np.isfinite(s100[-26]) and c[-1] < s100[-1] and s100[-1] < s100[-26]):
+                    continue
+            if B["short_need_market_down"] and spy_up is True:
+                continue
+        # 2. pullback count into today (bars before today, small opposite bars are noise)
+        cnt = time_count(df.iloc[:n - 1], n - 2, not up_trade, P)
+        if cnt < (B["long_pullback"] if up_trade else B["short_pullback"]):
+            continue
+        # 4. rejection (cheap checks before the level map)
+        if up_trade and pos < 0.5:
+            continue
+        if not up_trade:
+            if pos > B["short_close_pos"]:
+                continue
+            avg_v = v[-21:-1].mean()
+            if avg_v <= 0 or v[-1] < B["short_vol_mult"] * avg_v:
+                continue
+        # 3. sweep of a liquidity level (levels built from bars before today)
+        lv = liquidity_levels(df, a, tf, P, "low" if up_trade else "high")
+        hits = []
+        for x in lv:
+            p = x["price"]
+            if x["strength"] < 2:
+                continue
+            swept = (l[-1] < p - 0.05 * a and c[-1] > p) if up_trade else (h[-1] > p + 0.05 * a and c[-1] < p)
+            if swept:
+                hits.append(x)
+        # don't chase: only lines that price is still within max_chase_pct of
+        mc = B.get("max_chase_pct")
+        if mc is not None:
+            hits = [z for z in hits if abs(c[-1] - z["price"]) / z["price"] * 100 <= mc]
+        if not hits:
+            continue
+        x = max(hits, key=lambda z: (z["strength"], -abs(z["price"] - c[-1])))
+        grp = level_group(x["label"])
+        near = []
+        for z in lv:
+            if z["strength"] >= 2 and abs(z["price"] - x["price"]) <= 0.5 * a and all(abs(z["price"] - q) > 0.1 * a for q in near):
+                near.append(z["price"])
+        confl = max(1, len(near))
+        if not up_trade and (grp not in B["short_levels"] or confl < B["short_confluence"]):
+            continue
+        entry = float(c[-1])
+        # don't chase: skip if price is already more than max_chase_pct away from the liquidity line
+        chase = (entry - x["price"]) / x["price"] * 100 if up_trade else (x["price"] - entry) / x["price"] * 100
+        stop = float(l[-1] - B["long_stop_atr"] * a) if up_trade else float(h[-1] + B["short_stop_atr"] * a)
+        risk = abs(entry - stop) / entry * 100
+        if risk > B["max_risk_pct"] or risk < 0.3:
+            continue
+        cand = dict(direction="bullish" if up_trade else "bearish", side=side, stage="sweep", level=round(x["price"], 4),
+                    level_label=x["label"], level_group=grp, confluence=confl, entry=round(entry, 4), stop=round(stop, 4),
+                    risk_pct=round(risk, 2), count=cnt, atr=round(a, 4), close_pos=round(pos, 2), chase_pct=round(chase, 2),
+                    vol_ratio=round(float(v[-1] / v[-21:-1].mean()), 2) if v[-21:-1].mean() > 0 else None,
+                    keys=["stage_sweep", f"liq_{x['label'].split(' (')[0].lower().replace(' ', '_')}"],
+                    factors=[f"Trend {'up' if up_trade else 'down'} (50-day average)",
+                             f"{cnt}-bar pullback", f"Swept {x['label']} @ {x['price']:.2f} and closed back",
+                             f"{confl} level(s) together"],
+                    idea=(f"{'BUY' if up_trade else 'SELL'} at the close ~{entry:.2f}: {'uptrend' if up_trade else 'downtrend'}, "
+                          f"{cnt}-bar pullback swept {x['label'].lower()} {x['price']:.2f} and reclaimed it; stop {stop:.2f} "
+                          f"({risk:.1f}% risk)."),
+                    score=round(x["strength"] + 0.5 * (confl - 1) + (0.5 if cnt >= 7 else 0), 2), qualified=True)
+        if best is None or (cand["side"] == "long" and best["side"] == "short") or cand["score"] > best["score"]:
+            best = cand
+    return best
+
+
+def evaluate_sweep_intraday(daily: pd.DataFrame, today_bars: pd.DataFrame, tf: dict, P: dict, B: dict,
+                            spy_up: bool | None = None) -> dict | None:
+    """The same bot rules, checked DURING the day.
+
+    daily       daily bars up to and including YESTERDAY (the context: trend, pullback, levels)
+    today_bars  today's hourly bars so far (New York time)
+    Today's bar is built from the hourly bars so far (open, high so far, low so far, last
+    price, volume so far projected to a full day) and evaluate_sweep is run on it, so a
+    sweep that has already reclaimed the line triggers an entry at the current price,
+    provided price is still within max_chase_pct of the line."""
+    if not len(today_bars):
+        return None
+    last_t = today_bars.index[-1] + pd.Timedelta(hours=1)          # bar END time
+    mins = (last_t.hour * 60 + last_t.minute) - (9 * 60 + 30)
+    frac = min(max(mins / 390, 0.1), 1.0)
+    row = pd.DataFrame(dict(Open=[float(today_bars["Open"].iloc[0])], High=[float(today_bars["High"].max())],
+                            Low=[float(today_bars["Low"].min())], Close=[float(today_bars["Close"].iloc[-1])],
+                            Volume=[float(today_bars["Volume"].sum()) / frac]),
+                       index=[pd.Timestamp(today_bars.index[-1].date())])
+    res = evaluate_sweep(pd.concat([daily, row]), tf, P, B, spy_up=spy_up)
+    if res:
+        res["entry_time"] = last_t.strftime("%H:%M")
+    return res
