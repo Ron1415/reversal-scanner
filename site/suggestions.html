@@ -31,13 +31,21 @@
 <body>
 <div class="wrap">
   <h1>Suggestions Tracker</h1>
-  <div class="bar"><select id="src"><option value="live">Live tracker (from today on)</option><option value="bt">Backtest: last 60 trading days</option></select>
+  <div class="bar"><select id="src"><option value="live">Live tracker (from today on)</option><option value="bt">Backtest</option></select>
     <span class="sub" id="btInfo"></span></div>
   <div class="sub"><a href="index.html">← Scanner</a> · <a href="tracker.html">My trades</a> · <span id="gen"></span></div>
   <div class="sub" style="margin-top:6px">Every setup the scanner suggested, on every timeframe, followed forward with real prices.
     Two entries are tested for each: <b>at the close</b> of the signal bar, and the <b>safer entry</b> on a break of the reversal bar.
     Exits: half at +5%, stop to breakeven, rest at +10%; time stop after 15 bars. Results in R (1R = the amount risked).</div>
 
+  <div id="botBlock" hidden>
+    <h2>THE BOT: trend pullback + liquidity sweep (daily, 1-5 day holds)</h2>
+    <div class="sub">Longs: uptrend (above a rising 50-day average), 4+ bar pullback, sweep of a liquidity level that closes back above it,
+      close in the upper half; stop just under the sweep low; exit by day 5. Shorts (strict): downtrend on the daily AND ~20-week average,
+      market (SPY) below its 50-day, 5+ bar rally, sweep of a strong level with a second level in the same place, weak close on 1.2x volume;
+      breakeven after 0.5 ATR, then the stop trails each prior bar's high; exit by day 3. Exits: 1/2 at +5% (stop then locks +2.5%), 1/4 at +7.5%, rest at +10%.</div>
+    <div class="tbl" id="botTbl" style="margin-top:8px"></div>
+  </div>
   <div class="cols">
     <div><h2>Entered at the close</h2><div class="tiles" id="tClose"></div></div>
     <div><h2>Safer entry (break of the reversal bar)</h2><div class="tiles" id="tSafer"></div></div>
@@ -45,15 +53,20 @@
   <div id="levelBlock" hidden>
     <h2>Entry at the liquidity line (no tail needed)</h2>
     <div class="sub">Same setup (time count 7+, orderly move into a strong level) but a limit order at the level the first
-      time price reaches it; stop 1 ATR beyond the level. The fill bar can only stop out.</div>
+      time price reaches it. Exits: stop to breakeven after a 1-ATR move in favour, 1/2 off at +5% (stop then locks +2.5%),
+      1/4 at +7.5%, the rest at +10%; time stop after 15 bars. The fill bar can only stop out.</div>
     <div class="tiles" id="tLevel"></div>
+    <h2>Level entry: stop width and add-on variants</h2>
+    <div class="sub">Each cell: average result in R (1R = the most the trade could lose with every entry filled), average %
+      on one normal position, win rate, number of trades. "Double" risks twice a normal position, so compare its % column too.</div>
+    <div class="tbl" id="vars"></div>
   </div>
 
   <h2>Proposed rule changes</h2>
   <div class="box" id="props"></div>
 
   <h2>Breakdown</h2>
-  <div class="bar"><select id="bdVer"><option value="close">Entered at the close</option><option value="safer">Safer entry</option><option value="level">Entry at the liquidity line</option></select></div>
+  <div class="bar"><select id="bdVer"><option value="close">Entered at the close</option><option value="safer">Safer entry</option><option value="level">Entry at the liquidity line</option><option value="bot">The bot</option><option value="bot_intraday">The bot (intraday entry)</option></select></div>
   <div class="tbl" id="bd"></div>
 
   <h2>All suggestions</h2>
@@ -92,10 +105,37 @@ function result(v){
 }
 
 function render(){
+  const bot = REV?.bot, boti = REV?.bot_intraday;
+  $("botBlock").hidden = !(bot || boti);
+  if (bot || boti) {
+    const part = (title, b) => !b ? [] : [[`<i>${title}</i>`, null],
+      ["All (sized: longs 1.25x, shorts 0.5x)", b.all], ["Longs", b.long], ["Shorts", b.short],
+      ["First half of the period", b.first_half], ["Second half of the period", b.second_half]];
+    const rowsB = [...part("Entry at the 3:30 PM close", bot), ...part("Entry during the day (hourly checks, no chase beyond 2%)", boti)];
+    $("botTbl").innerHTML = `<table><tr><th></th><th>Trades</th><th>Per week</th><th>Win rate</th><th>Average</th><th>Average %</th><th>Avg days held</th><th>Reached +5%</th><th>Total % (sized)</th></tr>` +
+      rowsB.map(([k, b]) => !b ? `<tr><td colspan="9"><b>${k}</b></td></tr>` : `<tr><td>${k}</td><td>${b.n}</td><td>${b.per_week ?? "–"}</td><td>${pc(b.win)}</td><td>${R(b.avg_R)}</td><td>${P(b.avg_ret)}</td><td>${b.avg_days ?? "–"}</td><td>${pc(b.hit_5pct)}</td><td>${b.total_ret_sized ?? "–"}</td></tr>`).join("") + `</table>`;
+  }
   tiles($("tClose"), REV?.versions?.close?.summary);
   tiles($("tSafer"), REV?.versions?.safer?.summary);
   $("levelBlock").hidden = !REV?.versions?.level;
   if (REV?.versions?.level) tiles($("tLevel"), REV.versions.level.summary);
+  const vars = REV?.level_variants || [], groups = ["all", "long", "short", "new rules", "new rules long", "new rules short", "new rules 1st half", "new rules 2nd half", "policy"];
+  const bp = REV?.bot_policy;
+  const cell = g => !g || !g.n ? "–" : `${R(g.avg_R)} ${P(g.avg_ret)}<br><span class="sub">${pc(g.win)} win · ${g.n}</span>`;
+  $("vars").innerHTML = vars.length ? `<table><tr><th>Variant</th>${groups.map(g => `<th>${g === "policy" ? "bot policy" : g}</th>`).join("")}</tr>` +
+    vars.map(v => `<tr><td><b>${esc(v.label)}</b></td>${groups.map(g => `<td>${cell(v[g])}</td>`).join("")}</tr>`).join("") + `</table>`
+    : `<div class="empty">Run the backtest to compare variants.</div>`;
+  if (bp && vars.length) $("vars").insertAdjacentHTML("beforeend", `<div class="sub" style="padding:8px 10px">"new rules" = only trades that pass the
+    stricter short / looser long level rules (SIDE_RULES in config.py); 1st/2nd half splits the period to check the rules hold in both.
+    Bot policy: new rules, longs ${bp.long_size}x, shorts ${bp.short_size}x${bp.daily_shorts ? "" : ", no daily shorts"}; its % column is size-weighted.
+    Shorts use closer monitoring: breakeven after 0.5 ATR and an 8-bar time stop.</div>`);
+  const lg = REV?.level_groups || [];
+  if (lg.length) {
+    const names = [...new Set(lg.map(x => x.group))].sort();
+    const f = (g, sd) => { const x = lg.find(y => y.group === g && y.side === sd); return x ? `${R(x.avg_R)} <span class="sub">${pc(x.win)} · ${x.n}</span>` : "–"; };
+    $("vars").insertAdjacentHTML("beforeend", `<h2 style="margin:14px 10px 6px">Level types by side (headline exits)</h2><table><tr><th>Level type</th><th>Long</th><th>Short</th></tr>` +
+      names.map(g => `<tr><td>${esc(g)}</td><td>${f(g, "long")}</td><td>${f(g, "short")}</td></tr>`).join("") + `</table>`);
+  }
   const props = REV?.proposals || [], notes = REV?.notes || [];
   $("props").innerHTML = (props.length ? `<ol>${props.map(p => `<li><b>${esc(p.change)}</b> <span class="sub">(${esc(p.param)}, ${p.version === "close" ? "close entry" : "safer entry"})</span><br>${esc(p.evidence)}</li>`).join("")}</ol>`
     : `<div class="sub">No proposals yet.</div>`) + notes.map(n => `<div class="sub">${esc(n)}</div>`).join("");
