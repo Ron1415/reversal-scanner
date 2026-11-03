@@ -10,10 +10,12 @@ on:
     - cron: "5 20 * * 1-5"
     - cron: "30 20 * * 1-5"
     - cron: "50 20 * * 1-5"
+    # THE BOT (paper): every 10 minutes in the morning. The bot itself only acts 9:40 AM-12:05 PM New York time.
+    - cron: "*/10 13-17 * * 1-5"
   workflow_dispatch:
     inputs:
       mode:
-        description: "full = scan every stock, quick = re-check today's list, analyze = update the trackers, backtest = replay past trading days (set the length below)"
+        description: "full = scan every stock, quick = re-check today's list, analyze = update the trackers, backtest = replay past trading days (set the length below), bot = run the paper bot now"
         default: "full"
       backtest_days:
         description: "Backtest length in trading days (125 = about 6 months, 250 = about 1 year)"
@@ -50,11 +52,14 @@ jobs:
         run: |
           if [ "$MODE" = "analyze" ]; then
             python scanner.py --analyze
+          elif [ "$MODE" = "bot" ]; then
+            python scanner.py --bot --force
           elif [ "$MODE" = "backtest" ]; then
             python scanner.py --backtest "${BT_DAYS:-125}"
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             python scanner.py --refresh "${MODE:-full}"
           else
+            python scanner.py --bot
             python scanner.py --auto
           fi
           mkdir -p site
@@ -64,7 +69,7 @@ jobs:
         run: |
           git config user.name "reversal-bot"
           git config user.email "actions@users.noreply.github.com"
-          for f in site history suggestions.json earnings_cache.json backtest_suggestions.json; do
+          for f in site history bot suggestions.json earnings_cache.json backtest_suggestions.json; do
             if [ -e "$f" ]; then git add -A "$f"; fi
           done
           git diff --cached --quiet || git commit -m "Scan $(TZ=America/New_York date '+%Y-%m-%d %H:%M ET')"
