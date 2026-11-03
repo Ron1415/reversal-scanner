@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "full = scan every stock, quick = re-check today's list, analyze = update the trade tracker only"
+        description: "full = scan every stock, quick = re-check today's list, analyze = update the trackers, backtest = replay the last 60 trading days"
         default: "full"
       check_tickers:
         description: "Optional: check tickers instead of scanning (e.g. TPR AAPL)"
@@ -32,7 +32,7 @@ concurrency: reversal-scan
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 50
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -66,6 +66,8 @@ jobs:
         run: |
           if [ "$MODE" = "analyze" ]; then
             python scanner.py --analyze
+          elif [ "$MODE" = "backtest" ]; then
+            python scanner.py --backtest 60
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             python scanner.py --refresh "${MODE:-full}"
           else
@@ -79,8 +81,9 @@ jobs:
         run: |
           git config user.name "reversal-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add -A site
-          if [ -d history ]; then git add -A history; fi
+          for f in site history suggestions.json earnings_cache.json backtest_suggestions.json; do
+            if [ -e "$f" ]; then git add -A "$f"; fi
+          done
           git diff --cached --quiet || git commit -m "Scan $(TZ=America/New_York date '+%Y-%m-%d %H:%M ET')"
           # trades may have been saved from the dashboard during the run
           for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
