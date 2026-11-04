@@ -489,55 +489,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.82,
-"r": 0.55,
+"ret": -0.74,
+"r": -0.49,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-04",
 "added": false,
 "targets_hit": 0,
-"mfe": 1.17,
-"mae": -0.27
+"mfe": 1.32,
+"mae": -1.01
 },
 "variants": {
 "s0t0": {
-"r": 0.55,
-"ret": 0.82,
+"r": -0.49,
+"ret": -0.74,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.55,
-"ret": 0.82,
+"r": -0.49,
+"ret": -0.74,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.26,
-"ret": 0.82,
+"r": -0.24,
+"ret": -0.74,
 "done": false,
 "exit": "open",
 "risk": 3.13
 },
 "s1t1": {
-"r": 0.26,
-"ret": 0.82,
+"r": -0.24,
+"ret": -0.74,
 "done": false,
 "exit": "open",
 "risk": 3.13
 },
 "s2t0": {
-"r": 0.55,
-"ret": 0.82,
+"r": -0.49,
+"ret": -0.74,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.55,
-"ret": 0.82,
+"r": -0.49,
+"ret": -0.74,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -604,55 +604,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.88,
-"r": 0.59,
+"ret": 0.43,
+"r": 0.29,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-04",
 "added": false,
 "targets_hit": 0,
-"mfe": 1.08,
+"mfe": 1.89,
 "mae": 0.0
 },
 "variants": {
 "s0t0": {
-"r": 0.59,
-"ret": 0.88,
+"r": 0.29,
+"ret": 0.43,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.59,
-"ret": 0.88,
+"r": 0.29,
+"ret": 0.43,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.36,
-"ret": 0.88,
+"r": 0.17,
+"ret": 0.43,
 "done": false,
 "exit": "open",
 "risk": 2.46
 },
 "s1t1": {
-"r": 0.36,
-"ret": 0.88,
+"r": 0.17,
+"ret": 0.43,
 "done": false,
 "exit": "open",
 "risk": 2.46
 },
 "s2t0": {
-"r": 0.59,
-"ret": 0.88,
+"r": 0.29,
+"ret": 0.43,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.59,
-"ret": 0.88,
+"r": 0.29,
+"ret": 0.43,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -708,7 +708,7 @@
 "idea": "SELL ~45.72 at 09:45: 5-min swept major swing high 45.87 (low of the run 45.99) and reclaimed it; stop 46.41 (0.9% risk). Watch only (shorts are paused).",
 "valid_at_last_scan": true,
 "last_reason": "",
-"status": "open",
+"status": "closed",
 "outcome": {
 "bot_5m_watch": {
 "entry_rule": "intraday at 09:45 ET",
@@ -718,61 +718,133 @@
 "why": "entered at 09:45",
 "risk_pct": 1.5,
 "plan": {
-"done": false,
-"ret": -0.34,
-"r": -0.23,
+"done": true,
+"ret": -1.5,
+"r": -1.0,
 "bars": 1,
-"exit": "open",
+"exit": "stop",
 "exit_date": "2026-11-04",
 "added": false,
 "targets_hit": 0,
 "mfe": 0.16,
-"mae": -0.39
+"mae": -1.79
 },
 "variants": {
 "s0t0": {
-"r": -0.23,
-"ret": -0.34,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.23,
-"ret": -0.34,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.13,
-"ret": -0.34,
+"r": -0.55,
+"ret": -1.42,
 "done": false,
 "exit": "open",
 "risk": 2.58
 },
 "s1t1": {
-"r": -0.13,
-"ret": -0.34,
+"r": -0.55,
+"ret": -1.42,
 "done": false,
 "exit": "open",
 "risk": 2.58
 },
 "s2t0": {
-"r": -0.23,
-"ret": -0.34,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.23,
-"ret": -0.34,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 }
 }
+}
+},
+"paper": false,
+"watch": true,
+"live": true
+},
+{
+"key": "T|daily|bearish|2026-11-04|bot_5m_watch",
+"id": "T-2026-11-04-short-bot_5m_watch",
+"ticker": "T",
+"timeframe": "daily",
+"strategy": "bot_5m_watch",
+"direction": "bearish",
+"side": "short",
+"rev_date": "2026-11-04",
+"signal_date": "2026-11-04",
+"first_seen": "2026-11-04T11:20",
+"entry_time": "11:20",
+"sweep_time": "10:55",
+"stage": "sweep5m",
+"stages_seen": [
+"sweep5m"
+],
+"scan_price": 22.0199,
+"entry": 22.0199,
+"stop": 22.3502,
+"risk_pct": 1.5,
+"atr": 0.6793,
+"level": 22.0281,
+"level_label": "Trendline (falling resistance)",
+"level_group": "Trendline",
+"confluence": 2,
+"count": 4,
+"chase_pct": 0.04,
+"spy_up": false,
+"size": 0.0,
+"journal": true,
+"keys": [
+"stage_sweep5m",
+"liq_trendline"
+],
+"factors": [
+"Trend down (50-day average)",
+"4-bar pullback",
+"Trendline (falling resistance) @ 22.03 with 2 levels together",
+"5-min stop run to 22.12 at 10:55, back below the line at 11:20"
+],
+"idea": "SELL ~22.02 at 11:20: 5-min swept trendline (falling resistance) 22.03 (low of the run 22.12) and reclaimed it; stop 22.35 (1.5% risk). Watch only (shorts are paused).",
+"valid_at_last_scan": true,
+"last_reason": "",
+"status": "open",
+"outcome": {
+"bot_5m_watch": {
+"entry_rule": "intraday at 11:20 ET",
+"triggered": true,
+"entry": 22.0199,
+"entry_date": "2026-11-04",
+"why": "entered at 11:20",
+"risk_pct": 1.5,
+"plan": {
+"done": false,
+"ret": 0.0,
+"r": 0.0,
+"bars": 0,
+"exit": "open",
+"exit_date": null,
+"added": false,
+"targets_hit": 0,
+"mfe": 0.0,
+"mae": 0.0
+},
+"variants": {}
 }
 },
 "paper": false,
