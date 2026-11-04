@@ -478,7 +478,7 @@
 "idea": "SELL ~43.89 at 09:40: 5-min swept major swing high 43.91 (low of the run 44.19) and reclaimed it; stop 44.55 (1.5% risk). Watch only (shorts are paused).",
 "valid_at_last_scan": true,
 "last_reason": "",
-"status": "open",
+"status": "closed",
 "outcome": {
 "bot_5m_watch": {
 "entry_rule": "intraday at 09:40 ET",
@@ -488,58 +488,58 @@
 "why": "entered at 09:40",
 "risk_pct": 1.5,
 "plan": {
-"done": false,
-"ret": -0.74,
-"r": -0.49,
+"done": true,
+"ret": -1.5,
+"r": -1.0,
 "bars": 1,
-"exit": "open",
+"exit": "stop",
 "exit_date": "2026-11-04",
 "added": false,
 "targets_hit": 0,
 "mfe": 1.32,
-"mae": -1.01
+"mae": -1.78
 },
 "variants": {
 "s0t0": {
-"r": -0.49,
-"ret": -0.74,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.49,
-"ret": -0.74,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.24,
-"ret": -0.74,
+"r": -0.45,
+"ret": -1.41,
 "done": false,
 "exit": "open",
 "risk": 3.13
 },
 "s1t1": {
-"r": -0.24,
-"ret": -0.74,
+"r": -0.45,
+"ret": -1.41,
 "done": false,
 "exit": "open",
 "risk": 3.13
 },
 "s2t0": {
-"r": -0.49,
-"ret": -0.74,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.49,
-"ret": -0.74,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 }
 }
@@ -604,55 +604,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.43,
-"r": 0.29,
+"ret": -0.63,
+"r": -0.42,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-04",
 "added": false,
 "targets_hit": 0,
 "mfe": 1.89,
-"mae": 0.0
+"mae": -0.8
 },
 "variants": {
 "s0t0": {
-"r": 0.29,
-"ret": 0.43,
+"r": -0.42,
+"ret": -0.63,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.29,
-"ret": 0.43,
+"r": -0.42,
+"ret": -0.63,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.17,
-"ret": 0.43,
+"r": -0.26,
+"ret": -0.63,
 "done": false,
 "exit": "open",
 "risk": 2.46
 },
 "s1t1": {
-"r": 0.17,
-"ret": 0.43,
+"r": -0.26,
+"ret": -0.63,
 "done": false,
 "exit": "open",
 "risk": 2.46
 },
 "s2t0": {
-"r": 0.29,
-"ret": 0.43,
+"r": -0.42,
+"ret": -0.63,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.29,
-"ret": 0.43,
+"r": -0.42,
+"ret": -0.63,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -834,17 +834,60 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.0,
-"r": 0.0,
-"bars": 0,
+"ret": 0.34,
+"r": 0.23,
+"bars": 1,
 "exit": "open",
-"exit_date": null,
+"exit_date": "2026-11-04",
 "added": false,
 "targets_hit": 0,
-"mfe": 0.0,
-"mae": 0.0
+"mfe": 0.41,
+"mae": -0.05
 },
-"variants": {}
+"variants": {
+"s0t0": {
+"r": 0.23,
+"ret": 0.34,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s0t1": {
+"r": 0.23,
+"ret": 0.34,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s1t0": {
+"r": 0.12,
+"ret": 0.34,
+"done": false,
+"exit": "open",
+"risk": 2.73
+},
+"s1t1": {
+"r": 0.12,
+"ret": 0.34,
+"done": false,
+"exit": "open",
+"risk": 2.73
+},
+"s2t0": {
+"r": 0.23,
+"ret": 0.34,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s2t1": {
+"r": 0.23,
+"ret": 0.34,
+"done": false,
+"exit": "open",
+"risk": 1.5
+}
+}
 }
 },
 "paper": false,
