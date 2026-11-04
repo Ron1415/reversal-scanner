@@ -41,7 +41,7 @@
   <div id="paperBlock" hidden>
     <h2>THE BOT: paper trades (live)</h2>
     <div class="sub">Approved rules: 5-minute stop run through a daily liquidity line, entry on the first close back across it
-      before noon; longs with SPY above its 50-day at the strongest levels, shorts only with SPY below its 50-day (half size);
+      before noon; longs with SPY above its 50-day at the strongest levels, shorts are paused (short signals are logged as "watch only" and do not count as trades);
       stop at least 1.5% away; exits 1/2 at +5% (stop then locks +2.5%), 1/4 at +7.5%, rest at +10%, 1-5 days.</div>
     <div class="tbl" id="paperTbl" style="margin-top:8px"></div>
   </div>
@@ -112,13 +112,13 @@ function result(v){
 }
 
 function render(){
-  const paper = RECS.filter(r => r.strategy === "bot_5m" && r.live).sort((a, b) => (b.first_seen || "").localeCompare(a.first_seen || ""));
+  const paper = RECS.filter(r => (r.strategy === "bot_5m" || r.strategy === "bot_5m_watch") && r.live).sort((a, b) => (b.first_seen || "").localeCompare(a.first_seen || ""));
   $("paperBlock").hidden = !paper.length && $("src").value === "bt";
   $("paperTbl").innerHTML = paper.length ? `<table><tr><th>Entered</th><th>Ticker</th><th>Side</th><th>Entry</th><th>Stop</th><th>Risk</th><th>Line</th><th>Size</th><th>Status</th><th>Result</th></tr>` +
-    paper.map(r => { const p = (r.outcome?.bot_5m || {}).plan || {};
+    paper.map(r => { const p = (r.outcome?.[r.strategy] || {}).plan || {};
       return `<tr><td>${esc((r.first_seen || "").replace("T", " "))}</td><td><b><a href="https://www.tradingview.com/chart/?symbol=${r.ticker}" target="_blank" rel="noopener">${r.ticker}</a></b></td>
       <td>${r.side}</td><td>${r.entry?.toFixed(2)}</td><td>${r.stop?.toFixed(2)}</td><td>${r.risk_pct}%</td><td>${r.level?.toFixed(2)} <span class="sub">${esc(r.level_label)}</span></td>
-      <td>${r.size}x</td><td>${r.status}</td><td>${p.ret == null ? "–" : `${esc(p.exit || "")} ${P(p.ret)} ${R(p.r)}`}</td></tr>`; }).join("") + `</table>`
+      <td>${r.watch ? `<span class="sub">watch only</span>` : `${r.size}x`}</td><td>${r.status}</td><td>${p.ret == null ? "–" : `${esc(p.exit || "")} ${P(p.ret)} ${R(p.r)}`}</td></tr>`; }).join("") + `</table>`
     : `<div class="empty">No bot signals yet. The bot checks every 10 minutes from 9:40 AM to noon ET on trading days.</div>`;
   const bot = REV?.bot, boti = REV?.bot_intraday, bot5 = REV?.bot_5m, bot5b = REV?.bot_5m_break;
   $("botBlock").hidden = !(bot || boti || bot5 || bot5b || REV?.bot_fvg_limit);
