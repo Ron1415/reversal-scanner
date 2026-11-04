@@ -144,8 +144,8 @@
 "risk_pct": 1.91,
 "plan": {
 "done": false,
-"ret": 2.53,
-"r": 1.33,
+"ret": 2.75,
+"r": 1.44,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -154,8 +154,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.53,
-"r": 1.33,
+"ret": 2.75,
+"r": 1.44,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -164,8 +164,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.53,
-"r": 1.33,
+"ret": 2.75,
+"r": 1.44,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -400,8 +400,8 @@
 "risk_pct": 1.81,
 "plan": {
 "done": false,
-"ret": 3.21,
-"r": 1.77,
+"ret": 3.27,
+"r": 1.81,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -420,8 +420,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 1.41,
-"r": 0.78,
+"ret": 1.55,
+"r": 0.85,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -654,8 +654,8 @@
 "risk_pct": 2.4,
 "plan": {
 "done": false,
-"ret": -1.55,
-"r": -0.64,
+"ret": -1.67,
+"r": -0.7,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -664,8 +664,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -1.55,
-"r": -0.64,
+"ret": -1.67,
+"r": -0.7,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -674,8 +674,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -1.55,
-"r": -0.64,
+"ret": -1.67,
+"r": -0.7,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -693,8 +693,8 @@
 "risk_pct": 1.91,
 "plan": {
 "done": false,
-"ret": -1.06,
-"r": -0.55,
+"ret": -1.19,
+"r": -0.62,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -703,8 +703,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -1.06,
-"r": -0.55,
+"ret": -1.19,
+"r": -0.62,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -713,8 +713,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -1.06,
-"r": -0.55,
+"ret": -1.19,
+"r": -0.62,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -723,7 +723,7 @@
 }
 }
 },
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -779,8 +779,8 @@
 "risk_pct": 2.25,
 "plan": {
 "done": false,
-"ret": -0.34,
-"r": -0.15,
+"ret": 0.35,
+"r": 0.16,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -789,8 +789,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -0.34,
-"r": -0.15,
+"ret": 0.35,
+"r": 0.16,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -799,8 +799,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -0.34,
-"r": -0.15,
+"ret": 0.35,
+"r": 0.16,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -873,8 +873,8 @@
 "risk_pct": 3.79,
 "plan": {
 "done": false,
-"ret": 2.6,
-"r": 0.69,
+"ret": 2.65,
+"r": 0.7,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -883,8 +883,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.6,
-"r": 0.69,
+"ret": 2.65,
+"r": 0.7,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -893,8 +893,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.6,
-"r": 0.69,
+"ret": 2.65,
+"r": 0.7,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -997,8 +997,8 @@
 "risk_pct": 1.57,
 "plan": {
 "done": false,
-"ret": 1.02,
-"r": 0.65,
+"ret": 1.36,
+"r": 0.87,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -1007,8 +1007,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 1.02,
-"r": 0.65,
+"ret": 1.36,
+"r": 0.87,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -1017,8 +1017,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 1.02,
-"r": 0.65,
+"ret": 1.36,
+"r": 0.87,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -1240,8 +1240,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": -0.88,
-"r": -0.59,
+"ret": -1.28,
+"r": -0.86,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-04",
@@ -1252,43 +1252,43 @@
 },
 "variants": {
 "s0t0": {
-"r": -0.59,
-"ret": -0.88,
+"r": -0.86,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.59,
-"ret": -0.88,
+"r": -0.86,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.36,
-"ret": -0.88,
+"r": -0.52,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 2.46
 },
 "s1t1": {
-"r": -0.36,
-"ret": -0.88,
+"r": -0.52,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 2.46
 },
 "s2t0": {
-"r": -0.59,
-"ret": -0.88,
+"r": -0.86,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.59,
-"ret": -0.88,
+"r": -0.86,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -1470,55 +1470,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 1.25,
-"r": 0.84,
+"ret": 0.98,
+"r": 0.65,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-04",
 "added": false,
 "targets_hit": 0,
-"mfe": 1.36,
+"mfe": 1.5,
 "mae": -0.05
 },
 "variants": {
 "s0t0": {
-"r": 0.84,
-"ret": 1.25,
+"r": 0.65,
+"ret": 0.98,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.84,
-"ret": 1.25,
+"r": 0.65,
+"ret": 0.98,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.46,
-"ret": 1.25,
+"r": 0.36,
+"ret": 0.98,
 "done": false,
 "exit": "open",
 "risk": 2.73
 },
 "s1t1": {
-"r": 0.46,
-"ret": 1.25,
+"r": 0.36,
+"ret": 0.98,
 "done": false,
 "exit": "open",
 "risk": 2.73
 },
 "s2t0": {
-"r": 0.84,
-"ret": 1.25,
+"r": 0.65,
+"ret": 0.98,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.84,
-"ret": 1.25,
+"r": 0.65,
+"ret": 0.98,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -1576,9 +1576,9 @@
 "earnings_days": 71,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
-"valid_at_last_scan": true,
-"last_reason": ""
+"last_seen": "2026-11-04T15:35-05:00",
+"valid_at_last_scan": false,
+"last_reason": "no tail yet and not pushing strongly enough for an early heads-up"
 },
 {
 "key": "ABT|daily|bearish|2026-11-04",
@@ -1626,7 +1626,7 @@
 "earnings_days": 61,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -1676,7 +1676,7 @@
 "earnings_days": 1,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -1726,7 +1726,7 @@
 "earnings_days": 3,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -1776,7 +1776,7 @@
 "earnings_days": 8,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -1823,7 +1823,7 @@
 "earnings_days": 65,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -1917,7 +1917,7 @@
 "earnings_days": 78,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -1966,7 +1966,7 @@
 "earnings_days": 3,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -2013,7 +2013,7 @@
 "earnings_days": 1,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -2060,7 +2060,7 @@
 "earnings_days": 75,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -2107,7 +2107,7 @@
 "earnings_days": 78,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -2154,7 +2154,7 @@
 "earnings_days": 66,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -2203,7 +2203,7 @@
 "earnings_days": 13,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -2249,7 +2249,7 @@
 "earnings_days": 11,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -2295,7 +2295,7 @@
 "earnings_days": 9,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-04T15:17-05:00",
+"last_seen": "2026-11-04T15:35-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 }
