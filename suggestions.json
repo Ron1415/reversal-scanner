@@ -1470,8 +1470,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": -0.09,
-"r": -0.06,
+"ret": 0.7,
+"r": 0.47,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-05",
@@ -1482,43 +1482,43 @@
 },
 "variants": {
 "s0t0": {
-"r": -0.06,
-"ret": -0.09,
+"r": 0.47,
+"ret": 0.7,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.06,
-"ret": -0.09,
+"r": 0.47,
+"ret": 0.7,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.03,
-"ret": -0.09,
+"r": 0.26,
+"ret": 0.7,
 "done": false,
 "exit": "open",
 "risk": 2.73
 },
 "s1t1": {
-"r": -0.03,
-"ret": -0.09,
+"r": 0.26,
+"ret": 0.7,
 "done": false,
 "exit": "open",
 "risk": 2.73
 },
 "s2t0": {
-"r": -0.06,
-"ret": -0.09,
+"r": 0.47,
+"ret": 0.7,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.06,
-"ret": -0.09,
+"r": 0.47,
+"ret": 0.7,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -2469,58 +2469,403 @@
 "risk_pct": 1.75,
 "plan": {
 "done": false,
-"ret": 0.7,
-"r": 0.4,
+"ret": 0.09,
+"r": 0.05,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-05",
 "added": false,
 "targets_hit": 0,
-"mfe": 1.58,
-"mae": -0.45
+"mfe": 1.64,
+"mae": -1.59
 },
 "variants": {
 "s0t0": {
-"r": 0.4,
-"ret": 0.7,
+"r": 0.05,
+"ret": 0.09,
 "done": false,
 "exit": "open",
 "risk": 1.75
 },
 "s0t1": {
-"r": 0.4,
-"ret": 0.7,
+"r": 0.05,
+"ret": 0.09,
 "done": false,
 "exit": "open",
 "risk": 1.75
 },
 "s1t0": {
-"r": 0.22,
-"ret": 0.7,
+"r": 0.03,
+"ret": 0.09,
 "done": false,
 "exit": "open",
 "risk": 3.2
 },
 "s1t1": {
-"r": 0.22,
-"ret": 0.7,
+"r": 0.03,
+"ret": 0.09,
 "done": false,
 "exit": "open",
 "risk": 3.2
 },
 "s2t0": {
-"r": 0.4,
-"ret": 0.7,
+"r": 0.05,
+"ret": 0.09,
 "done": false,
 "exit": "open",
 "risk": 1.75
 },
 "s2t1": {
-"r": 0.4,
-"ret": 0.7,
+"r": 0.05,
+"ret": 0.09,
 "done": false,
 "exit": "open",
 "risk": 1.75
+}
+}
+}
+},
+"paper": true,
+"watch": false,
+"live": true
+},
+{
+"key": "CRM|daily|bullish|2026-11-05|bot_5m",
+"id": "CRM-2026-11-05-long-bot_5m",
+"ticker": "CRM",
+"timeframe": "daily",
+"strategy": "bot_5m",
+"direction": "bullish",
+"side": "long",
+"rev_date": "2026-11-05",
+"signal_date": "2026-11-05",
+"first_seen": "2026-11-05T10:25",
+"entry_time": "10:25",
+"sweep_time": "09:40",
+"stage": "sweep5m",
+"stages_seen": [
+"sweep5m"
+],
+"scan_price": 225.265,
+"entry": 225.265,
+"stop": 219.4236,
+"risk_pct": 2.59,
+"atr": 9.3069,
+"level": 225.04,
+"level_label": "Prior week's low",
+"level_group": "Prior week/month",
+"confluence": 3,
+"count": 5,
+"chase_pct": 0.1,
+"spy_up": true,
+"size": 1.25,
+"journal": true,
+"keys": [
+"stage_sweep5m",
+"liq_prior_week's_low"
+],
+"factors": [
+"Trend up (50-day average)",
+"5-bar pullback",
+"Prior week's low @ 225.04 with 3 levels together",
+"5-min stop run to 221.29 at 09:40, back above the line at 10:25"
+],
+"idea": "BUY ~225.26 at 10:25: 5-min swept prior week's low 225.04 (low of the run 221.29) and reclaimed it; stop 219.42 (2.6% risk). Size 1.25x. Paper trade.",
+"valid_at_last_scan": true,
+"last_reason": "",
+"status": "open",
+"outcome": {
+"bot_5m": {
+"entry_rule": "intraday at 10:25 ET",
+"triggered": true,
+"entry": 225.265,
+"entry_date": "2026-11-05",
+"why": "entered at 10:25",
+"risk_pct": 2.59,
+"plan": {
+"done": false,
+"ret": -0.84,
+"r": -0.32,
+"bars": 1,
+"exit": "open",
+"exit_date": "2026-11-05",
+"added": false,
+"targets_hit": 0,
+"mfe": 0.88,
+"mae": -0.86
+},
+"variants": {
+"s0t0": {
+"r": -0.32,
+"ret": -0.84,
+"done": false,
+"exit": "open",
+"risk": 2.59
+},
+"s0t1": {
+"r": -0.32,
+"ret": -0.84,
+"done": false,
+"exit": "open",
+"risk": 2.59
+},
+"s1t0": {
+"r": -0.22,
+"ret": -0.84,
+"done": false,
+"exit": "open",
+"risk": 3.83
+},
+"s1t1": {
+"r": -0.22,
+"ret": -0.84,
+"done": false,
+"exit": "open",
+"risk": 3.83
+},
+"s2t0": {
+"r": -0.32,
+"ret": -0.84,
+"done": false,
+"exit": "open",
+"risk": 2.59
+},
+"s2t1": {
+"r": -0.32,
+"ret": -0.84,
+"done": false,
+"exit": "open",
+"risk": 2.59
+}
+}
+}
+},
+"paper": true,
+"watch": false,
+"live": true
+},
+{
+"key": "DHR|daily|bullish|2026-11-05|bot_5m",
+"id": "DHR-2026-11-05-long-bot_5m",
+"ticker": "DHR",
+"timeframe": "daily",
+"strategy": "bot_5m",
+"direction": "bullish",
+"side": "long",
+"rev_date": "2026-11-05",
+"signal_date": "2026-11-05",
+"first_seen": "2026-11-05T11:15",
+"entry_time": "11:15",
+"sweep_time": "11:05",
+"stage": "sweep5m",
+"stages_seen": [
+"sweep5m"
+],
+"scan_price": 230.03,
+"entry": 230.03,
+"stop": 226.5796,
+"risk_pct": 1.5,
+"atr": 6.6104,
+"level": 229.32,
+"level_label": "Prior week's low",
+"level_group": "Prior week/month",
+"confluence": 3,
+"count": 4,
+"chase_pct": 0.31,
+"spy_up": true,
+"size": 1.25,
+"journal": false,
+"keys": [
+"stage_sweep5m",
+"liq_prior_week's_low"
+],
+"factors": [
+"Trend up (50-day average)",
+"4-bar pullback",
+"Prior week's low @ 229.32 with 3 levels together",
+"5-min stop run to 228.16 at 11:05, back above the line at 11:15"
+],
+"idea": "BUY ~230.03 at 11:15: 5-min swept prior week's low 229.32 (low of the run 228.16) and reclaimed it; stop 226.58 (1.5% risk). Size 1.25x. Paper trade.",
+"valid_at_last_scan": true,
+"last_reason": "",
+"status": "open",
+"outcome": {
+"bot_5m": {
+"entry_rule": "intraday at 11:15 ET",
+"triggered": true,
+"entry": 230.03,
+"entry_date": "2026-11-05",
+"why": "entered at 11:15",
+"risk_pct": 1.5,
+"plan": {
+"done": false,
+"ret": 0.12,
+"r": 0.08,
+"bars": 1,
+"exit": "open",
+"exit_date": "2026-11-05",
+"added": false,
+"targets_hit": 0,
+"mfe": 0.47,
+"mae": -0.25
+},
+"variants": {
+"s0t0": {
+"r": 0.08,
+"ret": 0.12,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s0t1": {
+"r": 0.08,
+"ret": 0.12,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s1t0": {
+"r": 0.05,
+"ret": 0.12,
+"done": false,
+"exit": "open",
+"risk": 2.36
+},
+"s1t1": {
+"r": 0.05,
+"ret": 0.12,
+"done": false,
+"exit": "open",
+"risk": 2.36
+},
+"s2t0": {
+"r": 0.08,
+"ret": 0.12,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s2t1": {
+"r": 0.08,
+"ret": 0.12,
+"done": false,
+"exit": "open",
+"risk": 1.5
+}
+}
+}
+},
+"paper": true,
+"watch": false,
+"live": true
+},
+{
+"key": "NUE|daily|bullish|2026-11-05|bot_5m",
+"id": "NUE-2026-11-05-long-bot_5m",
+"ticker": "NUE",
+"timeframe": "daily",
+"strategy": "bot_5m",
+"direction": "bullish",
+"side": "long",
+"rev_date": "2026-11-05",
+"signal_date": "2026-11-05",
+"first_seen": "2026-11-05T11:15",
+"entry_time": "11:15",
+"sweep_time": "10:50",
+"stage": "sweep5m",
+"stages_seen": [
+"sweep5m"
+],
+"scan_price": 254.11,
+"entry": 254.11,
+"stop": 248.6905,
+"risk_pct": 2.13,
+"atr": 9.2474,
+"level": 253.55,
+"level_label": "Prior week's low",
+"level_group": "Prior week/month",
+"confluence": 3,
+"count": 6,
+"chase_pct": 0.22,
+"spy_up": true,
+"size": 1.25,
+"journal": false,
+"keys": [
+"stage_sweep5m",
+"liq_prior_week's_low"
+],
+"factors": [
+"Trend up (50-day average)",
+"6-bar pullback",
+"Prior week's low @ 253.55 with 3 levels together",
+"5-min stop run to 250.54 at 10:50, back above the line at 11:15"
+],
+"idea": "BUY ~254.11 at 11:15: 5-min swept prior week's low 253.55 (low of the run 250.54) and reclaimed it; stop 248.69 (2.1% risk). Size 1.25x. Paper trade.",
+"valid_at_last_scan": true,
+"last_reason": "",
+"status": "open",
+"outcome": {
+"bot_5m": {
+"entry_rule": "intraday at 11:15 ET",
+"triggered": true,
+"entry": 254.11,
+"entry_date": "2026-11-05",
+"why": "entered at 11:15",
+"risk_pct": 2.13,
+"plan": {
+"done": false,
+"ret": 1.03,
+"r": 0.49,
+"bars": 1,
+"exit": "open",
+"exit_date": "2026-11-05",
+"added": false,
+"targets_hit": 0,
+"mfe": 1.43,
+"mae": -0.05
+},
+"variants": {
+"s0t0": {
+"r": 0.49,
+"ret": 1.03,
+"done": false,
+"exit": "open",
+"risk": 2.13
+},
+"s0t1": {
+"r": 0.49,
+"ret": 1.03,
+"done": false,
+"exit": "open",
+"risk": 2.13
+},
+"s1t0": {
+"r": 0.32,
+"ret": 1.03,
+"done": false,
+"exit": "open",
+"risk": 3.22
+},
+"s1t1": {
+"r": 0.32,
+"ret": 1.03,
+"done": false,
+"exit": "open",
+"risk": 3.22
+},
+"s2t0": {
+"r": 0.49,
+"ret": 1.03,
+"done": false,
+"exit": "open",
+"risk": 2.13
+},
+"s2t1": {
+"r": 0.49,
+"ret": 1.03,
+"done": false,
+"exit": "open",
+"risk": 2.13
 }
 }
 }
