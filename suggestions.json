@@ -1470,55 +1470,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.82,
-"r": 0.54,
-"bars": 1,
+"ret": -0.09,
+"r": -0.06,
+"bars": 2,
 "exit": "open",
-"exit_date": "2026-11-04",
+"exit_date": "2026-11-05",
 "added": false,
 "targets_hit": 0,
 "mfe": 1.5,
-"mae": -0.05
+"mae": -0.86
 },
 "variants": {
 "s0t0": {
-"r": 0.54,
-"ret": 0.82,
+"r": -0.06,
+"ret": -0.09,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.54,
-"ret": 0.82,
+"r": -0.06,
+"ret": -0.09,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.3,
-"ret": 0.82,
+"r": -0.03,
+"ret": -0.09,
 "done": false,
 "exit": "open",
 "risk": 2.73
 },
 "s1t1": {
-"r": 0.3,
-"ret": 0.82,
+"r": -0.03,
+"ret": -0.09,
 "done": false,
 "exit": "open",
 "risk": 2.73
 },
 "s2t0": {
-"r": 0.54,
-"ret": 0.82,
+"r": -0.06,
+"ret": -0.09,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.54,
-"ret": 0.82,
+"r": -0.06,
+"ret": -0.09,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -2298,5 +2298,235 @@
 "last_seen": "2026-11-04T15:52-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
+},
+{
+"key": "ADI|daily|bullish|2026-11-05|bot_5m",
+"id": "ADI-2026-11-05-long-bot_5m",
+"ticker": "ADI",
+"timeframe": "daily",
+"strategy": "bot_5m",
+"direction": "bullish",
+"side": "long",
+"rev_date": "2026-11-05",
+"signal_date": "2026-11-05",
+"first_seen": "2026-11-05T09:40",
+"entry_time": "09:40",
+"sweep_time": "09:35",
+"stage": "sweep5m",
+"stages_seen": [
+"sweep5m"
+],
+"scan_price": 395.945,
+"entry": 395.945,
+"stop": 384.8822,
+"risk_pct": 2.79,
+"atr": 16.1391,
+"level": 393.08,
+"level_label": "Prior week's low",
+"level_group": "Prior week/month",
+"confluence": 3,
+"count": 4,
+"chase_pct": 0.73,
+"spy_up": true,
+"size": 1.25,
+"journal": true,
+"keys": [
+"stage_sweep5m",
+"liq_prior_week's_low"
+],
+"factors": [
+"Trend up (50-day average)",
+"4-bar pullback",
+"Prior week's low @ 393.08 with 3 levels together",
+"5-min stop run to 388.11 at 09:35, back above the line at 09:40"
+],
+"idea": "BUY ~395.95 at 09:40: 5-min swept prior week's low 393.08 (low of the run 388.11) and reclaimed it; stop 384.88 (2.8% risk). Size 1.25x. Paper trade.",
+"valid_at_last_scan": true,
+"last_reason": "",
+"status": "closed",
+"outcome": {
+"bot_5m": {
+"entry_rule": "intraday at 09:40 ET",
+"triggered": true,
+"entry": 395.945,
+"entry_date": "2026-11-05",
+"why": "entered at 09:40",
+"risk_pct": 2.79,
+"plan": {
+"done": true,
+"ret": -2.79,
+"r": -1.0,
+"bars": 1,
+"exit": "stop",
+"exit_date": "2026-11-05",
+"added": false,
+"targets_hit": 0,
+"mfe": 0.39,
+"mae": -3.04
+},
+"variants": {
+"s0t0": {
+"r": -1.0,
+"ret": -2.79,
+"done": true,
+"exit": "stop",
+"risk": 2.79
+},
+"s0t1": {
+"r": -1.0,
+"ret": -2.79,
+"done": true,
+"exit": "stop",
+"risk": 2.79
+},
+"s1t0": {
+"r": -0.75,
+"ret": -3.02,
+"done": false,
+"exit": "open",
+"risk": 4.02
+},
+"s1t1": {
+"r": -0.75,
+"ret": -3.02,
+"done": false,
+"exit": "open",
+"risk": 4.02
+},
+"s2t0": {
+"r": -1.0,
+"ret": -2.79,
+"done": true,
+"exit": "stop",
+"risk": 2.79
+},
+"s2t1": {
+"r": -1.0,
+"ret": -2.79,
+"done": true,
+"exit": "stop",
+"risk": 2.79
+}
+}
+}
+},
+"paper": true,
+"watch": false,
+"live": true
+},
+{
+"key": "RVTY|daily|bullish|2026-11-05|bot_5m",
+"id": "RVTY-2026-11-05-long-bot_5m",
+"ticker": "RVTY",
+"timeframe": "daily",
+"strategy": "bot_5m",
+"direction": "bullish",
+"side": "long",
+"rev_date": "2026-11-05",
+"signal_date": "2026-11-05",
+"first_seen": "2026-11-05T09:40",
+"entry_time": "09:40",
+"sweep_time": "09:35",
+"stage": "sweep5m",
+"stages_seen": [
+"sweep5m"
+],
+"scan_price": 156.22,
+"entry": 156.22,
+"stop": 153.4863,
+"risk_pct": 1.75,
+"atr": 7.5685,
+"level": 155.81,
+"level_label": "Prior week's low",
+"level_group": "Prior week/month",
+"confluence": 2,
+"count": 5,
+"chase_pct": 0.26,
+"spy_up": true,
+"size": 1.25,
+"journal": false,
+"keys": [
+"stage_sweep5m",
+"liq_prior_week's_low"
+],
+"factors": [
+"Trend up (50-day average)",
+"5-bar pullback",
+"Prior week's low @ 155.81 with 2 levels together",
+"5-min stop run to 155.00 at 09:35, back above the line at 09:40"
+],
+"idea": "BUY ~156.22 at 09:40: 5-min swept prior week's low 155.81 (low of the run 155.00) and reclaimed it; stop 153.49 (1.7% risk). Size 1.25x. Paper trade.",
+"valid_at_last_scan": true,
+"last_reason": "",
+"status": "open",
+"outcome": {
+"bot_5m": {
+"entry_rule": "intraday at 09:40 ET",
+"triggered": true,
+"entry": 156.22,
+"entry_date": "2026-11-05",
+"why": "entered at 09:40",
+"risk_pct": 1.75,
+"plan": {
+"done": false,
+"ret": 0.7,
+"r": 0.4,
+"bars": 1,
+"exit": "open",
+"exit_date": "2026-11-05",
+"added": false,
+"targets_hit": 0,
+"mfe": 1.58,
+"mae": -0.45
+},
+"variants": {
+"s0t0": {
+"r": 0.4,
+"ret": 0.7,
+"done": false,
+"exit": "open",
+"risk": 1.75
+},
+"s0t1": {
+"r": 0.4,
+"ret": 0.7,
+"done": false,
+"exit": "open",
+"risk": 1.75
+},
+"s1t0": {
+"r": 0.22,
+"ret": 0.7,
+"done": false,
+"exit": "open",
+"risk": 3.2
+},
+"s1t1": {
+"r": 0.22,
+"ret": 0.7,
+"done": false,
+"exit": "open",
+"risk": 3.2
+},
+"s2t0": {
+"r": 0.4,
+"ret": 0.7,
+"done": false,
+"exit": "open",
+"risk": 1.75
+},
+"s2t1": {
+"r": 0.4,
+"ret": 0.7,
+"done": false,
+"exit": "open",
+"risk": 1.75
+}
+}
+}
+},
+"paper": true,
+"watch": false,
+"live": true
 }
 ]
