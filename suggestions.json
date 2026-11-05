@@ -3304,7 +3304,7 @@
 "risk_pct": 2.59,
 "plan": {
 "done": false,
-"ret": -1.27,
+"ret": -1.28,
 "r": -0.49,
 "bars": 1,
 "exit": "open",
@@ -3317,42 +3317,42 @@
 "variants": {
 "s0t0": {
 "r": -0.49,
-"ret": -1.27,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 2.59
 },
 "s0t1": {
 "r": -0.49,
-"ret": -1.27,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 2.59
 },
 "s1t0": {
 "r": -0.33,
-"ret": -1.27,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 3.83
 },
 "s1t1": {
 "r": -0.33,
-"ret": -1.27,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 3.83
 },
 "s2t0": {
 "r": -0.49,
-"ret": -1.27,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 2.59
 },
 "s2t1": {
 "r": -0.49,
-"ret": -1.27,
+"ret": -1.28,
 "done": false,
 "exit": "open",
 "risk": 2.59
