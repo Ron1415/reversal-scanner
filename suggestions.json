@@ -8826,5 +8826,350 @@
 "last_seen": "2026-11-12T08:49-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
+},
+{
+"key": "AVGO|daily|bearish|2026-11-12|bot_5m_watch",
+"id": "AVGO-2026-11-12-short-bot_5m_watch",
+"ticker": "AVGO",
+"timeframe": "daily",
+"strategy": "bot_5m_watch",
+"direction": "bearish",
+"side": "short",
+"rev_date": "2026-11-12",
+"signal_date": "2026-11-12",
+"first_seen": "2026-11-12T09:50",
+"entry_time": "09:50",
+"sweep_time": "09:35",
+"stage": "sweep5m",
+"stages_seen": [
+"sweep5m"
+],
+"scan_price": 358.155,
+"entry": 358.155,
+"stop": 367.3713,
+"risk_pct": 2.57,
+"atr": 16.5828,
+"level": 358.6831,
+"level_label": "Equal highs (double top)",
+"level_group": "Double top/bottom",
+"confluence": 2,
+"count": 4,
+"chase_pct": 0.15,
+"spy_up": false,
+"size": 0.0,
+"journal": true,
+"keys": [
+"stage_sweep5m",
+"liq_equal_highs"
+],
+"factors": [
+"Trend down (50-day average)",
+"4-bar pullback",
+"Equal highs (double top) @ 358.68 with 2 levels together",
+"5-min stop run to 365.71 at 09:35, back below the line at 09:50"
+],
+"idea": "SELL ~358.15 at 09:50: 5-min swept equal highs (double top) 358.68 (low of the run 365.71) and reclaimed it; stop 367.37 (2.6% risk). Watch only (shorts are paused).",
+"valid_at_last_scan": true,
+"last_reason": "",
+"status": "open",
+"outcome": {
+"bot_5m_watch": {
+"entry_rule": "intraday at 09:50 ET",
+"triggered": true,
+"entry": 358.155,
+"entry_date": "2026-11-12",
+"why": "entered at 09:50",
+"risk_pct": 2.57,
+"plan": {
+"done": false,
+"ret": -1.71,
+"r": -0.66,
+"bars": 1,
+"exit": "open",
+"exit_date": "2026-11-12",
+"added": false,
+"targets_hit": 0,
+"mfe": 0.26,
+"mae": -1.81
+},
+"variants": {
+"s0t0": {
+"r": -0.66,
+"ret": -1.71,
+"done": false,
+"exit": "open",
+"risk": 2.57
+},
+"s0t1": {
+"r": -0.66,
+"ret": -1.71,
+"done": false,
+"exit": "open",
+"risk": 2.57
+},
+"s1t0": {
+"r": -0.39,
+"ret": -1.71,
+"done": false,
+"exit": "open",
+"risk": 4.43
+},
+"s1t1": {
+"r": -0.39,
+"ret": -1.71,
+"done": false,
+"exit": "open",
+"risk": 4.43
+},
+"s2t0": {
+"r": -0.66,
+"ret": -1.71,
+"done": false,
+"exit": "open",
+"risk": 2.57
+},
+"s2t1": {
+"r": -0.66,
+"ret": -1.71,
+"done": false,
+"exit": "open",
+"risk": 2.57
+}
+}
+}
+},
+"paper": false,
+"watch": true,
+"live": true
+},
+{
+"key": "GOOGL|daily|bearish|2026-11-12|bot_5m_watch",
+"id": "GOOGL-2026-11-12-short-bot_5m_watch",
+"ticker": "GOOGL",
+"timeframe": "daily",
+"strategy": "bot_5m_watch",
+"direction": "bearish",
+"side": "short",
+"rev_date": "2026-11-12",
+"signal_date": "2026-11-12",
+"first_seen": "2026-11-12T10:10",
+"entry_time": "10:10",
+"sweep_time": "09:35",
+"stage": "sweep5m",
+"stages_seen": [
+"sweep5m"
+],
+"scan_price": 293.99,
+"entry": 293.99,
+"stop": 298.3998,
+"risk_pct": 1.5,
+"atr": 10.2801,
+"level": 295.1136,
+"level_label": "Major pivot zone (3 touches, 1.1x vol)",
+"level_group": "Volume zone",
+"confluence": 2,
+"count": 4,
+"chase_pct": 0.38,
+"spy_up": false,
+"size": 0.0,
+"journal": true,
+"keys": [
+"stage_sweep5m",
+"liq_major_pivot_zone"
+],
+"factors": [
+"Trend down (50-day average)",
+"4-bar pullback",
+"Major pivot zone (3 touches, 1.1x vol) @ 295.11 with 2 levels together",
+"5-min stop run to 296.95 at 09:35, back below the line at 10:10"
+],
+"idea": "SELL ~293.99 at 10:10: 5-min swept major pivot zone (3 touches, 1.1x vol) 295.11 (low of the run 296.95) and reclaimed it; stop 298.40 (1.5% risk). Watch only (shorts are paused).",
+"valid_at_last_scan": true,
+"last_reason": "",
+"status": "open",
+"outcome": {
+"bot_5m_watch": {
+"entry_rule": "intraday at 10:10 ET",
+"triggered": true,
+"entry": 293.99,
+"entry_date": "2026-11-12",
+"why": "entered at 10:10",
+"risk_pct": 1.5,
+"plan": {
+"done": false,
+"ret": -0.38,
+"r": -0.25,
+"bars": 1,
+"exit": "open",
+"exit_date": "2026-11-12",
+"added": false,
+"targets_hit": 0,
+"mfe": 0.05,
+"mae": -0.52
+},
+"variants": {
+"s0t0": {
+"r": -0.25,
+"ret": -0.38,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s0t1": {
+"r": -0.25,
+"ret": -0.38,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s1t0": {
+"r": -0.13,
+"ret": -0.38,
+"done": false,
+"exit": "open",
+"risk": 2.9
+},
+"s1t1": {
+"r": -0.13,
+"ret": -0.38,
+"done": false,
+"exit": "open",
+"risk": 2.9
+},
+"s2t0": {
+"r": -0.25,
+"ret": -0.38,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s2t1": {
+"r": -0.25,
+"ret": -0.38,
+"done": false,
+"exit": "open",
+"risk": 1.5
+}
+}
+}
+},
+"paper": false,
+"watch": true,
+"live": true
+},
+{
+"key": "OKE|daily|bearish|2026-11-12|bot_5m_watch",
+"id": "OKE-2026-11-12-short-bot_5m_watch",
+"ticker": "OKE",
+"timeframe": "daily",
+"strategy": "bot_5m_watch",
+"direction": "bearish",
+"side": "short",
+"rev_date": "2026-11-12",
+"signal_date": "2026-11-12",
+"first_seen": "2026-11-12T09:40",
+"entry_time": "09:40",
+"sweep_time": "09:35",
+"stage": "sweep5m",
+"stages_seen": [
+"sweep5m"
+],
+"scan_price": 88.4251,
+"entry": 88.4251,
+"stop": 89.7515,
+"risk_pct": 1.5,
+"atr": 2.553,
+"level": 88.4381,
+"level_label": "Equal highs (double top)",
+"level_group": "Double top/bottom",
+"confluence": 2,
+"count": 4,
+"chase_pct": 0.01,
+"spy_up": false,
+"size": 0.0,
+"journal": false,
+"keys": [
+"stage_sweep5m",
+"liq_equal_highs"
+],
+"factors": [
+"Trend down (50-day average)",
+"4-bar pullback",
+"Equal highs (double top) @ 88.44 with 2 levels together",
+"5-min stop run to 88.88 at 09:35, back below the line at 09:40"
+],
+"idea": "SELL ~88.43 at 09:40: 5-min swept equal highs (double top) 88.44 (low of the run 88.88) and reclaimed it; stop 89.75 (1.5% risk). Watch only (shorts are paused).",
+"valid_at_last_scan": true,
+"last_reason": "",
+"status": "open",
+"outcome": {
+"bot_5m_watch": {
+"entry_rule": "intraday at 09:40 ET",
+"triggered": true,
+"entry": 88.4251,
+"entry_date": "2026-11-12",
+"why": "entered at 09:40",
+"risk_pct": 1.5,
+"plan": {
+"done": false,
+"ret": -0.41,
+"r": -0.27,
+"bars": 1,
+"exit": "open",
+"exit_date": "2026-11-12",
+"added": false,
+"targets_hit": 0,
+"mfe": 0.07,
+"mae": -0.79
+},
+"variants": {
+"s0t0": {
+"r": -0.27,
+"ret": -0.41,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s0t1": {
+"r": -0.27,
+"ret": -0.41,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s1t0": {
+"r": -0.15,
+"ret": -0.41,
+"done": false,
+"exit": "open",
+"risk": 2.65
+},
+"s1t1": {
+"r": -0.15,
+"ret": -0.41,
+"done": false,
+"exit": "open",
+"risk": 2.65
+},
+"s2t0": {
+"r": -0.27,
+"ret": -0.41,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s2t1": {
+"r": -0.27,
+"ret": -0.41,
+"done": false,
+"exit": "open",
+"risk": 1.5
+}
+}
+}
+},
+"paper": false,
+"watch": true,
+"live": true
 }
 ]
