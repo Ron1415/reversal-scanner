@@ -65,6 +65,7 @@
   #ckOut{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;margin-top:12px}
   .verdict{font-weight:700;color:var(--st)}
   .why{font-size:12px;color:var(--mute)}
+  .tv{font-size:13px;color:var(--mute)} #tvMsg{color:var(--mute);font-size:12px}
 </style>
 </head>
 <body>
@@ -99,6 +100,7 @@
   <label>Min score <input type="range" id="min" min="0" max="10" step="0.5" value="0"> <span id="minv">0</span></label>
   <input type="search" id="q" placeholder="Filter ticker">
   <a href="reversal_signals.xlsx">Download Excel</a>
+  <span class="tv">TradingView: <a href="#" id="tvCopy">Copy dashboard data</a> · <a href="#" id="tvList">Download watchlist</a> <span id="tvMsg"></span></span>
   <nav><a href="tracker.html">My trades →</a> · <a href="suggestions.html">Suggestions tracker →</a></nav>
 </div>
 <div class="check">
@@ -376,6 +378,58 @@ async function poll(){
     if (j.generated_iso && j.generated_iso !== DATA?.[state.tf]?.generated_iso) location.reload();
   } catch(e) {}
 }
+
+// ---- TradingView exports: (1) data string for the "Reversal Scanner Dashboard" indicator, (2) watchlist file
+const TV_CODES = [[/major swing/i, "MS"], [/equal|double/i, "EQ"], [/prior week/i, "PW"], [/prior month/i, "PM"],
+                  [/trend ?line/i, "TL"], [/fib/i, "FB"], [/pivot zone/i, "PZ"], [/volume|node/i, "VN"], [/swing/i, "PS"]];
+const tvSym = t => String(t).toUpperCase().replace(/-/g, ".");
+function tvSetups(){
+  const out = [];
+  ["daily", "weekly", "monthly"].forEach(tf => {
+    const rows = ((DATA && DATA[tf]) || {rows: []}).rows.filter(r => r.qualifies !== false && STAGE[r.stage]);
+    rows.sort((a, b) => (RANK[b.stage] - RANK[a.stage]) || (b.score - a.score));
+    rows.forEach(r => {
+      const lv = [];
+      (r.factors || []).forEach(f => {
+        const m = /(?:swept|tagged|ahead:)\s+(.*?)\s+@\s+([\d.]+)/i.exec(f);
+        if (m && lv.length < 2) lv.push([(+m[2]).toFixed(2), (TV_CODES.find(c => c[0].test(m[1])) || [0, "LV"])[1]]);
+      });
+      if (!lv.length && (r.levels || []).length) lv.push([(+r.levels[0]).toFixed(2), "LV"]);
+      out.push({tf, r, lv});
+    });
+  });
+  return out;
+}
+function tvData(){
+  const gen = ["daily", "weekly", "monthly"].map(tf => (DATA && DATA[tf] && DATA[tf].generated) || "").sort().pop() || "";
+  const rows = tvSetups().slice(0, 60).map(({tf, r, lv}) => [
+    tvSym(r.ticker), tf[0].toUpperCase(), r.direction === "bearish" ? "S" : "L", {forming: "F", day2: "2", watch: "W"}[r.stage],
+    r.count ?? "", r.score ?? "", (lv[0] || ["", ""])[0], (lv[0] || ["", ""])[1], (lv[1] || ["", ""])[0], (lv[1] || ["", ""])[1],
+    (+(r.entry ?? r.close)).toFixed(2), r.stop != null ? (+r.stop).toFixed(2) : "", r.earnings_soon ? 1 : 0].join(","));
+  return ["RS1|" + gen.slice(0, 16), ...rows].join(";");
+}
+function tvWatchlist(){
+  const NAME = {forming: "TAIL NOW", day2: "TAIL 1-2 BARS AGO", watch: "WATCH"}, seen = new Set(), parts = [];
+  ["daily", "weekly", "monthly"].forEach(tf => ["forming", "day2", "watch"].forEach(st => ["bearish", "bullish"].forEach(dir => {
+    const syms = tvSetups().filter(x => x.tf === tf && x.r.stage === st && x.r.direction === dir).map(x => tvSym(x.r.ticker)).filter(s => !seen.has(s));
+    if (syms.length) { syms.forEach(s => seen.add(s)); parts.push(`###${tf.toUpperCase()} ${NAME[st]} ${dir === "bearish" ? "SHORT" : "LONG"}`, ...syms); }
+  })));
+  return parts.join(",");
+}
+$("tvCopy").onclick = async e => {
+  e.preventDefault();
+  const s = tvData();
+  try { await navigator.clipboard.writeText(s); }
+  catch (err) { const ta = document.createElement("textarea"); ta.value = s; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+  $("tvMsg").textContent = `Copied ${s.split(";").length - 1} setups. Paste into the indicator's settings.`;
+};
+$("tvList").onclick = e => {
+  e.preventDefault();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([tvWatchlist()], {type: "text/plain"}));
+  a.download = "reversal_watchlist.txt"; a.click();
+  $("tvMsg").textContent = "Watchlist saved. In TradingView: watchlist menu, Import list.";
+};
 
 $("btnQuick").onclick = () => refresh("quick");
 $("btnFull").onclick = () => refresh("full");
