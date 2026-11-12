@@ -7565,7 +7565,8 @@
 "first_seen": "2026-11-10T14:50-05:00",
 "stage": "forming",
 "stages_seen": [
-"forming"
+"forming",
+"day2"
 ],
 "scan_price": 60.33,
 "stop": 61.76,
@@ -7674,7 +7675,7 @@
 }
 }
 },
-"last_seen": "2026-11-10T15:45-05:00",
+"last_seen": "2026-11-12T08:49-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -7690,7 +7691,8 @@
 "first_seen": "2026-11-10T14:50-05:00",
 "stage": "forming",
 "stages_seen": [
-"forming"
+"forming",
+"day2"
 ],
 "scan_price": 234.73,
 "stop": 230.97,
@@ -7799,7 +7801,7 @@
 }
 }
 },
-"last_seen": "2026-11-10T15:45-05:00",
+"last_seen": "2026-11-12T08:49-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -8548,7 +8550,7 @@
 }
 }
 },
-"last_seen": "2026-11-11T14:56-05:00",
+"last_seen": "2026-11-12T08:49-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -8639,7 +8641,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-11T14:56-05:00",
+"last_seen": "2026-11-12T08:49-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -8730,7 +8732,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-11T14:56-05:00",
+"last_seen": "2026-11-12T08:49-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -8821,7 +8823,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-11T14:56-05:00",
+"last_seen": "2026-11-12T08:49-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 }
