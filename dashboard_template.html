@@ -401,12 +401,13 @@ function tvSetups(){
   return out;
 }
 function tvData(){
-  const gen = ["daily", "weekly", "monthly"].map(tf => (DATA && DATA[tf] && DATA[tf].generated) || "").sort().pop() || "";
+  // header: RS2|daily scan time|weekly scan time|monthly scan time (weekly and monthly lists are older snapshots)
+  const gens = ["daily", "weekly", "monthly"].map(tf => ((DATA && DATA[tf] && DATA[tf].generated) || "").slice(0, 16));
   const rows = tvSetups().slice(0, 60).map(({tf, r, lv}) => [
     tvSym(r.ticker), tf[0].toUpperCase(), r.direction === "bearish" ? "S" : "L", {forming: "F", day2: "2", watch: "W"}[r.stage],
     r.count ?? "", r.score ?? "", (lv[0] || ["", ""])[0], (lv[0] || ["", ""])[1], (lv[1] || ["", ""])[0], (lv[1] || ["", ""])[1],
     (+(r.entry ?? r.close)).toFixed(2), r.stop != null ? (+r.stop).toFixed(2) : "", r.earnings_soon ? 1 : 0].join(","));
-  return ["RS1|" + gen.slice(0, 16), ...rows].join(";");
+  return ["RS2|" + gens.join("|"), ...rows].join(";");
 }
 function tvWatchlist(){
   const NAME = {forming: "TAIL NOW", day2: "TAIL 1-2 BARS AGO", watch: "WATCH"}, seen = new Set(), parts = [];
