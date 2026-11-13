@@ -9344,8 +9344,8 @@
 "risk_pct": 1.73,
 "plan": {
 "done": false,
-"ret": 4.56,
-"r": 2.63,
+"ret": 4.5,
+"r": 2.6,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-13",
@@ -9356,43 +9356,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 2.63,
-"ret": 4.56,
+"r": 2.6,
+"ret": 4.5,
 "done": false,
 "exit": "open",
 "risk": 1.73
 },
 "s0t1": {
-"r": 2.38,
-"ret": 4.12,
+"r": 2.31,
+"ret": 4.0,
 "done": false,
 "exit": "open",
 "risk": 1.73
 },
 "s1t0": {
-"r": 0.96,
-"ret": 4.56,
+"r": 0.95,
+"ret": 4.5,
 "done": false,
 "exit": "open",
 "risk": 4.72
 },
 "s1t1": {
-"r": 0.87,
-"ret": 4.12,
+"r": 0.85,
+"ret": 4.0,
 "done": false,
 "exit": "open",
 "risk": 4.72
 },
 "s2t0": {
-"r": 2.63,
-"ret": 4.56,
+"r": 2.6,
+"ret": 4.5,
 "done": false,
 "exit": "open",
 "risk": 1.73
 },
 "s2t1": {
-"r": 2.38,
-"ret": 4.12,
+"r": 2.31,
+"ret": 4.0,
 "done": false,
 "exit": "open",
 "risk": 1.73
@@ -9459,8 +9459,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.86,
-"r": 0.57,
+"ret": 0.97,
+"r": 0.65,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-13",
@@ -9471,43 +9471,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 0.57,
-"ret": 0.86,
+"r": 0.65,
+"ret": 0.97,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.57,
-"ret": 0.86,
+"r": 0.65,
+"ret": 0.97,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.27,
-"ret": 0.86,
+"r": 0.3,
+"ret": 0.97,
 "done": false,
 "exit": "open",
 "risk": 3.19
 },
 "s1t1": {
-"r": 0.27,
-"ret": 0.86,
+"r": 0.3,
+"ret": 0.97,
 "done": false,
 "exit": "open",
 "risk": 3.19
 },
 "s2t0": {
-"r": 0.57,
-"ret": 0.86,
+"r": 0.65,
+"ret": 0.97,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.57,
-"ret": 0.86,
+"r": 0.65,
+"ret": 0.97,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -9574,8 +9574,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 4.1,
-"r": 2.74,
+"ret": 4.14,
+"r": 2.76,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-13",
@@ -9586,43 +9586,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 2.74,
-"ret": 4.1,
+"r": 2.76,
+"ret": 4.14,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 2.83,
-"ret": 4.25,
+"r": 2.86,
+"ret": 4.29,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 1.14,
-"ret": 4.1,
+"r": 1.15,
+"ret": 4.14,
 "done": false,
 "exit": "open",
 "risk": 3.61
 },
 "s1t1": {
-"r": 1.18,
-"ret": 4.25,
+"r": 1.19,
+"ret": 4.29,
 "done": false,
 "exit": "open",
 "risk": 3.61
 },
 "s2t0": {
-"r": 2.74,
-"ret": 4.1,
+"r": 2.76,
+"ret": 4.14,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 2.83,
-"ret": 4.25,
+"r": 2.86,
+"ret": 4.29,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -9796,55 +9796,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": -0.47,
-"r": -0.32,
+"ret": -0.58,
+"r": -0.39,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-13",
 "added": false,
 "targets_hit": 0,
 "mfe": 0.72,
-"mae": -0.55
+"mae": -0.65
 },
 "variants": {
 "s0t0": {
-"r": -0.32,
-"ret": -0.47,
+"r": -0.39,
+"ret": -0.58,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.32,
-"ret": -0.47,
+"r": -0.39,
+"ret": -0.58,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.16,
-"ret": -0.47,
+"r": -0.19,
+"ret": -0.58,
 "done": false,
 "exit": "open",
 "risk": 3.0
 },
 "s1t1": {
-"r": -0.16,
-"ret": -0.47,
+"r": -0.19,
+"ret": -0.58,
 "done": false,
 "exit": "open",
 "risk": 3.0
 },
 "s2t0": {
-"r": -0.32,
-"ret": -0.47,
+"r": -0.39,
+"ret": -0.58,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.32,
-"ret": -0.47,
+"r": -0.39,
+"ret": -0.58,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -9911,8 +9911,8 @@
 "risk_pct": 1.89,
 "plan": {
 "done": false,
-"ret": -0.99,
-"r": -0.52,
+"ret": -1.14,
+"r": -0.6,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-13",
@@ -9923,43 +9923,43 @@
 },
 "variants": {
 "s0t0": {
-"r": -0.52,
-"ret": -0.99,
+"r": -0.6,
+"ret": -1.14,
 "done": false,
 "exit": "open",
 "risk": 1.89
 },
 "s0t1": {
-"r": -0.52,
-"ret": -0.99,
+"r": -0.6,
+"ret": -1.14,
 "done": false,
 "exit": "open",
 "risk": 1.89
 },
 "s1t0": {
-"r": -0.31,
-"ret": -0.99,
+"r": -0.35,
+"ret": -1.14,
 "done": false,
 "exit": "open",
 "risk": 3.23
 },
 "s1t1": {
-"r": -0.31,
-"ret": -0.99,
+"r": -0.35,
+"ret": -1.14,
 "done": false,
 "exit": "open",
 "risk": 3.23
 },
 "s2t0": {
-"r": -0.52,
-"ret": -0.99,
+"r": -0.6,
+"ret": -1.14,
 "done": false,
 "exit": "open",
 "risk": 1.89
 },
 "s2t1": {
-"r": -0.52,
-"ret": -0.99,
+"r": -0.6,
+"ret": -1.14,
 "done": false,
 "exit": "open",
 "risk": 1.89
@@ -10256,8 +10256,8 @@
 "risk_pct": 2.31,
 "plan": {
 "done": false,
-"ret": 0.3,
-"r": 0.13,
+"ret": 0.08,
+"r": 0.04,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-13",
@@ -10268,43 +10268,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 0.13,
-"ret": 0.3,
+"r": 0.04,
+"ret": 0.08,
 "done": false,
 "exit": "open",
 "risk": 2.31
 },
 "s0t1": {
-"r": 0.13,
-"ret": 0.3,
+"r": 0.04,
+"ret": 0.08,
 "done": false,
 "exit": "open",
 "risk": 2.31
 },
 "s1t0": {
-"r": 0.08,
-"ret": 0.3,
+"r": 0.02,
+"ret": 0.08,
 "done": false,
 "exit": "open",
 "risk": 3.69
 },
 "s1t1": {
-"r": 0.08,
-"ret": 0.3,
+"r": 0.02,
+"ret": 0.08,
 "done": false,
 "exit": "open",
 "risk": 3.69
 },
 "s2t0": {
-"r": 0.13,
-"ret": 0.3,
+"r": 0.04,
+"ret": 0.08,
 "done": false,
 "exit": "open",
 "risk": 2.31
 },
 "s2t1": {
-"r": 0.13,
-"ret": 0.3,
+"r": 0.04,
+"ret": 0.08,
 "done": false,
 "exit": "open",
 "risk": 2.31
@@ -10371,8 +10371,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.23,
-"r": 0.15,
+"ret": 0.05,
+"r": 0.03,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-13",
@@ -10383,43 +10383,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 0.15,
-"ret": 0.23,
+"r": 0.03,
+"ret": 0.05,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.15,
-"ret": 0.23,
+"r": 0.03,
+"ret": 0.05,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.09,
-"ret": 0.23,
+"r": 0.02,
+"ret": 0.05,
 "done": false,
 "exit": "open",
 "risk": 2.64
 },
 "s1t1": {
-"r": 0.09,
-"ret": 0.23,
+"r": 0.02,
+"ret": 0.05,
 "done": false,
 "exit": "open",
 "risk": 2.64
 },
 "s2t0": {
-"r": 0.15,
-"ret": 0.23,
+"r": 0.03,
+"ret": 0.05,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.15,
-"ret": 0.23,
+"r": 0.03,
+"ret": 0.05,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -10486,8 +10486,8 @@
 "risk_pct": 2.04,
 "plan": {
 "done": false,
-"ret": 1.03,
-"r": 0.5,
+"ret": 0.73,
+"r": 0.36,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-13",
@@ -10498,43 +10498,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 0.5,
-"ret": 1.03,
+"r": 0.36,
+"ret": 0.73,
 "done": false,
 "exit": "open",
 "risk": 2.04
 },
 "s0t1": {
-"r": 0.5,
-"ret": 1.03,
+"r": 0.36,
+"ret": 0.73,
 "done": false,
 "exit": "open",
 "risk": 2.04
 },
 "s1t0": {
-"r": 0.25,
-"ret": 1.03,
+"r": 0.18,
+"ret": 0.73,
 "done": false,
 "exit": "open",
 "risk": 4.11
 },
 "s1t1": {
-"r": 0.25,
-"ret": 1.03,
+"r": 0.18,
+"ret": 0.73,
 "done": false,
 "exit": "open",
 "risk": 4.11
 },
 "s2t0": {
-"r": 0.5,
-"ret": 1.03,
+"r": 0.36,
+"ret": 0.73,
 "done": false,
 "exit": "open",
 "risk": 2.04
 },
 "s2t1": {
-"r": 0.5,
-"ret": 1.03,
+"r": 0.36,
+"ret": 0.73,
 "done": false,
 "exit": "open",
 "risk": 2.04
@@ -10716,8 +10716,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.61,
-"r": 0.41,
+"ret": 0.48,
+"r": 0.32,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-13",
@@ -10728,43 +10728,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 0.41,
-"ret": 0.61,
+"r": 0.32,
+"ret": 0.48,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.41,
-"ret": 0.61,
+"r": 0.32,
+"ret": 0.48,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.2,
-"ret": 0.61,
+"r": 0.16,
+"ret": 0.48,
 "done": false,
 "exit": "open",
 "risk": 3.0
 },
 "s1t1": {
-"r": 0.2,
-"ret": 0.61,
+"r": 0.16,
+"ret": 0.48,
 "done": false,
 "exit": "open",
 "risk": 3.0
 },
 "s2t0": {
-"r": 0.41,
-"ret": 0.61,
+"r": 0.32,
+"ret": 0.48,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.41,
-"ret": 0.61,
+"r": 0.32,
+"ret": 0.48,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -10946,8 +10946,8 @@
 "risk_pct": 2.49,
 "plan": {
 "done": false,
-"ret": 0.91,
-"r": 0.37,
+"ret": 0.94,
+"r": 0.38,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-13",
@@ -10958,43 +10958,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 0.37,
-"ret": 0.91,
+"r": 0.38,
+"ret": 0.94,
 "done": false,
 "exit": "open",
 "risk": 2.49
 },
 "s0t1": {
-"r": 0.37,
-"ret": 0.91,
+"r": 0.38,
+"ret": 0.94,
 "done": false,
 "exit": "open",
 "risk": 2.49
 },
 "s1t0": {
 "r": 0.24,
-"ret": 0.91,
+"ret": 0.94,
 "done": false,
 "exit": "open",
 "risk": 3.85
 },
 "s1t1": {
 "r": 0.24,
-"ret": 0.91,
+"ret": 0.94,
 "done": false,
 "exit": "open",
 "risk": 3.85
 },
 "s2t0": {
-"r": 0.37,
-"ret": 0.91,
+"r": 0.38,
+"ret": 0.94,
 "done": false,
 "exit": "open",
 "risk": 2.49
 },
 "s2t1": {
-"r": 0.37,
-"ret": 0.91,
+"r": 0.38,
+"ret": 0.94,
 "done": false,
 "exit": "open",
 "risk": 2.49
