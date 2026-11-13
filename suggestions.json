@@ -9351,7 +9351,7 @@
 "exit_date": "2026-11-13",
 "added": false,
 "targets_hit": 1,
-"mfe": 6.6,
+"mfe": 6.64,
 "mae": -1.35
 },
 "variants": {
@@ -9574,8 +9574,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 4.14,
-"r": 2.76,
+"ret": 4.17,
+"r": 2.78,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-13",
@@ -9586,43 +9586,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 2.76,
-"ret": 4.14,
+"r": 2.78,
+"ret": 4.17,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 2.86,
-"ret": 4.29,
+"r": 2.87,
+"ret": 4.31,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
 "r": 1.15,
-"ret": 4.14,
+"ret": 4.17,
 "done": false,
 "exit": "open",
 "risk": 3.61
 },
 "s1t1": {
 "r": 1.19,
-"ret": 4.29,
+"ret": 4.31,
 "done": false,
 "exit": "open",
 "risk": 3.61
 },
 "s2t0": {
-"r": 2.76,
-"ret": 4.14,
+"r": 2.78,
+"ret": 4.17,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 2.86,
-"ret": 4.29,
+"r": 2.87,
+"ret": 4.31,
 "done": false,
 "exit": "open",
 "risk": 1.5
