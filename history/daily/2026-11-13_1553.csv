@@ -1,0 +1,2 @@
+ticker,direction,stage,idea,score,count,close,change_pct,entry,stop,risk_pct,moved_pct,rsi,earnings_next,earnings_soon,factors,reason,bar_date,chart
+KR,bearish,Watch: into a level,Expecting DOWN: 8-bar rally into equal highs (double top) 71.22; watch for a tail in the next 1-2 days.,3.0,8,71.02,1.73,71.02,71.68,0.93,0.22,68.5,2026-12-03,False,Still pushing up into the level; no tail yet | Time count 8: up bars since the last real down bar | Level just ahead: Equal highs (double top) @ 71.22,,2026-11-13,https://www.tradingview.com/chart/?symbol=KR
