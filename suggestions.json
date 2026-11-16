@@ -144,32 +144,32 @@
 "risk_pct": 1.91,
 "plan": {
 "done": false,
-"ret": 3.2,
-"r": 1.68,
-"bars": 8,
+"ret": 2.88,
+"r": 1.51,
+"bars": 9,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.75,
+"mfe": 4.93,
 "mae": 0.0
 },
 "full_t1": {
 "done": false,
-"ret": 3.2,
-"r": 1.68,
-"bars": 8,
+"ret": 2.88,
+"r": 1.51,
+"bars": 9,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.75,
+"mfe": 4.93,
 "mae": 0.0
 },
 "full_t2": {
 "done": false,
-"ret": 3.2,
-"r": 1.68,
-"bars": 8,
+"ret": 2.88,
+"r": 1.51,
+"bars": 9,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.75,
+"mfe": 4.93,
 "mae": 0.0
 }
 },
@@ -183,32 +183,32 @@
 "risk_pct": 3.32,
 "plan": {
 "done": false,
-"ret": 1.72,
-"r": 0.52,
-"bars": 7,
+"ret": 1.4,
+"r": 0.42,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
-"mfe": 3.25,
+"mfe": 3.42,
 "mae": -1.28
 },
 "full_t1": {
 "done": false,
-"ret": 1.72,
-"r": 0.52,
-"bars": 7,
+"ret": 1.4,
+"r": 0.42,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
-"mfe": 3.25,
+"mfe": 3.42,
 "mae": -1.28
 },
 "full_t2": {
 "done": false,
-"ret": 1.72,
-"r": 0.52,
-"bars": 7,
+"ret": 1.4,
+"r": 0.42,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
-"mfe": 3.25,
+"mfe": 3.42,
 "mae": -1.28
 }
 }
@@ -420,12 +420,12 @@
 },
 "full_t2": {
 "done": false,
-"ret": 4.67,
-"r": 2.58,
-"bars": 8,
+"ret": 5.71,
+"r": 3.15,
+"bars": 9,
 "exit": "open",
 "exit_date": null,
-"mfe": 5.24,
+"mfe": 5.89,
 "mae": -1.62
 }
 },
@@ -439,32 +439,32 @@
 "risk_pct": 5.08,
 "plan": {
 "done": false,
-"ret": 1.61,
-"r": 0.32,
-"bars": 7,
+"ret": 2.68,
+"r": 0.53,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.96,
+"mfe": 2.87,
 "mae": -3.66
 },
 "full_t1": {
 "done": false,
-"ret": 1.61,
-"r": 0.32,
-"bars": 7,
+"ret": 2.68,
+"r": 0.53,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.96,
+"mfe": 2.87,
 "mae": -3.66
 },
 "full_t2": {
 "done": false,
-"ret": 1.61,
-"r": 0.32,
-"bars": 7,
+"ret": 2.68,
+"r": 0.53,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.96,
+"mfe": 2.87,
 "mae": -3.66
 }
 }
@@ -1647,9 +1647,9 @@
 "risk_pct": 1.62,
 "plan": {
 "done": false,
-"ret": 5.51,
-"r": 3.4,
-"bars": 7,
+"ret": 5.85,
+"r": 3.62,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
 "mfe": 7.46,
@@ -1667,9 +1667,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 6.02,
-"r": 3.72,
-"bars": 7,
+"ret": 6.71,
+"r": 4.14,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
 "mfe": 7.46,
@@ -1686,9 +1686,9 @@
 "risk_pct": 5.67,
 "plan": {
 "done": false,
-"ret": 2.27,
-"r": 0.4,
-"bars": 5,
+"ret": 2.99,
+"r": 0.53,
+"bars": 6,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.77,
@@ -1696,9 +1696,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.27,
-"r": 0.4,
-"bars": 5,
+"ret": 2.99,
+"r": 0.53,
+"bars": 6,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.77,
@@ -1706,9 +1706,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.27,
-"r": 0.4,
-"bars": 5,
+"ret": 2.99,
+"r": 0.53,
+"bars": 6,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.77,
@@ -2230,7 +2230,7 @@
 "earnings_next": "2027-02-22",
 "earnings_blackout": false,
 "earnings_days": 78,
-"status": "open",
+"status": "closed",
 "outcome": {
 "close": {
 "entry_rule": "close of the signal bar",
@@ -2260,14 +2260,14 @@
 "mae": -1.27
 },
 "full_t2": {
-"done": false,
-"ret": -0.61,
-"r": -0.22,
-"bars": 7,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -2.81,
+"r": -1.0,
+"bars": 8,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 5.9,
-"mae": -1.82
+"mae": -3.25
 }
 },
 "safer": {
@@ -2279,34 +2279,34 @@
 "why": "entered on the break",
 "risk_pct": 6.72,
 "plan": {
-"done": false,
-"ret": -4.44,
-"r": -0.66,
-"bars": 5,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -6.72,
+"r": -1.0,
+"bars": 6,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 2.32,
-"mae": -5.69
+"mae": -7.18
 },
 "full_t1": {
-"done": false,
-"ret": -4.44,
-"r": -0.66,
-"bars": 5,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -6.72,
+"r": -1.0,
+"bars": 6,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 2.32,
-"mae": -5.69
+"mae": -7.18
 },
 "full_t2": {
-"done": false,
-"ret": -4.44,
-"r": -0.66,
-"bars": 5,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -6.72,
+"r": -1.0,
+"bars": 6,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 2.32,
-"mae": -5.69
+"mae": -7.18
 }
 }
 },
@@ -2552,12 +2552,12 @@
 "risk_pct": 1.66,
 "plan": {
 "done": false,
-"ret": 6.03,
-"r": 3.63,
-"bars": 7,
+"ret": 6.94,
+"r": 4.17,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
-"mfe": 9.56,
+"mfe": 9.95,
 "mae": -0.79
 },
 "full_t1": {
@@ -2572,12 +2572,12 @@
 },
 "full_t2": {
 "done": false,
-"ret": 7.07,
-"r": 4.25,
-"bars": 7,
+"ret": 8.89,
+"r": 5.34,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
-"mfe": 9.56,
+"mfe": 9.95,
 "mae": -0.79
 }
 },
@@ -2591,32 +2591,32 @@
 "risk_pct": 8.16,
 "plan": {
 "done": false,
-"ret": 1.12,
-"r": 0.14,
-"bars": 6,
+"ret": 3.06,
+"r": 0.38,
+"bars": 7,
 "exit": "open",
 "exit_date": null,
-"mfe": 3.69,
+"mfe": 4.2,
 "mae": -5.12
 },
 "full_t1": {
 "done": false,
-"ret": 1.12,
-"r": 0.14,
-"bars": 6,
+"ret": 3.06,
+"r": 0.38,
+"bars": 7,
 "exit": "open",
 "exit_date": null,
-"mfe": 3.69,
+"mfe": 4.2,
 "mae": -5.12
 },
 "full_t2": {
 "done": false,
-"ret": 1.12,
-"r": 0.14,
-"bars": 6,
+"ret": 3.06,
+"r": 0.38,
+"bars": 7,
 "exit": "open",
 "exit_date": null,
-"mfe": 3.69,
+"mfe": 4.2,
 "mae": -5.12
 }
 }
@@ -2769,9 +2769,9 @@
 "risk_pct": 2.88,
 "plan": {
 "done": false,
-"ret": 1.51,
-"r": 0.52,
-"bars": 7,
+"ret": 1.46,
+"r": 0.51,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.92,
@@ -2779,9 +2779,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 1.51,
-"r": 0.52,
-"bars": 7,
+"ret": 1.46,
+"r": 0.51,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.92,
@@ -2789,9 +2789,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 1.51,
-"r": 0.52,
-"bars": 7,
+"ret": 1.46,
+"r": 0.51,
+"bars": 8,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.92,
@@ -2808,33 +2808,33 @@
 "risk_pct": 5.93,
 "plan": {
 "done": false,
-"ret": -1.42,
-"r": -0.24,
-"bars": 5,
+"ret": -1.47,
+"r": -0.25,
+"bars": 6,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.1,
-"mae": -2.47
+"mae": -3.25
 },
 "full_t1": {
 "done": false,
-"ret": -1.42,
-"r": -0.24,
-"bars": 5,
+"ret": -1.47,
+"r": -0.25,
+"bars": 6,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.1,
-"mae": -2.47
+"mae": -3.25
 },
 "full_t2": {
 "done": false,
-"ret": -1.42,
-"r": -0.24,
-"bars": 5,
+"ret": -1.47,
+"r": -0.25,
+"bars": 6,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.1,
-"mae": -2.47
+"mae": -3.25
 }
 }
 },
@@ -3811,9 +3811,9 @@
 "risk_pct": 3.07,
 "plan": {
 "done": false,
-"ret": -0.76,
-"r": -0.25,
-"bars": 5,
+"ret": -0.18,
+"r": -0.06,
+"bars": 6,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.0,
@@ -3821,9 +3821,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": -0.76,
-"r": -0.25,
-"bars": 5,
+"ret": -0.18,
+"r": -0.06,
+"bars": 6,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.0,
@@ -3831,9 +3831,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": -0.76,
-"r": -0.25,
-"bars": 5,
+"ret": -0.18,
+"r": -0.06,
+"bars": 6,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.0,
@@ -3897,9 +3897,9 @@
 "risk_pct": 1.84,
 "plan": {
 "done": false,
-"ret": 5.47,
-"r": 2.98,
-"bars": 6,
+"ret": 4.14,
+"r": 2.25,
+"bars": 7,
 "exit": "open",
 "exit_date": null,
 "mfe": 8.12,
@@ -3917,9 +3917,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 5.94,
-"r": 3.23,
-"bars": 6,
+"ret": 3.28,
+"r": 1.78,
+"bars": 7,
 "exit": "open",
 "exit_date": null,
 "mfe": 8.12,
@@ -3935,14 +3935,14 @@
 "why": "entered on the break",
 "risk_pct": 4.65,
 "plan": {
-"done": false,
-"ret": 4.17,
-"r": 0.9,
-"bars": 5,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": 2.5,
+"r": 0.54,
+"bars": 6,
+"exit": "breakeven stop",
+"exit_date": "2026-11-16",
 "mfe": 5.58,
-"mae": -0.06
+"mae": -1.07
 },
 "full_t1": {
 "done": true,
@@ -3956,13 +3956,13 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.34,
-"r": 0.72,
-"bars": 5,
+"ret": 0.61,
+"r": 0.13,
+"bars": 6,
 "exit": "open",
 "exit_date": null,
 "mfe": 5.58,
-"mae": -0.06
+"mae": -1.07
 }
 }
 },
@@ -4011,7 +4011,7 @@
 "earnings_next": "2026-11-05",
 "earnings_blackout": true,
 "earnings_days": 0,
-"status": "open",
+"status": "closed",
 "outcome": {
 "close": {
 "entry_rule": "close of the signal bar",
@@ -4021,34 +4021,34 @@
 "why": "entered at the close",
 "risk_pct": 2.06,
 "plan": {
-"done": false,
-"ret": 0.56,
-"r": 0.27,
-"bars": 6,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -2.06,
+"r": -1.0,
+"bars": 7,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 4.43,
-"mae": -0.14
+"mae": -3.32
 },
 "full_t1": {
-"done": false,
-"ret": 0.56,
-"r": 0.27,
-"bars": 6,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -2.06,
+"r": -1.0,
+"bars": 7,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 4.43,
-"mae": -0.14
+"mae": -3.32
 },
 "full_t2": {
-"done": false,
-"ret": 0.56,
-"r": 0.27,
-"bars": 6,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -2.06,
+"r": -1.0,
+"bars": 7,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 4.43,
-"mae": -0.14
+"mae": -3.32
 }
 },
 "safer": {
@@ -4153,33 +4153,33 @@
 "risk_pct": 12.62,
 "plan": {
 "done": false,
-"ret": 0.75,
-"r": 0.06,
-"bars": 4,
+"ret": -4.13,
+"r": -0.33,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.88,
-"mae": -1.94
+"mae": -4.53
 },
 "full_t1": {
 "done": false,
-"ret": 0.75,
-"r": 0.06,
-"bars": 4,
+"ret": -4.13,
+"r": -0.33,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.88,
-"mae": -1.94
+"mae": -4.53
 },
 "full_t2": {
 "done": false,
-"ret": 0.75,
-"r": 0.06,
-"bars": 4,
+"ret": -4.13,
+"r": -0.33,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.88,
-"mae": -1.94
+"mae": -4.53
 }
 }
 },
@@ -4403,9 +4403,9 @@
 "risk_pct": 6.91,
 "plan": {
 "done": false,
-"ret": 2.25,
-"r": 0.33,
-"bars": 4,
+"ret": -2.07,
+"r": -0.3,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.76,
@@ -4413,9 +4413,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.25,
-"r": 0.33,
-"bars": 4,
+"ret": -2.07,
+"r": -0.3,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.76,
@@ -4423,9 +4423,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.25,
-"r": 0.33,
-"bars": 4,
+"ret": -2.07,
+"r": -0.3,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.76,
@@ -4711,33 +4711,33 @@
 "risk_pct": 5.08,
 "plan": {
 "done": false,
-"ret": 1.2,
-"r": 0.24,
-"bars": 4,
+"ret": -1.13,
+"r": -0.22,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.12,
-"mae": 0.0
+"mae": -2.13
 },
 "full_t1": {
 "done": false,
-"ret": 1.2,
-"r": 0.24,
-"bars": 4,
+"ret": -1.13,
+"r": -0.22,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.12,
-"mae": 0.0
+"mae": -2.13
 },
 "full_t2": {
 "done": false,
-"ret": 1.2,
-"r": 0.24,
-"bars": 4,
+"ret": -1.13,
+"r": -0.22,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.12,
-"mae": 0.0
+"mae": -2.13
 }
 }
 },
@@ -5003,7 +5003,7 @@
 "earnings_next": "2027-02-10",
 "earnings_blackout": false,
 "earnings_days": 68,
-"status": "open",
+"status": "closed",
 "outcome": {
 "close": {
 "entry_rule": "close of the signal bar",
@@ -5013,34 +5013,34 @@
 "why": "entered at the close",
 "risk_pct": 2.69,
 "plan": {
-"done": false,
-"ret": -1.07,
-"r": -0.4,
-"bars": 5,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -2.69,
+"r": -1.0,
+"bars": 6,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 2.4,
-"mae": -2.16
+"mae": -3.8
 },
 "full_t1": {
-"done": false,
-"ret": -1.07,
-"r": -0.4,
-"bars": 5,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -2.69,
+"r": -1.0,
+"bars": 6,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 2.4,
-"mae": -2.16
+"mae": -3.8
 },
 "full_t2": {
-"done": false,
-"ret": -1.07,
-"r": -0.4,
-"bars": 5,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -2.69,
+"r": -1.0,
+"bars": 6,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 2.4,
-"mae": -2.16
+"mae": -3.8
 }
 },
 "safer": {
@@ -5315,7 +5315,7 @@
 "earnings_next": "2027-01-21",
 "earnings_blackout": false,
 "earnings_days": 54,
-"status": "open",
+"status": "closed",
 "outcome": {
 "close": {
 "entry_rule": "close of the signal bar",
@@ -5325,41 +5325,41 @@
 "why": "entered at the close",
 "risk_pct": 3.5,
 "plan": {
-"done": false,
-"ret": -2.61,
-"r": -0.75,
-"bars": 1,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -4.09,
+"r": -1.17,
+"bars": 2,
+"exit": "stop",
+"exit_date": "2026-11-20",
 "mfe": 0.1,
-"mae": -3.22
+"mae": -4.94
 },
 "full_t1": {
-"done": false,
-"ret": -2.61,
-"r": -0.75,
-"bars": 1,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -4.09,
+"r": -1.17,
+"bars": 2,
+"exit": "stop",
+"exit_date": "2026-11-20",
 "mfe": 0.1,
-"mae": -3.22
+"mae": -4.94
 },
 "full_t2": {
-"done": false,
-"ret": -2.61,
-"r": -0.75,
-"bars": 1,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -4.09,
+"r": -1.17,
+"bars": 2,
+"exit": "stop",
+"exit_date": "2026-11-20",
 "mfe": 0.1,
-"mae": -3.22
+"mae": -4.94
 }
 },
 "safer": {
 "entry_rule": "break below the reversal bar (161.47) within 3 bars",
 "trigger": 161.47,
-"triggered": null,
-"why": "waiting for the trigger"
+"triggered": false,
+"why": "cancelled: the stop was hit before the trigger"
 }
 },
 "last_seen": "2026-11-06T15:46-05:00",
@@ -5422,9 +5422,9 @@
 "risk_pct": 5.09,
 "plan": {
 "done": false,
-"ret": -0.69,
-"r": -0.14,
-"bars": 1,
+"ret": -0.44,
+"r": -0.09,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.44,
@@ -5432,9 +5432,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": -0.69,
-"r": -0.14,
-"bars": 1,
+"ret": -0.44,
+"r": -0.09,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.44,
@@ -5442,9 +5442,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": -0.69,
-"r": -0.14,
-"bars": 1,
+"ret": -0.44,
+"r": -0.09,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.44,
@@ -5518,32 +5518,32 @@
 "risk_pct": 6.53,
 "plan": {
 "done": false,
-"ret": -0.68,
-"r": -0.1,
-"bars": 1,
+"ret": -0.07,
+"r": -0.01,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 0.0,
+"mfe": 0.12,
 "mae": -3.7
 },
 "full_t1": {
 "done": false,
-"ret": -0.68,
-"r": -0.1,
-"bars": 1,
+"ret": -0.07,
+"r": -0.01,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 0.0,
+"mfe": 0.12,
 "mae": -3.7
 },
 "full_t2": {
 "done": false,
-"ret": -0.68,
-"r": -0.1,
-"bars": 1,
+"ret": -0.07,
+"r": -0.01,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 0.0,
+"mfe": 0.12,
 "mae": -3.7
 }
 },
@@ -5702,32 +5702,32 @@
 "risk_pct": 5.29,
 "plan": {
 "done": false,
-"ret": 0.44,
-"r": 0.08,
-"bars": 1,
+"ret": 0.85,
+"r": 0.16,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.32,
+"mfe": 2.41,
 "mae": -3.73
 },
 "full_t1": {
 "done": false,
-"ret": 0.44,
-"r": 0.08,
-"bars": 1,
+"ret": 0.85,
+"r": 0.16,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.32,
+"mfe": 2.41,
 "mae": -3.73
 },
 "full_t2": {
 "done": false,
-"ret": 0.44,
-"r": 0.08,
-"bars": 1,
+"ret": 0.85,
+"r": 0.16,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.32,
+"mfe": 2.41,
 "mae": -3.73
 }
 },
@@ -5741,32 +5741,32 @@
 "risk_pct": 6.13,
 "plan": {
 "done": false,
-"ret": -0.35,
-"r": -0.06,
-"bars": 1,
+"ret": 0.06,
+"r": 0.01,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.54,
+"mfe": 1.63,
 "mae": -4.55
 },
 "full_t1": {
 "done": false,
-"ret": -0.35,
-"r": -0.06,
-"bars": 1,
+"ret": 0.06,
+"r": 0.01,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.54,
+"mfe": 1.63,
 "mae": -4.55
 },
 "full_t2": {
 "done": false,
-"ret": -0.35,
-"r": -0.06,
-"bars": 1,
+"ret": 0.06,
+"r": 0.01,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.54,
+"mfe": 1.63,
 "mae": -4.55
 }
 }
@@ -5829,9 +5829,9 @@
 "risk_pct": 2.71,
 "plan": {
 "done": false,
-"ret": 3.01,
-"r": 1.11,
-"bars": 1,
+"ret": 1.06,
+"r": 0.39,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.34,
@@ -5839,9 +5839,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 3.01,
-"r": 1.11,
-"bars": 1,
+"ret": 1.06,
+"r": 0.39,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.34,
@@ -5849,9 +5849,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.01,
-"r": 1.11,
-"bars": 1,
+"ret": 1.06,
+"r": 0.39,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.34,
@@ -5923,9 +5923,9 @@
 "risk_pct": 10.46,
 "plan": {
 "done": false,
-"ret": 3.6,
-"r": 0.34,
-"bars": 1,
+"ret": 1.04,
+"r": 0.1,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.8,
@@ -5933,9 +5933,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 3.6,
-"r": 0.34,
-"bars": 1,
+"ret": 1.04,
+"r": 0.1,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.8,
@@ -5943,9 +5943,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.6,
-"r": 0.34,
-"bars": 1,
+"ret": 1.04,
+"r": 0.1,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.8,
@@ -6017,33 +6017,33 @@
 "risk_pct": 9.06,
 "plan": {
 "done": false,
-"ret": -0.64,
-"r": -0.07,
-"bars": 1,
+"ret": -0.77,
+"r": -0.08,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.84,
-"mae": -1.14
+"mae": -2.35
 },
 "full_t1": {
 "done": false,
-"ret": -0.64,
-"r": -0.07,
-"bars": 1,
+"ret": -0.77,
+"r": -0.08,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.84,
-"mae": -1.14
+"mae": -2.35
 },
 "full_t2": {
 "done": false,
-"ret": -0.64,
-"r": -0.07,
-"bars": 1,
+"ret": -0.77,
+"r": -0.08,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.84,
-"mae": -1.14
+"mae": -2.35
 }
 },
 "safer": {
@@ -6147,33 +6147,33 @@
 "risk_pct": 16.37,
 "plan": {
 "done": false,
-"ret": 0.0,
-"r": 0.0,
-"bars": 0,
+"ret": -0.38,
+"r": -0.02,
+"bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 0.0,
-"mae": 0.0
+"mfe": 0.6,
+"mae": -2.36
 },
 "full_t1": {
 "done": false,
-"ret": 0.0,
-"r": 0.0,
-"bars": 0,
+"ret": -0.38,
+"r": -0.02,
+"bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 0.0,
-"mae": 0.0
+"mfe": 0.6,
+"mae": -2.36
 },
 "full_t2": {
 "done": false,
-"ret": 0.0,
-"r": 0.0,
-"bars": 0,
+"ret": -0.38,
+"r": -0.02,
+"bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 0.0,
-"mae": 0.0
+"mfe": 0.6,
+"mae": -2.36
 }
 }
 },
@@ -6421,9 +6421,9 @@
 "risk_pct": 2.16,
 "plan": {
 "done": false,
-"ret": 4.3,
-"r": 1.99,
-"bars": 4,
+"ret": 2.38,
+"r": 1.1,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.85,
@@ -6431,9 +6431,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 4.3,
-"r": 1.99,
-"bars": 4,
+"ret": 2.38,
+"r": 1.1,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.85,
@@ -6441,9 +6441,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 4.3,
-"r": 1.99,
-"bars": 4,
+"ret": 2.38,
+"r": 1.1,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.85,
@@ -6460,9 +6460,9 @@
 "risk_pct": 2.8,
 "plan": {
 "done": false,
-"ret": 3.62,
-"r": 1.3,
-"bars": 3,
+"ret": 1.72,
+"r": 0.62,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.17,
@@ -6470,9 +6470,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 3.62,
-"r": 1.3,
-"bars": 3,
+"ret": 1.72,
+"r": 0.62,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.17,
@@ -6480,9 +6480,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.62,
-"r": 1.3,
-"bars": 3,
+"ret": 1.72,
+"r": 0.62,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.17,
@@ -6548,32 +6548,32 @@
 "risk_pct": 1.82,
 "plan": {
 "done": false,
-"ret": 4.23,
-"r": 2.33,
-"bars": 4,
+"ret": 3.45,
+"r": 1.9,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.44,
+"mfe": 5.11,
 "mae": -1.12
 },
 "full_t1": {
-"done": false,
-"ret": 4.23,
-"r": 2.33,
-"bars": 4,
-"exit": "open",
-"exit_date": null,
-"mfe": 4.44,
+"done": true,
+"ret": 5.0,
+"r": 2.75,
+"bars": 5,
+"exit": "T1",
+"exit_date": "2026-11-16",
+"mfe": 5.11,
 "mae": -1.12
 },
 "full_t2": {
 "done": false,
-"ret": 4.23,
-"r": 2.33,
-"bars": 4,
+"ret": 1.9,
+"r": 1.05,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.44,
+"mfe": 5.11,
 "mae": -1.12
 }
 },
@@ -6587,32 +6587,32 @@
 "risk_pct": 2.94,
 "plan": {
 "done": false,
-"ret": 3.04,
-"r": 1.03,
-"bars": 2,
+"ret": 0.74,
+"r": 0.25,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 3.24,
+"mfe": 3.91,
 "mae": -0.25
 },
 "full_t1": {
 "done": false,
-"ret": 3.04,
-"r": 1.03,
-"bars": 2,
+"ret": 0.74,
+"r": 0.25,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 3.24,
+"mfe": 3.91,
 "mae": -0.25
 },
 "full_t2": {
 "done": false,
-"ret": 3.04,
-"r": 1.03,
-"bars": 2,
+"ret": 0.74,
+"r": 0.25,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 3.24,
+"mfe": 3.91,
 "mae": -0.25
 }
 }
@@ -6766,9 +6766,9 @@
 "risk_pct": 4.13,
 "plan": {
 "done": false,
-"ret": -0.44,
-"r": -0.11,
-"bars": 4,
+"ret": 0.93,
+"r": 0.23,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.49,
@@ -6776,9 +6776,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": -0.44,
-"r": -0.11,
-"bars": 4,
+"ret": 0.93,
+"r": 0.23,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.49,
@@ -6786,9 +6786,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": -0.44,
-"r": -0.11,
-"bars": 4,
+"ret": 0.93,
+"r": 0.23,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.49,
@@ -6805,9 +6805,9 @@
 "risk_pct": 4.16,
 "plan": {
 "done": false,
-"ret": -0.46,
-"r": -0.11,
-"bars": 3,
+"ret": 0.91,
+"r": 0.22,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.46,
@@ -6815,9 +6815,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": -0.46,
-"r": -0.11,
-"bars": 3,
+"ret": 0.91,
+"r": 0.22,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.46,
@@ -6825,9 +6825,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": -0.46,
-"r": -0.11,
-"bars": 3,
+"ret": 0.91,
+"r": 0.22,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.46,
@@ -6900,33 +6900,33 @@
 "risk_pct": 4.64,
 "plan": {
 "done": false,
-"ret": -1.05,
-"r": -0.23,
-"bars": 3,
+"ret": -1.02,
+"r": -0.22,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.42,
-"mae": -2.15
+"mae": -3.78
 },
 "full_t1": {
 "done": false,
-"ret": -1.05,
-"r": -0.23,
-"bars": 3,
+"ret": -1.02,
+"r": -0.22,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.42,
-"mae": -2.15
+"mae": -3.78
 },
 "full_t2": {
 "done": false,
-"ret": -1.05,
-"r": -0.23,
-"bars": 3,
+"ret": -1.02,
+"r": -0.22,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.42,
-"mae": -2.15
+"mae": -3.78
 }
 }
 },
@@ -7086,32 +7086,32 @@
 "risk_pct": 4.55,
 "plan": {
 "done": false,
-"ret": 0.96,
-"r": 0.21,
-"bars": 1,
+"ret": 2.99,
+"r": 0.66,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.36,
+"mfe": 4.51,
 "mae": -1.06
 },
 "full_t1": {
 "done": false,
-"ret": 0.96,
-"r": 0.21,
-"bars": 1,
+"ret": 2.99,
+"r": 0.66,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.36,
+"mfe": 4.51,
 "mae": -1.06
 },
 "full_t2": {
 "done": false,
-"ret": 0.96,
-"r": 0.21,
-"bars": 1,
+"ret": 2.99,
+"r": 0.66,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.36,
+"mfe": 4.51,
 "mae": -1.06
 }
 }
@@ -7174,9 +7174,9 @@
 "risk_pct": 3.22,
 "plan": {
 "done": false,
-"ret": 1.44,
-"r": 0.45,
-"bars": 4,
+"ret": 0.27,
+"r": 0.08,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.55,
@@ -7184,9 +7184,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 1.44,
-"r": 0.45,
-"bars": 4,
+"ret": 0.27,
+"r": 0.08,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.55,
@@ -7194,9 +7194,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 1.44,
-"r": 0.45,
-"bars": 4,
+"ret": 0.27,
+"r": 0.08,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.55,
@@ -7266,9 +7266,9 @@
 "risk_pct": 1.0,
 "plan": {
 "done": false,
-"ret": 3.02,
-"r": 3.02,
-"bars": 4,
+"ret": 2.18,
+"r": 2.18,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.37,
@@ -7276,9 +7276,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 3.02,
-"r": 3.02,
-"bars": 4,
+"ret": 2.18,
+"r": 2.18,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.37,
@@ -7286,9 +7286,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.02,
-"r": 3.02,
-"bars": 4,
+"ret": 2.18,
+"r": 2.18,
+"bars": 5,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.37,
@@ -7305,9 +7305,9 @@
 "risk_pct": 2.13,
 "plan": {
 "done": false,
-"ret": 1.93,
-"r": 0.91,
-"bars": 3,
+"ret": 1.09,
+"r": 0.51,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.29,
@@ -7315,9 +7315,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 1.93,
-"r": 0.91,
-"bars": 3,
+"ret": 1.09,
+"r": 0.51,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.29,
@@ -7325,9 +7325,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 1.93,
-"r": 0.91,
-"bars": 3,
+"ret": 1.09,
+"r": 0.51,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.29,
@@ -7396,9 +7396,9 @@
 "risk_pct": 2.32,
 "plan": {
 "done": false,
-"ret": 2.96,
-"r": 1.27,
-"bars": 3,
+"ret": 0.97,
+"r": 0.42,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.79,
@@ -7406,9 +7406,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.96,
-"r": 1.27,
-"bars": 3,
+"ret": 0.97,
+"r": 0.42,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.79,
@@ -7416,9 +7416,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.96,
-"r": 1.27,
-"bars": 3,
+"ret": 0.97,
+"r": 0.42,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.79,
@@ -7597,7 +7597,7 @@
 "earnings_next": "2026-11-16",
 "earnings_blackout": false,
 "earnings_days": 4,
-"status": "open",
+"status": "closed",
 "outcome": {
 "close": {
 "entry_rule": "close of the signal bar",
@@ -7613,34 +7613,34 @@
 "why": "entered on the break",
 "risk_pct": 3.83,
 "plan": {
-"done": false,
-"ret": 0.56,
-"r": 0.15,
-"bars": 2,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -3.83,
+"r": -1.0,
+"bars": 3,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 1.7,
-"mae": -1.93
+"mae": -9.85
 },
 "full_t1": {
-"done": false,
-"ret": 0.56,
-"r": 0.15,
-"bars": 2,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -3.83,
+"r": -1.0,
+"bars": 3,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 1.7,
-"mae": -1.93
+"mae": -9.85
 },
 "full_t2": {
-"done": false,
-"ret": 0.56,
-"r": 0.15,
-"bars": 2,
-"exit": "open",
-"exit_date": null,
+"done": true,
+"ret": -3.83,
+"r": -1.0,
+"bars": 3,
+"exit": "stop",
+"exit_date": "2026-11-16",
 "mfe": 1.7,
-"mae": -1.93
+"mae": -9.85
 }
 }
 },
@@ -7707,32 +7707,32 @@
 "risk_pct": 2.88,
 "plan": {
 "done": false,
-"ret": 2.1,
-"r": 0.73,
-"bars": 2,
+"ret": 4.58,
+"r": 1.59,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.51,
+"mfe": 5.68,
 "mae": -1.81
 },
 "full_t1": {
-"done": false,
-"ret": 2.1,
-"r": 0.73,
-"bars": 2,
-"exit": "open",
-"exit_date": null,
-"mfe": 2.51,
+"done": true,
+"ret": 5.0,
+"r": 1.74,
+"bars": 3,
+"exit": "T1",
+"exit_date": "2026-11-16",
+"mfe": 5.68,
 "mae": -1.81
 },
 "full_t2": {
 "done": false,
-"ret": 2.1,
-"r": 0.73,
-"bars": 2,
+"ret": 4.15,
+"r": 1.44,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.51,
+"mfe": 5.68,
 "mae": -1.81
 }
 }
@@ -8140,32 +8140,32 @@
 "risk_pct": 1.33,
 "plan": {
 "done": false,
-"ret": 1.18,
-"r": 0.89,
-"bars": 3,
+"ret": 1.76,
+"r": 1.32,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.28,
+"mfe": 1.78,
 "mae": -0.77
 },
 "full_t1": {
 "done": false,
-"ret": 1.18,
-"r": 0.89,
-"bars": 3,
+"ret": 1.76,
+"r": 1.32,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.28,
+"mfe": 1.78,
 "mae": -0.77
 },
 "full_t2": {
 "done": false,
-"ret": 1.18,
-"r": 0.89,
-"bars": 3,
+"ret": 1.76,
+"r": 1.32,
+"bars": 4,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.28,
+"mfe": 1.78,
 "mae": -0.77
 }
 },
@@ -8179,33 +8179,33 @@
 "risk_pct": 2.39,
 "plan": {
 "done": false,
-"ret": 0.0,
-"r": 0.0,
-"bars": 0,
+"ret": 0.72,
+"r": 0.3,
+"bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 0.0,
-"mae": 0.0
+"mfe": 0.75,
+"mae": -0.92
 },
 "full_t1": {
 "done": false,
-"ret": 0.0,
-"r": 0.0,
-"bars": 0,
+"ret": 0.72,
+"r": 0.3,
+"bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 0.0,
-"mae": 0.0
+"mfe": 0.75,
+"mae": -0.92
 },
 "full_t2": {
 "done": false,
-"ret": 0.0,
-"r": 0.0,
-"bars": 0,
+"ret": 0.72,
+"r": 0.3,
+"bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 0.0,
-"mae": 0.0
+"mfe": 0.75,
+"mae": -0.92
 }
 }
 },
@@ -8450,32 +8450,32 @@
 "risk_pct": 3.21,
 "plan": {
 "done": false,
-"ret": 2.67,
-"r": 0.83,
-"bars": 2,
+"ret": 2.97,
+"r": 0.93,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.88,
+"mfe": 4.55,
 "mae": -1.52
 },
 "full_t1": {
 "done": false,
-"ret": 2.67,
-"r": 0.83,
-"bars": 2,
+"ret": 2.97,
+"r": 0.93,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.88,
+"mfe": 4.55,
 "mae": -1.52
 },
 "full_t2": {
 "done": false,
-"ret": 2.67,
-"r": 0.83,
-"bars": 2,
+"ret": 2.97,
+"r": 0.93,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.88,
+"mfe": 4.55,
 "mae": -1.52
 }
 },
@@ -8489,32 +8489,32 @@
 "risk_pct": 3.24,
 "plan": {
 "done": false,
-"ret": 2.64,
-"r": 0.81,
-"bars": 2,
+"ret": 2.94,
+"r": 0.91,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.84,
+"mfe": 4.51,
 "mae": -1.55
 },
 "full_t1": {
 "done": false,
-"ret": 2.64,
-"r": 0.81,
-"bars": 2,
+"ret": 2.94,
+"r": 0.91,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.84,
+"mfe": 4.51,
 "mae": -1.55
 },
 "full_t2": {
 "done": false,
-"ret": 2.64,
-"r": 0.81,
-"bars": 2,
+"ret": 2.94,
+"r": 0.91,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.84,
+"mfe": 4.51,
 "mae": -1.55
 }
 }
@@ -8665,9 +8665,9 @@
 "risk_pct": 2.02,
 "plan": {
 "done": false,
-"ret": 3.86,
-"r": 1.91,
-"bars": 2,
+"ret": 2.72,
+"r": 1.34,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.94,
@@ -8675,9 +8675,9 @@
 },
 "full_t1": {
 "done": false,
-"ret": 3.86,
-"r": 1.91,
-"bars": 2,
+"ret": 2.72,
+"r": 1.34,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.94,
@@ -8685,9 +8685,9 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.86,
-"r": 1.91,
-"bars": 2,
+"ret": 2.72,
+"r": 1.34,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
 "mfe": 4.94,
@@ -8704,33 +8704,33 @@
 "risk_pct": 4.97,
 "plan": {
 "done": false,
-"ret": 1.08,
-"r": 0.22,
-"bars": 1,
+"ret": -0.1,
+"r": -0.02,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.19,
-"mae": 0.0
+"mae": -2.11
 },
 "full_t1": {
 "done": false,
-"ret": 1.08,
-"r": 0.22,
-"bars": 1,
+"ret": -0.1,
+"r": -0.02,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.19,
-"mae": 0.0
+"mae": -2.11
 },
 "full_t2": {
 "done": false,
-"ret": 1.08,
-"r": 0.22,
-"bars": 1,
+"ret": -0.1,
+"r": -0.02,
+"bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 2.19,
-"mae": 0.0
+"mae": -2.11
 }
 }
 },
@@ -8789,40 +8789,40 @@
 "risk_pct": 1.26,
 "plan": {
 "done": false,
-"ret": 0.37,
-"r": 0.29,
-"bars": 2,
+"ret": 1.16,
+"r": 0.92,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.64,
-"mae": -1.14
+"mfe": 1.76,
+"mae": -1.24
 },
 "full_t1": {
 "done": false,
-"ret": 0.37,
-"r": 0.29,
-"bars": 2,
+"ret": 1.16,
+"r": 0.92,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.64,
-"mae": -1.14
+"mfe": 1.76,
+"mae": -1.24
 },
 "full_t2": {
 "done": false,
-"ret": 0.37,
-"r": 0.29,
-"bars": 2,
+"ret": 1.16,
+"r": 0.92,
+"bars": 3,
 "exit": "open",
 "exit_date": null,
-"mfe": 1.64,
-"mae": -1.14
+"mfe": 1.76,
+"mae": -1.24
 }
 },
 "safer": {
 "entry_rule": "break below the reversal bar (683.77) within 3 bars",
 "trigger": 683.77,
-"triggered": null,
-"why": "waiting for the trigger"
+"triggered": false,
+"why": "not triggered: price never broke 683.77 within 3 bars"
 }
 },
 "last_seen": "2026-11-12T08:49-05:00",
@@ -9459,55 +9459,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 4.95,
-"r": 3.3,
+"ret": 5.06,
+"r": 3.37,
 "bars": 3,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
 "targets_hit": 1,
-"mfe": 5.47,
+"mfe": 5.93,
 "mae": -0.04
 },
 "variants": {
 "s0t0": {
-"r": 3.3,
-"ret": 4.95,
+"r": 3.37,
+"ret": 5.06,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 3.04,
-"ret": 4.56,
+"r": 3.11,
+"ret": 4.67,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 1.55,
-"ret": 4.95,
+"r": 1.59,
+"ret": 5.06,
 "done": false,
 "exit": "open",
 "risk": 3.19
 },
 "s1t1": {
-"r": 1.43,
-"ret": 4.56,
+"r": 1.46,
+"ret": 4.67,
 "done": false,
 "exit": "open",
 "risk": 3.19
 },
 "s2t0": {
-"r": 3.3,
-"ret": 4.95,
+"r": 3.37,
+"ret": 5.06,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 3.04,
-"ret": 4.56,
+"r": 3.11,
+"ret": 4.67,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -9574,8 +9574,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 6.23,
-"r": 4.16,
+"ret": 6.19,
+"r": 4.12,
 "bars": 3,
 "exit": "open",
 "exit_date": "2026-11-16",
@@ -9586,43 +9586,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 4.16,
-"ret": 6.23,
+"r": 4.12,
+"ret": 6.19,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 4.32,
-"ret": 6.48,
+"r": 4.29,
+"ret": 6.43,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 1.73,
-"ret": 6.23,
+"r": 1.71,
+"ret": 6.19,
 "done": false,
 "exit": "open",
 "risk": 3.61
 },
 "s1t1": {
-"r": 1.79,
-"ret": 6.48,
+"r": 1.78,
+"ret": 6.43,
 "done": false,
 "exit": "open",
 "risk": 3.61
 },
 "s2t0": {
-"r": 4.16,
-"ret": 6.23,
+"r": 4.12,
+"ret": 6.19,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 4.32,
-"ret": 6.48,
+"r": 4.29,
+"ret": 6.43,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -9796,55 +9796,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 2.4,
-"r": 1.6,
+"ret": 3.44,
+"r": 2.3,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
 "targets_hit": 0,
-"mfe": 2.54,
+"mfe": 3.7,
 "mae": -0.65
 },
 "variants": {
 "s0t0": {
-"r": 1.6,
-"ret": 2.4,
+"r": 2.3,
+"ret": 3.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 1.6,
-"ret": 2.4,
+"r": 2.3,
+"ret": 3.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.8,
-"ret": 2.4,
+"r": 1.15,
+"ret": 3.44,
 "done": false,
 "exit": "open",
 "risk": 3.0
 },
 "s1t1": {
-"r": 0.8,
-"ret": 2.4,
+"r": 1.15,
+"ret": 3.44,
 "done": false,
 "exit": "open",
 "risk": 3.0
 },
 "s2t0": {
-"r": 1.6,
-"ret": 2.4,
+"r": 2.3,
+"ret": 3.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 1.6,
-"ret": 2.4,
+"r": 2.3,
+"ret": 3.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -9911,55 +9911,55 @@
 "risk_pct": 1.89,
 "plan": {
 "done": false,
-"ret": 0.97,
-"r": 0.51,
+"ret": 1.76,
+"r": 0.93,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
 "targets_hit": 0,
-"mfe": 1.29,
+"mfe": 2.02,
 "mae": -1.46
 },
 "variants": {
 "s0t0": {
-"r": 0.51,
-"ret": 0.97,
+"r": 0.93,
+"ret": 1.76,
 "done": false,
 "exit": "open",
 "risk": 1.89
 },
 "s0t1": {
-"r": 0.51,
-"ret": 0.97,
+"r": 0.93,
+"ret": 1.76,
 "done": false,
 "exit": "open",
 "risk": 1.89
 },
 "s1t0": {
-"r": 0.3,
-"ret": 0.97,
+"r": 0.55,
+"ret": 1.76,
 "done": false,
 "exit": "open",
 "risk": 3.23
 },
 "s1t1": {
-"r": 0.3,
-"ret": 0.97,
+"r": 0.55,
+"ret": 1.76,
 "done": false,
 "exit": "open",
 "risk": 3.23
 },
 "s2t0": {
-"r": 0.51,
-"ret": 0.97,
+"r": 0.93,
+"ret": 1.76,
 "done": false,
 "exit": "open",
 "risk": 1.89
 },
 "s2t1": {
-"r": 0.51,
-"ret": 0.97,
+"r": 0.93,
+"ret": 1.76,
 "done": false,
 "exit": "open",
 "risk": 1.89
@@ -10256,55 +10256,55 @@
 "risk_pct": 2.31,
 "plan": {
 "done": false,
-"ret": 2.61,
-"r": 1.13,
+"ret": 2.86,
+"r": 1.24,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
 "targets_hit": 0,
-"mfe": 2.81,
+"mfe": 3.11,
 "mae": -0.11
 },
 "variants": {
 "s0t0": {
-"r": 1.13,
-"ret": 2.61,
+"r": 1.24,
+"ret": 2.86,
 "done": false,
 "exit": "open",
 "risk": 2.31
 },
 "s0t1": {
-"r": 1.13,
-"ret": 2.61,
+"r": 1.24,
+"ret": 2.86,
 "done": false,
 "exit": "open",
 "risk": 2.31
 },
 "s1t0": {
-"r": 0.71,
-"ret": 2.61,
+"r": 0.78,
+"ret": 2.86,
 "done": false,
 "exit": "open",
 "risk": 3.69
 },
 "s1t1": {
-"r": 0.71,
-"ret": 2.61,
+"r": 0.78,
+"ret": 2.86,
 "done": false,
 "exit": "open",
 "risk": 3.69
 },
 "s2t0": {
-"r": 1.13,
-"ret": 2.61,
+"r": 1.24,
+"ret": 2.86,
 "done": false,
 "exit": "open",
 "risk": 2.31
 },
 "s2t1": {
-"r": 1.13,
-"ret": 2.61,
+"r": 1.24,
+"ret": 2.86,
 "done": false,
 "exit": "open",
 "risk": 2.31
@@ -10371,55 +10371,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 3.09,
-"r": 2.06,
+"ret": 3.24,
+"r": 2.16,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
 "targets_hit": 0,
-"mfe": 3.18,
+"mfe": 3.83,
 "mae": -0.29
 },
 "variants": {
 "s0t0": {
-"r": 2.06,
-"ret": 3.09,
+"r": 2.16,
+"ret": 3.24,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 1.98,
-"ret": 2.97,
+"r": 2.03,
+"ret": 3.05,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 1.17,
-"ret": 3.09,
+"r": 1.23,
+"ret": 3.24,
 "done": false,
 "exit": "open",
 "risk": 2.64
 },
 "s1t1": {
-"r": 1.13,
-"ret": 2.97,
+"r": 1.15,
+"ret": 3.05,
 "done": false,
 "exit": "open",
 "risk": 2.64
 },
 "s2t0": {
-"r": 2.06,
-"ret": 3.09,
+"r": 2.16,
+"ret": 3.24,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 1.98,
-"ret": 2.97,
+"r": 2.03,
+"ret": 3.05,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -10486,55 +10486,55 @@
 "risk_pct": 2.04,
 "plan": {
 "done": false,
-"ret": 3.83,
-"r": 1.88,
+"ret": 4.78,
+"r": 2.34,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
-"targets_hit": 0,
-"mfe": 4.05,
+"targets_hit": 1,
+"mfe": 5.0,
 "mae": -0.34
 },
 "variants": {
 "s0t0": {
-"r": 1.88,
-"ret": 3.83,
+"r": 2.34,
+"ret": 4.78,
 "done": false,
 "exit": "open",
 "risk": 2.04
 },
 "s0t1": {
-"r": 1.88,
-"ret": 3.83,
+"r": 2.24,
+"ret": 4.57,
 "done": false,
 "exit": "open",
 "risk": 2.04
 },
 "s1t0": {
-"r": 0.93,
-"ret": 3.83,
+"r": 1.16,
+"ret": 4.78,
 "done": false,
 "exit": "open",
 "risk": 4.11
 },
 "s1t1": {
-"r": 0.93,
-"ret": 3.83,
+"r": 1.11,
+"ret": 4.57,
 "done": false,
 "exit": "open",
 "risk": 4.11
 },
 "s2t0": {
-"r": 1.88,
-"ret": 3.83,
+"r": 2.34,
+"ret": 4.78,
 "done": false,
 "exit": "open",
 "risk": 2.04
 },
 "s2t1": {
-"r": 1.88,
-"ret": 3.83,
+"r": 2.24,
+"ret": 4.57,
 "done": false,
 "exit": "open",
 "risk": 2.04
@@ -10601,55 +10601,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 2.08,
-"r": 1.39,
+"ret": 2.44,
+"r": 1.63,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
 "targets_hit": 0,
-"mfe": 2.35,
+"mfe": 2.77,
 "mae": -0.19
 },
 "variants": {
 "s0t0": {
-"r": 1.39,
-"ret": 2.08,
+"r": 1.63,
+"ret": 2.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 1.39,
-"ret": 2.08,
+"r": 1.63,
+"ret": 2.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.84,
-"ret": 2.08,
+"r": 0.99,
+"ret": 2.44,
 "done": false,
 "exit": "open",
 "risk": 2.48
 },
 "s1t1": {
-"r": 0.84,
-"ret": 2.08,
+"r": 0.99,
+"ret": 2.44,
 "done": false,
 "exit": "open",
 "risk": 2.48
 },
 "s2t0": {
-"r": 1.39,
-"ret": 2.08,
+"r": 1.63,
+"ret": 2.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 1.39,
-"ret": 2.08,
+"r": 1.63,
+"ret": 2.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -10716,8 +10716,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 2.7,
-"r": 1.8,
+"ret": 2.87,
+"r": 1.91,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-16",
@@ -10728,43 +10728,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 1.8,
-"ret": 2.7,
+"r": 1.91,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 1.8,
-"ret": 2.7,
+"r": 1.91,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.9,
-"ret": 2.7,
+"r": 0.95,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 3.0
 },
 "s1t1": {
-"r": 0.9,
-"ret": 2.7,
+"r": 0.95,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 3.0
 },
 "s2t0": {
-"r": 1.8,
-"ret": 2.7,
+"r": 1.91,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 1.8,
-"ret": 2.7,
+"r": 1.91,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -10946,55 +10946,55 @@
 "risk_pct": 2.49,
 "plan": {
 "done": false,
-"ret": 3.82,
-"r": 1.54,
+"ret": 4.49,
+"r": 1.8,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
 "targets_hit": 0,
-"mfe": 4.34,
+"mfe": 4.86,
 "mae": 0.0
 },
 "variants": {
 "s0t0": {
-"r": 1.54,
-"ret": 3.82,
+"r": 1.8,
+"ret": 4.49,
 "done": false,
 "exit": "open",
 "risk": 2.49
 },
 "s0t1": {
-"r": 1.45,
-"ret": 3.61,
+"r": 1.58,
+"ret": 3.94,
 "done": false,
 "exit": "open",
 "risk": 2.49
 },
 "s1t0": {
-"r": 0.99,
-"ret": 3.82,
+"r": 1.17,
+"ret": 4.49,
 "done": false,
 "exit": "open",
 "risk": 3.85
 },
 "s1t1": {
-"r": 0.94,
-"ret": 3.61,
+"r": 1.02,
+"ret": 3.94,
 "done": false,
 "exit": "open",
 "risk": 3.85
 },
 "s2t0": {
-"r": 1.54,
-"ret": 3.82,
+"r": 1.8,
+"ret": 4.49,
 "done": false,
 "exit": "open",
 "risk": 2.49
 },
 "s2t1": {
-"r": 1.45,
-"ret": 3.61,
+"r": 1.58,
+"ret": 3.94,
 "done": false,
 "exit": "open",
 "risk": 2.49
@@ -11046,8 +11046,53 @@
 "earnings_next": "2026-12-03",
 "earnings_blackout": false,
 "earnings_days": 14,
-"status": "pending",
-"outcome": {},
+"status": "closed",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 70.8,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 1.24,
+"plan": {
+"done": true,
+"ret": -1.24,
+"r": -1.0,
+"bars": 1,
+"exit": "stop",
+"exit_date": "2026-11-16",
+"mfe": 0.77,
+"mae": -1.44
+},
+"full_t1": {
+"done": true,
+"ret": -1.24,
+"r": -1.0,
+"bars": 1,
+"exit": "stop",
+"exit_date": "2026-11-16",
+"mfe": 0.77,
+"mae": -1.44
+},
+"full_t2": {
+"done": true,
+"ret": -1.24,
+"r": -1.0,
+"bars": 1,
+"exit": "stop",
+"exit_date": "2026-11-16",
+"mfe": 0.77,
+"mae": -1.44
+}
+},
+"safer": {
+"entry_rule": "break below the reversal bar (69.59) within 3 bars",
+"trigger": 69.59,
+"triggered": false,
+"why": "cancelled: the stop was hit before the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11093,8 +11138,86 @@
 "earnings_next": "2027-02-09",
 "earnings_blackout": false,
 "earnings_days": 62,
-"status": "pending",
-"outcome": {},
+"status": "open",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 153.78,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 4.25,
+"plan": {
+"done": false,
+"ret": 2.31,
+"r": 0.55,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 2.68,
+"mae": 0.0
+},
+"full_t1": {
+"done": false,
+"ret": 2.31,
+"r": 0.55,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 2.68,
+"mae": 0.0
+},
+"full_t2": {
+"done": false,
+"ret": 2.31,
+"r": 0.55,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 2.68,
+"mae": 0.0
+}
+},
+"safer": {
+"entry_rule": "break below the reversal bar (150.21) within 3 bars",
+"trigger": 150.21,
+"triggered": true,
+"entry": 150.21,
+"entry_date": "2026-11-20",
+"why": "entered on the break",
+"risk_pct": 6.72,
+"plan": {
+"done": false,
+"ret": 0.0,
+"r": 0.0,
+"bars": 0,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": 0.0
+},
+"full_t1": {
+"done": false,
+"ret": 0.0,
+"r": 0.0,
+"bars": 0,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": 0.0
+},
+"full_t2": {
+"done": false,
+"ret": 0.0,
+"r": 0.0,
+"bars": 0,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": 0.0
+}
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11143,8 +11266,86 @@
 "earnings_next": "2027-01-27",
 "earnings_blackout": false,
 "earnings_days": 53,
-"status": "pending",
-"outcome": {},
+"status": "open",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 5853.92,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 3.85,
+"plan": {
+"done": false,
+"ret": -1.25,
+"r": -0.32,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 1.12,
+"mae": -1.27
+},
+"full_t1": {
+"done": false,
+"ret": -1.25,
+"r": -0.32,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 1.12,
+"mae": -1.27
+},
+"full_t2": {
+"done": false,
+"ret": -1.25,
+"r": -0.32,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 1.12,
+"mae": -1.27
+}
+},
+"safer": {
+"entry_rule": "break above the reversal bar (6125.00) within 3 bars",
+"trigger": 6125.0,
+"triggered": true,
+"entry": 6125.0,
+"entry_date": "2026-11-06",
+"why": "entered on the break",
+"risk_pct": 8.1,
+"plan": {
+"done": true,
+"ret": 0.54,
+"r": 0.07,
+"bars": 2,
+"exit": "breakeven stop",
+"exit_date": "2026-11-20",
+"mfe": 5.18,
+"mae": -5.64
+},
+"full_t1": {
+"done": true,
+"ret": 5.0,
+"r": 0.62,
+"bars": 1,
+"exit": "T1",
+"exit_date": "2026-11-13",
+"mfe": 5.18,
+"mae": -5.5
+},
+"full_t2": {
+"done": false,
+"ret": -5.62,
+"r": -0.69,
+"bars": 2,
+"exit": "open",
+"exit_date": null,
+"mfe": 5.18,
+"mae": -5.64
+}
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11190,8 +11391,53 @@
 "earnings_next": "2027-02-09",
 "earnings_blackout": false,
 "earnings_days": 62,
-"status": "pending",
-"outcome": {},
+"status": "open",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 84.68,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 3.97,
+"plan": {
+"done": false,
+"ret": 0.12,
+"r": 0.03,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.32,
+"mae": -1.38
+},
+"full_t1": {
+"done": false,
+"ret": 0.12,
+"r": 0.03,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.32,
+"mae": -1.38
+},
+"full_t2": {
+"done": false,
+"ret": 0.12,
+"r": 0.03,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.32,
+"mae": -1.38
+}
+},
+"safer": {
+"entry_rule": "break below the reversal bar (81.28) within 3 bars",
+"trigger": 81.28,
+"triggered": null,
+"why": "waiting for the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11237,8 +11483,53 @@
 "earnings_next": "2027-02-03",
 "earnings_blackout": false,
 "earnings_days": 58,
-"status": "pending",
-"outcome": {},
+"status": "open",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 67.92,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 2.0,
+"plan": {
+"done": false,
+"ret": 0.63,
+"r": 0.32,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.78,
+"mae": -0.29
+},
+"full_t1": {
+"done": false,
+"ret": 0.63,
+"r": 0.32,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.78,
+"mae": -0.29
+},
+"full_t2": {
+"done": false,
+"ret": 0.63,
+"r": 0.32,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.78,
+"mae": -0.29
+}
+},
+"safer": {
+"entry_rule": "break below the reversal bar (64.44) within 3 bars",
+"trigger": 64.44,
+"triggered": null,
+"why": "waiting for the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11287,8 +11578,53 @@
 "earnings_next": "2027-01-21",
 "earnings_blackout": false,
 "earnings_days": 49,
-"status": "pending",
-"outcome": {},
+"status": "closed",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 169.8,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 1.58,
+"plan": {
+"done": true,
+"ret": -1.58,
+"r": -1.0,
+"bars": 1,
+"exit": "stop",
+"exit_date": "2026-11-20",
+"mfe": 0.0,
+"mae": -2.22
+},
+"full_t1": {
+"done": true,
+"ret": -1.58,
+"r": -1.0,
+"bars": 1,
+"exit": "stop",
+"exit_date": "2026-11-20",
+"mfe": 0.0,
+"mae": -2.22
+},
+"full_t2": {
+"done": true,
+"ret": -1.58,
+"r": -1.0,
+"bars": 1,
+"exit": "stop",
+"exit_date": "2026-11-20",
+"mfe": 0.0,
+"mae": -2.22
+}
+},
+"safer": {
+"entry_rule": "break below the reversal bar (165.23) within 3 bars",
+"trigger": 165.23,
+"triggered": false,
+"why": "cancelled: the stop was hit before the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11336,8 +11672,20 @@
 "earnings_next": "2027-02-09",
 "earnings_blackout": false,
 "earnings_days": 62,
-"status": "pending",
-"outcome": {},
+"status": "open",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": false,
+"why": "not entered: setup no longer valid at the last scan (no tail yet and not pushing strongly enough for an early heads-up)"
+},
+"safer": {
+"entry_rule": "break below the reversal bar (195.02) within 3 bars",
+"trigger": 195.02,
+"triggered": null,
+"why": "waiting for the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": false,
 "last_reason": "no tail yet and not pushing strongly enough for an early heads-up"
@@ -11383,8 +11731,53 @@
 "earnings_next": "2026-12-10",
 "earnings_blackout": false,
 "earnings_days": 19,
-"status": "pending",
-"outcome": {},
+"status": "closed",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 1106.21,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 0.71,
+"plan": {
+"done": true,
+"ret": -0.71,
+"r": -1.0,
+"bars": 1,
+"exit": "stop",
+"exit_date": "2026-11-20",
+"mfe": 0.12,
+"mae": -0.98
+},
+"full_t1": {
+"done": true,
+"ret": -0.71,
+"r": -1.0,
+"bars": 1,
+"exit": "stop",
+"exit_date": "2026-11-20",
+"mfe": 0.12,
+"mae": -0.98
+},
+"full_t2": {
+"done": true,
+"ret": -0.71,
+"r": -1.0,
+"bars": 1,
+"exit": "stop",
+"exit_date": "2026-11-20",
+"mfe": 0.12,
+"mae": -0.98
+}
+},
+"safer": {
+"entry_rule": "break below the reversal bar (1045.73) within 3 bars",
+"trigger": 1045.73,
+"triggered": false,
+"why": "cancelled: the stop was hit before the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11430,8 +11823,53 @@
 "earnings_next": "2027-02-16",
 "earnings_blackout": false,
 "earnings_days": 67,
-"status": "pending",
-"outcome": {},
+"status": "open",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 252.99,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 1.61,
+"plan": {
+"done": false,
+"ret": -0.64,
+"r": -0.4,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": -1.5
+},
+"full_t1": {
+"done": false,
+"ret": -0.64,
+"r": -0.4,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": -1.5
+},
+"full_t2": {
+"done": false,
+"ret": -0.64,
+"r": -0.4,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": -1.5
+}
+},
+"safer": {
+"entry_rule": "break below the reversal bar (243.85) within 3 bars",
+"trigger": 243.85,
+"triggered": null,
+"why": "waiting for the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11476,8 +11914,53 @@
 "earnings_next": "2027-02-05",
 "earnings_blackout": false,
 "earnings_days": 60,
-"status": "pending",
-"outcome": {},
+"status": "open",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 375.42,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 1.48,
+"plan": {
+"done": false,
+"ret": 0.04,
+"r": 0.03,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.9,
+"mae": -1.16
+},
+"full_t1": {
+"done": false,
+"ret": 0.04,
+"r": 0.03,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.9,
+"mae": -1.16
+},
+"full_t2": {
+"done": false,
+"ret": 0.04,
+"r": 0.03,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.9,
+"mae": -1.16
+}
+},
+"safer": {
+"entry_rule": "break below the reversal bar (350.82) within 3 bars",
+"trigger": 350.82,
+"triggered": null,
+"why": "waiting for the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11522,8 +12005,53 @@
 "earnings_next": "2027-02-03",
 "earnings_blackout": false,
 "earnings_days": 58,
-"status": "pending",
-"outcome": {},
+"status": "open",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 317.97,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 1.56,
+"plan": {
+"done": false,
+"ret": 0.03,
+"r": 0.02,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.69,
+"mae": -1.08
+},
+"full_t1": {
+"done": false,
+"ret": 0.03,
+"r": 0.02,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.69,
+"mae": -1.08
+},
+"full_t2": {
+"done": false,
+"ret": 0.03,
+"r": 0.02,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.69,
+"mae": -1.08
+}
+},
+"safer": {
+"entry_rule": "break below the reversal bar (300.58) within 3 bars",
+"trigger": 300.58,
+"triggered": null,
+"why": "waiting for the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11568,8 +12096,53 @@
 "earnings_next": "2027-02-11",
 "earnings_blackout": false,
 "earnings_days": 64,
-"status": "pending",
-"outcome": {},
+"status": "open",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 127.65,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 14.82,
+"plan": {
+"done": false,
+"ret": -5.71,
+"r": -0.39,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": -8.09
+},
+"full_t1": {
+"done": false,
+"ret": -5.71,
+"r": -0.39,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": -8.09
+},
+"full_t2": {
+"done": false,
+"ret": -5.71,
+"r": -0.39,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": -8.09
+}
+},
+"safer": {
+"entry_rule": "break above the reversal bar (139.75) within 3 bars",
+"trigger": 139.75,
+"triggered": null,
+"why": "waiting for the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11614,8 +12187,53 @@
 "earnings_next": "2027-02-02",
 "earnings_blackout": false,
 "earnings_days": 57,
-"status": "pending",
-"outcome": {},
+"status": "open",
+"outcome": {
+"close": {
+"entry_rule": "close of the signal bar",
+"triggered": true,
+"entry": 26.87,
+"entry_date": "2026-11-13",
+"why": "entered at the close",
+"risk_pct": 10.01,
+"plan": {
+"done": false,
+"ret": -5.94,
+"r": -0.59,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": -7.0
+},
+"full_t1": {
+"done": false,
+"ret": -5.94,
+"r": -0.59,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": -7.0
+},
+"full_t2": {
+"done": false,
+"ret": -5.94,
+"r": -0.59,
+"bars": 1,
+"exit": "open",
+"exit_date": null,
+"mfe": 0.0,
+"mae": -7.0
+}
+},
+"safer": {
+"entry_rule": "break above the reversal bar (31.19) within 3 bars",
+"trigger": 31.19,
+"triggered": null,
+"why": "waiting for the trigger"
+}
+},
 "last_seen": "2026-11-13T15:53-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
@@ -11675,55 +12293,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 2.33,
-"r": 1.55,
+"ret": 2.84,
+"r": 1.9,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
 "targets_hit": 0,
-"mfe": 2.48,
+"mfe": 3.34,
 "mae": -0.94
 },
 "variants": {
 "s0t0": {
-"r": 1.55,
-"ret": 2.33,
+"r": 1.9,
+"ret": 2.84,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 1.55,
-"ret": 2.33,
+"r": 1.9,
+"ret": 2.84,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.78,
-"ret": 2.33,
+"r": 0.96,
+"ret": 2.84,
 "done": false,
 "exit": "open",
 "risk": 2.97
 },
 "s1t1": {
-"r": 0.78,
-"ret": 2.33,
+"r": 0.96,
+"ret": 2.84,
 "done": false,
 "exit": "open",
 "risk": 2.97
 },
 "s2t0": {
-"r": 1.55,
-"ret": 2.33,
+"r": 1.9,
+"ret": 2.84,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 1.55,
-"ret": 2.33,
+"r": 1.9,
+"ret": 2.84,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -11790,55 +12408,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.38,
-"r": 0.25,
+"ret": 0.62,
+"r": 0.41,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
 "targets_hit": 0,
-"mfe": 0.49,
+"mfe": 1.26,
 "mae": -0.44
 },
 "variants": {
 "s0t0": {
-"r": 0.25,
-"ret": 0.38,
+"r": 0.41,
+"ret": 0.62,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.25,
-"ret": 0.38,
+"r": 0.41,
+"ret": 0.62,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.15,
-"ret": 0.38,
+"r": 0.24,
+"ret": 0.62,
 "done": false,
 "exit": "open",
 "risk": 2.62
 },
 "s1t1": {
-"r": 0.15,
-"ret": 0.38,
+"r": 0.24,
+"ret": 0.62,
 "done": false,
 "exit": "open",
 "risk": 2.62
 },
 "s2t0": {
-"r": 0.25,
-"ret": 0.38,
+"r": 0.41,
+"ret": 0.62,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.25,
-"ret": 0.38,
+"r": 0.41,
+"ret": 0.62,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -11849,5 +12467,293 @@
 "paper": false,
 "watch": true,
 "live": true
+},
+{
+"key": "EW|daily|bearish|2026-11-16",
+"id": "EW-daily-2026-11-16-bear",
+"ticker": "EW",
+"timeframe": "daily",
+"direction": "bearish",
+"side": "short",
+"rev_date": "2026-11-16",
+"signal_date": "2026-11-16",
+"first_seen": "2026-11-16T14:53-05:00",
+"stage": "forming",
+"stages_seen": [
+"forming"
+],
+"scan_price": 106.46,
+"stop": 108.26,
+"score": 5.5,
+"count": 10,
+"moved_pct": 1.41,
+"tail_pct": 0.49,
+"efficiency": 0.91,
+"move_atr": 9.1,
+"rsi": 77.4,
+"keys": [
+"stage_forming",
+"count_9",
+"liq_prior_week's_high",
+"sweep"
+],
+"factors": [
+"Topping tail forming at the high (tail 49% of range)",
+"Time count 10: up bars since the last real down bar",
+"Liquidity swept Prior week's high @ 107.69",
+"RSI overbought (77)"
+],
+"idea": "Expecting DOWN: 10-bar rally at prior week's high 107.69; topping tail forming now.",
+"levels": [
+107.69
+],
+"earnings_next": "2027-02-09",
+"earnings_blackout": false,
+"earnings_days": 61,
+"status": "pending",
+"outcome": {},
+"last_seen": "2026-11-16T14:53-05:00",
+"valid_at_last_scan": true,
+"last_reason": ""
+},
+{
+"key": "COST|daily|bearish|2026-11-16",
+"id": "COST-daily-2026-11-16-bear",
+"ticker": "COST",
+"timeframe": "daily",
+"direction": "bearish",
+"side": "short",
+"rev_date": "2026-11-16",
+"signal_date": "2026-11-16",
+"first_seen": "2026-11-16T14:53-05:00",
+"stage": "forming",
+"stages_seen": [
+"forming"
+],
+"scan_price": 1109.34,
+"stop": 1118.91,
+"score": 5.0,
+"count": 8,
+"moved_pct": 0.69,
+"tail_pct": 0.54,
+"efficiency": 0.78,
+"move_atr": 12.3,
+"rsi": 76.6,
+"keys": [
+"stage_forming",
+"count",
+"liq_prior_week's_high",
+"sweep"
+],
+"factors": [
+"Topping tail forming at the high (tail 54% of range)",
+"Time count 8: up bars since the last real down bar",
+"Liquidity swept Prior week's high @ 1109.50",
+"RSI overbought (77)"
+],
+"idea": "Expecting DOWN: 8-bar rally at prior week's high 1109.50; topping tail forming now.",
+"levels": [
+1109.5
+],
+"earnings_next": "2026-12-10",
+"earnings_blackout": false,
+"earnings_days": 18,
+"status": "pending",
+"outcome": {},
+"last_seen": "2026-11-16T14:53-05:00",
+"valid_at_last_scan": true,
+"last_reason": ""
+},
+{
+"key": "FFIV|daily|bullish|2026-11-16",
+"id": "FFIV-daily-2026-11-16-bull",
+"ticker": "FFIV",
+"timeframe": "daily",
+"direction": "bullish",
+"side": "long",
+"rev_date": "2026-11-16",
+"signal_date": "2026-11-16",
+"first_seen": "2026-11-16T14:53-05:00",
+"stage": "forming",
+"stages_seen": [
+"forming"
+],
+"scan_price": 305.44,
+"stop": 298.27,
+"score": 5.0,
+"count": 8,
+"moved_pct": 1.86,
+"tail_pct": 0.82,
+"efficiency": 0.53,
+"move_atr": 11.6,
+"rsi": 23.4,
+"keys": [
+"stage_forming",
+"count",
+"liq_major_pivot_zone",
+"sweep"
+],
+"factors": [
+"Bottoming tail forming at the low (tail 82% of range)",
+"Time count 8: down bars since the last real up bar",
+"Liquidity swept Major pivot zone (1 touch, 2.3x vol) @ 303.98",
+"RSI oversold (23)"
+],
+"idea": "Expecting UP: 8-bar decline at major pivot zone (1 touch, 2.3x vol) 303.98; bottoming tail forming now.",
+"levels": [
+303.98
+],
+"earnings_next": "2027-01-26",
+"earnings_blackout": false,
+"earnings_days": 51,
+"status": "pending",
+"outcome": {},
+"last_seen": "2026-11-16T14:53-05:00",
+"valid_at_last_scan": true,
+"last_reason": ""
+},
+{
+"key": "WRB|daily|bearish|2026-11-16",
+"id": "WRB-daily-2026-11-16-bear",
+"ticker": "WRB",
+"timeframe": "daily",
+"direction": "bearish",
+"side": "short",
+"rev_date": "2026-11-16",
+"signal_date": "2026-11-16",
+"first_seen": "2026-11-16T14:53-05:00",
+"stage": "forming",
+"stages_seen": [
+"forming"
+],
+"scan_price": 78.21,
+"stop": 79.04,
+"score": 4.67,
+"count": 13,
+"moved_pct": 0.87,
+"tail_pct": 0.45,
+"efficiency": 0.48,
+"move_atr": 8.2,
+"rsi": 66.8,
+"keys": [
+"stage_forming",
+"count_9",
+"liq_prior_swing_high"
+],
+"factors": [
+"Topping tail forming at the high (tail 45% of range)",
+"Time count 13: up bars since the last real down bar",
+"Liquidity tagged Prior swing high @ 79.26"
+],
+"idea": "Expecting DOWN: 13-bar rally at prior swing high 79.26; topping tail forming now.",
+"levels": [
+79.26
+],
+"earnings_next": "2027-01-25",
+"earnings_blackout": false,
+"earnings_days": 50,
+"status": "pending",
+"outcome": {},
+"last_seen": "2026-11-16T14:53-05:00",
+"valid_at_last_scan": true,
+"last_reason": ""
+},
+{
+"key": "COF|daily|bullish|2026-11-16",
+"id": "COF-daily-2026-11-16-bull",
+"ticker": "COF",
+"timeframe": "daily",
+"direction": "bullish",
+"side": "long",
+"rev_date": "2026-11-16",
+"signal_date": "2026-11-16",
+"first_seen": "2026-11-16T14:53-05:00",
+"stage": "watch",
+"stages_seen": [
+"watch"
+],
+"scan_price": 192.24,
+"stop": 189.23,
+"score": 4.17,
+"count": 9,
+"moved_pct": 0.43,
+"tail_pct": 0.21,
+"efficiency": 0.75,
+"move_atr": 4.0,
+"rsi": 37.4,
+"keys": [
+"stage_watch",
+"count_9",
+"liq_equal_lows",
+"liq_fib_61.8%_retrace"
+],
+"factors": [
+"Still pushing down into the level; no tail yet",
+"Time count 9: down bars since the last real up bar",
+"Level just ahead: Equal lows (double bottom) @ 190.71",
+"Level just ahead: Fib 61.8% retrace @ 194.14"
+],
+"idea": "Expecting UP: 9-bar decline into equal lows (double bottom) 190.71; watch for a tail in the next 1-2 days.",
+"levels": [
+190.7065,
+194.1442
+],
+"earnings_next": "2027-01-19",
+"earnings_blackout": false,
+"earnings_days": 46,
+"status": "pending",
+"outcome": {},
+"last_seen": "2026-11-16T14:53-05:00",
+"valid_at_last_scan": true,
+"last_reason": ""
+},
+{
+"key": "SRE|daily|bullish|2026-11-16",
+"id": "SRE-daily-2026-11-16-bull",
+"ticker": "SRE",
+"timeframe": "daily",
+"direction": "bullish",
+"side": "long",
+"rev_date": "2026-11-16",
+"signal_date": "2026-11-16",
+"first_seen": "2026-11-16T14:53-05:00",
+"stage": "watch",
+"stages_seen": [
+"watch"
+],
+"scan_price": 78.34,
+"stop": 77.46,
+"score": 4.17,
+"count": 12,
+"moved_pct": 0.09,
+"tail_pct": 0.03,
+"efficiency": 0.64,
+"move_atr": 5.5,
+"rsi": 37.4,
+"keys": [
+"stage_watch",
+"count_9",
+"liq_major_swing_low",
+"liq_prior_week's_low"
+],
+"factors": [
+"Still pushing down into the level; no tail yet",
+"Time count 12: down bars since the last real up bar",
+"Level just ahead: Major swing low @ 78.93",
+"Level just ahead: Prior week's low @ 77.86"
+],
+"idea": "Expecting UP: 12-bar decline into major swing low 78.93; watch for a tail in the next 1-2 days.",
+"levels": [
+78.9271,
+77.86
+],
+"earnings_next": "2027-02-25",
+"earnings_blackout": false,
+"earnings_days": 73,
+"status": "pending",
+"outcome": {},
+"last_seen": "2026-11-16T14:53-05:00",
+"valid_at_last_scan": true,
+"last_reason": ""
 }
 ]
