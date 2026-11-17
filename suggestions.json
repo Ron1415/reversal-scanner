@@ -10486,20 +10486,20 @@
 "risk_pct": 2.04,
 "plan": {
 "done": false,
-"ret": 4.46,
-"r": 2.18,
+"ret": 3.92,
+"r": 1.92,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-16",
 "added": false,
-"targets_hit": 1,
+"targets_hit": 0,
 "mfe": 5.0,
 "mae": -0.34
 },
 "variants": {
 "s0t0": {
-"r": 2.18,
-"ret": 4.46,
+"r": 1.92,
+"ret": 3.92,
 "done": false,
 "exit": "open",
 "risk": 2.04
@@ -10512,8 +10512,8 @@
 "risk": 2.04
 },
 "s1t0": {
-"r": 1.08,
-"ret": 4.46,
+"r": 0.95,
+"ret": 3.92,
 "done": false,
 "exit": "open",
 "risk": 4.11
@@ -10526,8 +10526,8 @@
 "risk": 4.11
 },
 "s2t0": {
-"r": 2.18,
-"ret": 4.46,
+"r": 1.92,
+"ret": 3.92,
 "done": false,
 "exit": "open",
 "risk": 2.04
