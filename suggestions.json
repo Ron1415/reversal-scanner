@@ -9796,8 +9796,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 5.58,
-"r": 3.72,
+"ret": 5.59,
+"r": 3.73,
 "bars": 3,
 "exit": "open",
 "exit_date": "2026-11-17",
@@ -9808,22 +9808,22 @@
 },
 "variants": {
 "s0t0": {
-"r": 3.72,
-"ret": 5.58,
+"r": 3.73,
+"ret": 5.59,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 3.21,
+"r": 3.22,
 "ret": 4.82,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 1.86,
-"ret": 5.58,
+"r": 1.87,
+"ret": 5.59,
 "done": false,
 "exit": "open",
 "risk": 3.0
@@ -9836,14 +9836,14 @@
 "risk": 3.0
 },
 "s2t0": {
-"r": 3.72,
-"ret": 5.58,
+"r": 3.73,
+"ret": 5.59,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 3.21,
+"r": 3.22,
 "ret": 4.82,
 "done": false,
 "exit": "open",
@@ -9911,55 +9911,55 @@
 "risk_pct": 1.89,
 "plan": {
 "done": false,
-"ret": 3.63,
-"r": 1.92,
+"ret": 3.57,
+"r": 1.88,
 "bars": 3,
 "exit": "open",
 "exit_date": "2026-11-17",
 "added": false,
 "targets_hit": 0,
-"mfe": 4.22,
+"mfe": 4.23,
 "mae": -1.46
 },
 "variants": {
 "s0t0": {
-"r": 1.92,
-"ret": 3.63,
+"r": 1.88,
+"ret": 3.57,
 "done": false,
 "exit": "open",
 "risk": 1.89
 },
 "s0t1": {
-"r": 1.84,
-"ret": 3.48,
+"r": 1.82,
+"ret": 3.46,
 "done": false,
 "exit": "open",
 "risk": 1.89
 },
 "s1t0": {
-"r": 1.12,
-"ret": 3.63,
+"r": 1.11,
+"ret": 3.57,
 "done": false,
 "exit": "open",
 "risk": 3.23
 },
 "s1t1": {
-"r": 1.08,
-"ret": 3.48,
+"r": 1.07,
+"ret": 3.46,
 "done": false,
 "exit": "open",
 "risk": 3.23
 },
 "s2t0": {
-"r": 1.92,
-"ret": 3.63,
+"r": 1.88,
+"ret": 3.57,
 "done": false,
 "exit": "open",
 "risk": 1.89
 },
 "s2t1": {
-"r": 1.84,
-"ret": 3.48,
+"r": 1.82,
+"ret": 3.46,
 "done": false,
 "exit": "open",
 "risk": 1.89
@@ -10256,8 +10256,8 @@
 "risk_pct": 2.31,
 "plan": {
 "done": false,
-"ret": 3.24,
-"r": 1.4,
+"ret": 2.87,
+"r": 1.24,
 "bars": 3,
 "exit": "open",
 "exit_date": "2026-11-17",
@@ -10268,43 +10268,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 1.4,
-"ret": 3.24,
+"r": 1.24,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 2.31
 },
 "s0t1": {
-"r": 1.45,
-"ret": 3.34,
+"r": 1.37,
+"ret": 3.16,
 "done": false,
 "exit": "open",
 "risk": 2.31
 },
 "s1t0": {
-"r": 0.88,
-"ret": 3.24,
+"r": 0.78,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 3.69
 },
 "s1t1": {
-"r": 0.91,
-"ret": 3.34,
+"r": 0.86,
+"ret": 3.16,
 "done": false,
 "exit": "open",
 "risk": 3.69
 },
 "s2t0": {
-"r": 1.4,
-"ret": 3.24,
+"r": 1.24,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 2.31
 },
 "s2t1": {
-"r": 1.45,
-"ret": 3.34,
+"r": 1.37,
+"ret": 3.16,
 "done": false,
 "exit": "open",
 "risk": 2.31
@@ -10371,8 +10371,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 4.07,
-"r": 2.72,
+"ret": 3.79,
+"r": 2.53,
 "bars": 3,
 "exit": "open",
 "exit_date": "2026-11-17",
@@ -10383,43 +10383,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 2.72,
-"ret": 4.07,
+"r": 2.53,
+"ret": 3.79,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 2.34,
-"ret": 3.52,
+"r": 2.3,
+"ret": 3.45,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 1.54,
-"ret": 4.07,
+"r": 1.43,
+"ret": 3.79,
 "done": false,
 "exit": "open",
 "risk": 2.64
 },
 "s1t1": {
-"r": 1.33,
-"ret": 3.52,
+"r": 1.3,
+"ret": 3.45,
 "done": false,
 "exit": "open",
 "risk": 2.64
 },
 "s2t0": {
-"r": 2.72,
-"ret": 4.07,
+"r": 2.53,
+"ret": 3.79,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 2.34,
-"ret": 3.52,
+"r": 2.3,
+"ret": 3.45,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -10486,8 +10486,8 @@
 "risk_pct": 2.04,
 "plan": {
 "done": false,
-"ret": 5.69,
-"r": 2.79,
+"ret": 5.6,
+"r": 2.74,
 "bars": 3,
 "exit": "open",
 "exit_date": "2026-11-17",
@@ -10498,43 +10498,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 2.79,
-"ret": 5.69,
+"r": 2.74,
+"ret": 5.6,
 "done": false,
 "exit": "open",
 "risk": 2.04
 },
 "s0t1": {
-"r": 2.83,
-"ret": 5.78,
-"done": false,
-"exit": "open",
-"risk": 2.04
-},
-"s1t0": {
-"r": 1.39,
-"ret": 5.69,
-"done": false,
-"exit": "open",
-"risk": 4.11
-},
-"s1t1": {
-"r": 1.41,
-"ret": 5.78,
-"done": false,
-"exit": "open",
-"risk": 4.11
-},
-"s2t0": {
 "r": 2.79,
 "ret": 5.69,
 "done": false,
 "exit": "open",
 "risk": 2.04
 },
+"s1t0": {
+"r": 1.36,
+"ret": 5.6,
+"done": false,
+"exit": "open",
+"risk": 4.11
+},
+"s1t1": {
+"r": 1.38,
+"ret": 5.69,
+"done": false,
+"exit": "open",
+"risk": 4.11
+},
+"s2t0": {
+"r": 2.74,
+"ret": 5.6,
+"done": false,
+"exit": "open",
+"risk": 2.04
+},
 "s2t1": {
-"r": 2.83,
-"ret": 5.78,
+"r": 2.79,
+"ret": 5.69,
 "done": false,
 "exit": "open",
 "risk": 2.04
@@ -10601,8 +10601,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 3.97,
-"r": 2.64,
+"ret": 3.81,
+"r": 2.54,
 "bars": 3,
 "exit": "open",
 "exit_date": "2026-11-17",
@@ -10613,43 +10613,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 2.64,
-"ret": 3.97,
+"r": 2.54,
+"ret": 3.81,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 2.09,
-"ret": 3.13,
+"r": 2.06,
+"ret": 3.09,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 1.6,
-"ret": 3.97,
+"r": 1.54,
+"ret": 3.81,
 "done": false,
 "exit": "open",
 "risk": 2.48
 },
 "s1t1": {
-"r": 1.26,
-"ret": 3.13,
+"r": 1.25,
+"ret": 3.09,
 "done": false,
 "exit": "open",
 "risk": 2.48
 },
 "s2t0": {
-"r": 2.64,
-"ret": 3.97,
+"r": 2.54,
+"ret": 3.81,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 2.09,
-"ret": 3.13,
+"r": 2.06,
+"ret": 3.09,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -10716,8 +10716,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 2.97,
-"r": 1.98,
+"ret": 2.87,
+"r": 1.91,
 "bars": 3,
 "exit": "open",
 "exit_date": "2026-11-17",
@@ -10728,43 +10728,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 1.98,
-"ret": 2.97,
+"r": 1.91,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 1.98,
-"ret": 2.97,
+"r": 1.91,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.99,
-"ret": 2.97,
+"r": 0.96,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 3.0
 },
 "s1t1": {
-"r": 0.99,
-"ret": 2.97,
+"r": 0.96,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 3.0
 },
 "s2t0": {
-"r": 1.98,
-"ret": 2.97,
+"r": 1.91,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 1.98,
-"ret": 2.97,
+"r": 1.91,
+"ret": 2.87,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -10946,8 +10946,8 @@
 "risk_pct": 2.49,
 "plan": {
 "done": false,
-"ret": 5.56,
-"r": 2.23,
+"ret": 5.49,
+"r": 2.21,
 "bars": 3,
 "exit": "open",
 "exit_date": "2026-11-17",
@@ -10958,43 +10958,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 2.23,
-"ret": 5.56,
+"r": 2.21,
+"ret": 5.49,
 "done": false,
 "exit": "open",
 "risk": 2.49
 },
 "s0t1": {
-"r": 1.81,
-"ret": 4.5,
+"r": 1.8,
+"ret": 4.47,
 "done": false,
 "exit": "open",
 "risk": 2.49
 },
 "s1t0": {
-"r": 1.44,
-"ret": 5.56,
+"r": 1.43,
+"ret": 5.49,
 "done": false,
 "exit": "open",
 "risk": 3.85
 },
 "s1t1": {
-"r": 1.17,
-"ret": 4.5,
+"r": 1.16,
+"ret": 4.47,
 "done": false,
 "exit": "open",
 "risk": 3.85
 },
 "s2t0": {
-"r": 2.23,
-"ret": 5.56,
+"r": 2.21,
+"ret": 5.49,
 "done": false,
 "exit": "open",
 "risk": 2.49
 },
 "s2t1": {
-"r": 1.81,
-"ret": 4.5,
+"r": 1.8,
+"ret": 4.47,
 "done": false,
 "exit": "open",
 "risk": 2.49
@@ -12408,8 +12408,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 3.86,
-"r": 2.57,
+"ret": 3.71,
+"r": 2.47,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-17",
@@ -12420,43 +12420,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 2.57,
-"ret": 3.86,
+"r": 2.47,
+"ret": 3.71,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 2.28,
-"ret": 3.42,
+"r": 2.26,
+"ret": 3.38,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 1.47,
-"ret": 3.86,
+"r": 1.41,
+"ret": 3.71,
 "done": false,
 "exit": "open",
 "risk": 2.62
 },
 "s1t1": {
-"r": 1.3,
-"ret": 3.42,
+"r": 1.29,
+"ret": 3.38,
 "done": false,
 "exit": "open",
 "risk": 2.62
 },
 "s2t0": {
-"r": 2.57,
-"ret": 3.86,
+"r": 2.47,
+"ret": 3.71,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 2.28,
-"ret": 3.42,
+"r": 2.26,
+"ret": 3.38,
 "done": false,
 "exit": "open",
 "risk": 1.5
