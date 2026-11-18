@@ -9803,7 +9803,7 @@
 "exit_date": "2026-11-17",
 "added": false,
 "targets_hit": 1,
-"mfe": 6.32,
+"mfe": 6.31,
 "mae": -0.65
 },
 "variants": {
@@ -10493,7 +10493,7 @@
 "exit_date": "2026-11-17",
 "added": false,
 "targets_hit": 1,
-"mfe": 6.39,
+"mfe": 6.5,
 "mae": -0.34
 },
 "variants": {
