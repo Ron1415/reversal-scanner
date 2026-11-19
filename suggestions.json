@@ -15212,8 +15212,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.98,
-"r": 0.65,
+"ret": 0.9,
+"r": 0.6,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-19",
@@ -15224,43 +15224,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 0.65,
-"ret": 0.98,
+"r": 0.6,
+"ret": 0.9,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.65,
-"ret": 0.98,
+"r": 0.6,
+"ret": 0.9,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.41,
-"ret": 0.98,
+"r": 0.37,
+"ret": 0.9,
 "done": false,
 "exit": "open",
 "risk": 2.4
 },
 "s1t1": {
-"r": 0.41,
-"ret": 0.98,
+"r": 0.37,
+"ret": 0.9,
 "done": false,
 "exit": "open",
 "risk": 2.4
 },
 "s2t0": {
-"r": 0.65,
-"ret": 0.98,
+"r": 0.6,
+"ret": 0.9,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.65,
-"ret": 0.98,
+"r": 0.6,
+"ret": 0.9,
 "done": false,
 "exit": "open",
 "risk": 1.5
