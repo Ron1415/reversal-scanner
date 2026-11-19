@@ -144,8 +144,8 @@
 "risk_pct": 1.91,
 "plan": {
 "done": false,
-"ret": 1.99,
-"r": 1.04,
+"ret": 2.02,
+"r": 1.06,
 "bars": 12,
 "exit": "open",
 "exit_date": null,
@@ -154,8 +154,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 1.99,
-"r": 1.04,
+"ret": 2.02,
+"r": 1.06,
 "bars": 12,
 "exit": "open",
 "exit_date": null,
@@ -164,8 +164,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 1.99,
-"r": 1.04,
+"ret": 2.02,
+"r": 1.06,
 "bars": 12,
 "exit": "open",
 "exit_date": null,
@@ -183,8 +183,8 @@
 "risk_pct": 3.32,
 "plan": {
 "done": false,
-"ret": 0.53,
-"r": 0.16,
+"ret": 0.55,
+"r": 0.17,
 "bars": 11,
 "exit": "open",
 "exit_date": null,
@@ -193,8 +193,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 0.53,
-"r": 0.16,
+"ret": 0.55,
+"r": 0.17,
 "bars": 11,
 "exit": "open",
 "exit_date": null,
@@ -203,8 +203,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 0.53,
-"r": 0.16,
+"ret": 0.55,
+"r": 0.17,
 "bars": 11,
 "exit": "open",
 "exit_date": null,
@@ -420,8 +420,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 7.72,
-"r": 4.26,
+"ret": 7.3,
+"r": 4.03,
 "bars": 12,
 "exit": "open",
 "exit_date": null,
@@ -439,8 +439,8 @@
 "risk_pct": 5.08,
 "plan": {
 "done": false,
-"ret": 4.88,
-"r": 0.96,
+"ret": 4.66,
+"r": 0.92,
 "bars": 11,
 "exit": "open",
 "exit_date": null,
@@ -459,8 +459,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 4.75,
-"r": 0.94,
+"ret": 4.33,
+"r": 0.85,
 "bars": 11,
 "exit": "open",
 "exit_date": null,
@@ -1686,8 +1686,8 @@
 "risk_pct": 5.67,
 "plan": {
 "done": false,
-"ret": 5.66,
-"r": 1.0,
+"ret": 5.59,
+"r": 0.99,
 "bars": 9,
 "exit": "open",
 "exit_date": null,
@@ -1706,8 +1706,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 6.32,
-"r": 1.11,
+"ret": 6.18,
+"r": 1.09,
 "bars": 9,
 "exit": "open",
 "exit_date": null,
@@ -2769,8 +2769,8 @@
 "risk_pct": 3.31,
 "plan": {
 "done": false,
-"ret": 2.14,
-"r": 0.65,
+"ret": 2.12,
+"r": 0.64,
 "bars": 11,
 "exit": "open",
 "exit_date": null,
@@ -2779,8 +2779,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.14,
-"r": 0.65,
+"ret": 2.12,
+"r": 0.64,
 "bars": 11,
 "exit": "open",
 "exit_date": null,
@@ -2789,8 +2789,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.14,
-"r": 0.65,
+"ret": 2.12,
+"r": 0.64,
 "bars": 11,
 "exit": "open",
 "exit_date": null,
@@ -2808,7 +2808,7 @@
 "risk_pct": 6.37,
 "plan": {
 "done": false,
-"ret": -0.76,
+"ret": -0.78,
 "r": -0.12,
 "bars": 9,
 "exit": "open",
@@ -2818,7 +2818,7 @@
 },
 "full_t1": {
 "done": false,
-"ret": -0.76,
+"ret": -0.78,
 "r": -0.12,
 "bars": 9,
 "exit": "open",
@@ -2828,7 +2828,7 @@
 },
 "full_t2": {
 "done": false,
-"ret": -0.76,
+"ret": -0.78,
 "r": -0.12,
 "bars": 9,
 "exit": "open",
@@ -3811,8 +3811,8 @@
 "risk_pct": 3.07,
 "plan": {
 "done": false,
-"ret": 1.3,
-"r": 0.42,
+"ret": 1.24,
+"r": 0.41,
 "bars": 9,
 "exit": "open",
 "exit_date": null,
@@ -3821,8 +3821,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 1.3,
-"r": 0.42,
+"ret": 1.24,
+"r": 0.41,
 "bars": 9,
 "exit": "open",
 "exit_date": null,
@@ -3831,8 +3831,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 1.3,
-"r": 0.42,
+"ret": 1.24,
+"r": 0.41,
 "bars": 9,
 "exit": "open",
 "exit_date": null,
@@ -3897,8 +3897,8 @@
 "risk_pct": 1.84,
 "plan": {
 "done": false,
-"ret": 5.52,
-"r": 3.01,
+"ret": 5.24,
+"r": 2.85,
 "bars": 10,
 "exit": "open",
 "exit_date": null,
@@ -3917,8 +3917,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 6.05,
-"r": 3.29,
+"ret": 5.47,
+"r": 2.98,
 "bars": 10,
 "exit": "open",
 "exit_date": null,
@@ -3956,8 +3956,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.45,
-"r": 0.74,
+"ret": 2.86,
+"r": 0.62,
 "bars": 9,
 "exit": "open",
 "exit_date": null,
@@ -4153,7 +4153,7 @@
 "risk_pct": 12.62,
 "plan": {
 "done": false,
-"ret": -8.1,
+"ret": -8.05,
 "r": -0.64,
 "bars": 8,
 "exit": "open",
@@ -4163,7 +4163,7 @@
 },
 "full_t1": {
 "done": false,
-"ret": -8.1,
+"ret": -8.05,
 "r": -0.64,
 "bars": 8,
 "exit": "open",
@@ -4173,7 +4173,7 @@
 },
 "full_t2": {
 "done": false,
-"ret": -8.1,
+"ret": -8.05,
 "r": -0.64,
 "bars": 8,
 "exit": "open",
@@ -4711,8 +4711,8 @@
 "risk_pct": 5.08,
 "plan": {
 "done": false,
-"ret": -2.64,
-"r": -0.52,
+"ret": -2.49,
+"r": -0.49,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -4721,8 +4721,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -2.64,
-"r": -0.52,
+"ret": -2.49,
+"r": -0.49,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -4731,8 +4731,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -2.64,
-"r": -0.52,
+"ret": -2.49,
+"r": -0.49,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -5422,8 +5422,8 @@
 "risk_pct": 5.09,
 "plan": {
 "done": false,
-"ret": 2.17,
-"r": 0.43,
+"ret": 1.71,
+"r": 0.33,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5432,8 +5432,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.17,
-"r": 0.43,
+"ret": 1.71,
+"r": 0.33,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5442,8 +5442,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.17,
-"r": 0.43,
+"ret": 1.71,
+"r": 0.33,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5551,8 +5551,8 @@
 "risk_pct": 6.53,
 "plan": {
 "done": false,
-"ret": 1.8,
-"r": 0.28,
+"ret": 1.77,
+"r": 0.27,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5561,8 +5561,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 1.8,
-"r": 0.28,
+"ret": 1.77,
+"r": 0.27,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5571,8 +5571,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 1.8,
-"r": 0.28,
+"ret": 1.77,
+"r": 0.27,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5768,8 +5768,8 @@
 "risk_pct": 5.29,
 "plan": {
 "done": false,
-"ret": -0.54,
-"r": -0.1,
+"ret": -0.75,
+"r": -0.14,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5778,8 +5778,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -0.54,
-"r": -0.1,
+"ret": -0.75,
+"r": -0.14,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5788,8 +5788,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -0.54,
-"r": -0.1,
+"ret": -0.75,
+"r": -0.14,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5807,8 +5807,8 @@
 "risk_pct": 6.13,
 "plan": {
 "done": false,
-"ret": -1.34,
-"r": -0.22,
+"ret": -1.55,
+"r": -0.25,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5817,8 +5817,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -1.34,
-"r": -0.22,
+"ret": -1.55,
+"r": -0.25,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5827,8 +5827,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -1.34,
-"r": -0.22,
+"ret": -1.55,
+"r": -0.25,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5989,8 +5989,8 @@
 "risk_pct": 10.46,
 "plan": {
 "done": false,
-"ret": -2.31,
-"r": -0.22,
+"ret": -1.94,
+"r": -0.19,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -5999,8 +5999,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -2.31,
-"r": -0.22,
+"ret": -1.94,
+"r": -0.19,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -6009,8 +6009,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -2.31,
-"r": -0.22,
+"ret": -1.94,
+"r": -0.19,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -6213,7 +6213,7 @@
 "risk_pct": 16.37,
 "plan": {
 "done": false,
-"ret": 4.24,
+"ret": 4.2,
 "r": 0.26,
 "bars": 1,
 "exit": "open",
@@ -6233,7 +6233,7 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.49,
+"ret": 3.4,
 "r": 0.21,
 "bars": 1,
 "exit": "open",
@@ -6487,8 +6487,8 @@
 "risk_pct": 2.16,
 "plan": {
 "done": false,
-"ret": 0.95,
-"r": 0.44,
+"ret": 0.9,
+"r": 0.41,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -6497,8 +6497,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 0.95,
-"r": 0.44,
+"ret": 0.9,
+"r": 0.41,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -6507,8 +6507,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 0.95,
-"r": 0.44,
+"ret": 0.9,
+"r": 0.41,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -6526,8 +6526,8 @@
 "risk_pct": 2.8,
 "plan": {
 "done": false,
-"ret": 0.3,
-"r": 0.11,
+"ret": 0.24,
+"r": 0.09,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -6536,8 +6536,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 0.3,
-"r": 0.11,
+"ret": 0.24,
+"r": 0.09,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -6546,8 +6546,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 0.3,
-"r": 0.11,
+"ret": 0.24,
+"r": 0.09,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -6832,8 +6832,8 @@
 "risk_pct": 4.13,
 "plan": {
 "done": false,
-"ret": 2.46,
-"r": 0.6,
+"ret": 2.22,
+"r": 0.54,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -6842,8 +6842,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.46,
-"r": 0.6,
+"ret": 2.22,
+"r": 0.54,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -6852,8 +6852,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.46,
-"r": 0.6,
+"ret": 2.22,
+"r": 0.54,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -6871,8 +6871,8 @@
 "risk_pct": 4.16,
 "plan": {
 "done": false,
-"ret": 2.44,
-"r": 0.59,
+"ret": 2.19,
+"r": 0.53,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -6881,8 +6881,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.44,
-"r": 0.59,
+"ret": 2.19,
+"r": 0.53,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -6891,8 +6891,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.44,
-"r": 0.59,
+"ret": 2.19,
+"r": 0.53,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -7332,8 +7332,8 @@
 "risk_pct": 1.0,
 "plan": {
 "done": false,
-"ret": 5.06,
-"r": 5.07,
+"ret": 5.01,
+"r": 5.02,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -7352,8 +7352,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 5.12,
-"r": 5.13,
+"ret": 5.03,
+"r": 5.04,
 "bars": 8,
 "exit": "open",
 "exit_date": null,
@@ -7371,8 +7371,8 @@
 "risk_pct": 2.13,
 "plan": {
 "done": false,
-"ret": 4.06,
-"r": 1.91,
+"ret": 3.97,
+"r": 1.87,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -7381,8 +7381,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 4.06,
-"r": 1.91,
+"ret": 3.97,
+"r": 1.87,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -7391,8 +7391,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 4.06,
-"r": 1.91,
+"ret": 3.97,
+"r": 1.87,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -8206,8 +8206,8 @@
 "risk_pct": 1.33,
 "plan": {
 "done": false,
-"ret": 3.21,
-"r": 2.42,
+"ret": 3.15,
+"r": 2.37,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -8216,8 +8216,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 3.21,
-"r": 2.42,
+"ret": 3.15,
+"r": 2.37,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -8226,8 +8226,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.21,
-"r": 2.42,
+"ret": 3.15,
+"r": 2.37,
 "bars": 7,
 "exit": "open",
 "exit_date": null,
@@ -8245,8 +8245,8 @@
 "risk_pct": 2.39,
 "plan": {
 "done": false,
-"ret": 2.19,
-"r": 0.91,
+"ret": 2.13,
+"r": 0.89,
 "bars": 4,
 "exit": "open",
 "exit_date": null,
@@ -8255,8 +8255,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.19,
-"r": 0.91,
+"ret": 2.13,
+"r": 0.89,
 "bars": 4,
 "exit": "open",
 "exit_date": null,
@@ -8265,8 +8265,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.19,
-"r": 0.91,
+"ret": 2.13,
+"r": 0.89,
 "bars": 4,
 "exit": "open",
 "exit_date": null,
@@ -8731,8 +8731,8 @@
 "risk_pct": 2.02,
 "plan": {
 "done": false,
-"ret": 1.02,
-"r": 0.51,
+"ret": 0.9,
+"r": 0.45,
 "bars": 6,
 "exit": "open",
 "exit_date": null,
@@ -8741,8 +8741,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 1.02,
-"r": 0.51,
+"ret": 0.9,
+"r": 0.45,
 "bars": 6,
 "exit": "open",
 "exit_date": null,
@@ -8751,8 +8751,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 1.02,
-"r": 0.51,
+"ret": 0.9,
+"r": 0.45,
 "bars": 6,
 "exit": "open",
 "exit_date": null,
@@ -8770,8 +8770,8 @@
 "risk_pct": 4.97,
 "plan": {
 "done": false,
-"ret": -1.84,
-"r": -0.37,
+"ret": -1.97,
+"r": -0.4,
 "bars": 5,
 "exit": "open",
 "exit_date": null,
@@ -8780,8 +8780,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -1.84,
-"r": -0.37,
+"ret": -1.97,
+"r": -0.4,
 "bars": 5,
 "exit": "open",
 "exit_date": null,
@@ -8790,8 +8790,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -1.84,
-"r": -0.37,
+"ret": -1.97,
+"r": -0.4,
 "bars": 5,
 "exit": "open",
 "exit_date": null,
@@ -8855,32 +8855,32 @@
 "risk_pct": 1.26,
 "plan": {
 "done": false,
-"ret": 3.51,
-"r": 2.79,
+"ret": 4.08,
+"r": 3.23,
 "bars": 6,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.1,
+"mfe": 4.27,
 "mae": -1.24
 },
 "full_t1": {
 "done": false,
-"ret": 3.51,
-"r": 2.79,
+"ret": 4.08,
+"r": 3.23,
 "bars": 6,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.1,
+"mfe": 4.27,
 "mae": -1.24
 },
 "full_t2": {
 "done": false,
-"ret": 3.51,
-"r": 2.79,
+"ret": 4.08,
+"r": 3.23,
 "bars": 6,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.1,
+"mfe": 4.27,
 "mae": -1.24
 }
 },
@@ -11215,8 +11215,8 @@
 "risk_pct": 4.25,
 "plan": {
 "done": false,
-"ret": 2.7,
-"r": 0.64,
+"ret": 2.56,
+"r": 0.6,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -11225,8 +11225,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.7,
-"r": 0.64,
+"ret": 2.56,
+"r": 0.6,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -11235,8 +11235,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.7,
-"r": 0.64,
+"ret": 2.56,
+"r": 0.6,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -11468,32 +11468,32 @@
 "risk_pct": 3.97,
 "plan": {
 "done": false,
-"ret": 2.18,
-"r": 0.55,
+"ret": 2.02,
+"r": 0.51,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.99,
+"mfe": 2.98,
 "mae": -1.38
 },
 "full_t1": {
 "done": false,
-"ret": 2.18,
-"r": 0.55,
+"ret": 2.02,
+"r": 0.51,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.99,
+"mfe": 2.98,
 "mae": -1.38
 },
 "full_t2": {
 "done": false,
-"ret": 2.18,
-"r": 0.55,
+"ret": 2.02,
+"r": 0.51,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 2.99,
+"mfe": 2.98,
 "mae": -1.38
 }
 },
@@ -11560,32 +11560,32 @@
 "risk_pct": 2.0,
 "plan": {
 "done": false,
-"ret": 3.97,
-"r": 1.98,
+"ret": 3.74,
+"r": 1.87,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.03,
+"mfe": 4.2,
 "mae": -0.29
 },
 "full_t1": {
 "done": false,
-"ret": 3.97,
-"r": 1.98,
+"ret": 3.74,
+"r": 1.87,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.03,
+"mfe": 4.2,
 "mae": -0.29
 },
 "full_t2": {
 "done": false,
-"ret": 3.97,
-"r": 1.98,
+"ret": 3.74,
+"r": 1.87,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
-"mfe": 4.03,
+"mfe": 4.2,
 "mae": -0.29
 }
 },
@@ -11900,8 +11900,8 @@
 "risk_pct": 1.61,
 "plan": {
 "done": false,
-"ret": 2.83,
-"r": 1.76,
+"ret": 2.47,
+"r": 1.53,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -11910,8 +11910,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.83,
-"r": 1.76,
+"ret": 2.47,
+"r": 1.53,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -11920,8 +11920,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.83,
-"r": 1.76,
+"ret": 2.47,
+"r": 1.53,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -11991,8 +11991,8 @@
 "risk_pct": 1.48,
 "plan": {
 "done": false,
-"ret": 4.78,
-"r": 3.22,
+"ret": 4.89,
+"r": 3.29,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -12011,8 +12011,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 4.55,
-"r": 3.07,
+"ret": 4.77,
+"r": 3.22,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -12082,8 +12082,8 @@
 "risk_pct": 1.56,
 "plan": {
 "done": false,
-"ret": 3.3,
-"r": 2.12,
+"ret": 3.61,
+"r": 2.31,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -12092,8 +12092,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 3.3,
-"r": 2.12,
+"ret": 3.61,
+"r": 2.31,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -12102,8 +12102,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.3,
-"r": 2.12,
+"ret": 3.61,
+"r": 2.31,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -12173,33 +12173,33 @@
 "risk_pct": 14.82,
 "plan": {
 "done": false,
-"ret": -13.87,
-"r": -0.94,
+"ret": -14.38,
+"r": -0.97,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.0,
-"mae": -14.3
+"mae": -14.39
 },
 "full_t1": {
 "done": false,
-"ret": -13.87,
-"r": -0.94,
+"ret": -14.38,
+"r": -0.97,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.0,
-"mae": -14.3
+"mae": -14.39
 },
 "full_t2": {
 "done": false,
-"ret": -13.87,
-"r": -0.94,
+"ret": -14.38,
+"r": -0.97,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.0,
-"mae": -14.3
+"mae": -14.39
 }
 },
 "safer": {
@@ -12587,8 +12587,8 @@
 "risk_pct": 1.07,
 "plan": {
 "done": false,
-"ret": 3.13,
-"r": 2.92,
+"ret": 2.74,
+"r": 2.55,
 "bars": 3,
 "exit": "open",
 "exit_date": null,
@@ -12597,8 +12597,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 3.13,
-"r": 2.92,
+"ret": 2.74,
+"r": 2.55,
 "bars": 3,
 "exit": "open",
 "exit_date": null,
@@ -12607,8 +12607,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.13,
-"r": 2.92,
+"ret": 2.74,
+"r": 2.55,
 "bars": 3,
 "exit": "open",
 "exit_date": null,
@@ -12626,8 +12626,8 @@
 "risk_pct": 3.36,
 "plan": {
 "done": false,
-"ret": 0.94,
-"r": 0.28,
+"ret": 0.54,
+"r": 0.16,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -12636,8 +12636,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 0.94,
-"r": 0.28,
+"ret": 0.54,
+"r": 0.16,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -12646,8 +12646,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 0.94,
-"r": 0.28,
+"ret": 0.54,
+"r": 0.16,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -12780,8 +12780,8 @@
 "risk_pct": 2.67,
 "plan": {
 "done": false,
-"ret": 4.19,
-"r": 1.57,
+"ret": 4.42,
+"r": 1.65,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -12800,8 +12800,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.38,
-"r": 1.27,
+"ret": 3.84,
+"r": 1.44,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -12872,8 +12872,8 @@
 "risk_pct": 1.9,
 "plan": {
 "done": false,
-"ret": 0.37,
-"r": 0.2,
+"ret": 0.17,
+"r": 0.09,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -12882,8 +12882,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 0.37,
-"r": 0.2,
+"ret": 0.17,
+"r": 0.09,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -12892,8 +12892,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 0.37,
-"r": 0.2,
+"ret": 0.17,
+"r": 0.09,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13262,8 +13262,8 @@
 "risk_pct": 2.44,
 "plan": {
 "done": false,
-"ret": 4.41,
-"r": 1.81,
+"ret": 4.64,
+"r": 1.91,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13282,8 +13282,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 3.83,
-"r": 1.57,
+"ret": 4.29,
+"r": 1.76,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13301,8 +13301,8 @@
 "risk_pct": 3.7,
 "plan": {
 "done": false,
-"ret": 3.74,
-"r": 1.01,
+"ret": 3.97,
+"r": 1.07,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -13321,8 +13321,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.48,
-"r": 0.67,
+"ret": 2.94,
+"r": 0.79,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -13387,8 +13387,8 @@
 "risk_pct": 1.28,
 "plan": {
 "done": false,
-"ret": 1.92,
-"r": 1.5,
+"ret": 1.87,
+"r": 1.47,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13397,8 +13397,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 1.92,
-"r": 1.5,
+"ret": 1.87,
+"r": 1.47,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13407,8 +13407,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 1.92,
-"r": 1.5,
+"ret": 1.87,
+"r": 1.47,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13426,8 +13426,8 @@
 "risk_pct": 2.23,
 "plan": {
 "done": false,
-"ret": 0.99,
-"r": 0.44,
+"ret": 0.94,
+"r": 0.42,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -13436,8 +13436,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 0.99,
-"r": 0.44,
+"ret": 0.94,
+"r": 0.42,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -13446,8 +13446,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 0.99,
-"r": 0.44,
+"ret": 0.94,
+"r": 0.42,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -13456,7 +13456,7 @@
 }
 }
 },
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -13554,8 +13554,8 @@
 "risk_pct": 1.53,
 "plan": {
 "done": false,
-"ret": 2.93,
-"r": 1.92,
+"ret": 2.94,
+"r": 1.93,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13564,8 +13564,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 2.93,
-"r": 1.92,
+"ret": 2.94,
+"r": 1.93,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13574,8 +13574,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 2.93,
-"r": 1.92,
+"ret": 2.94,
+"r": 1.93,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13736,33 +13736,33 @@
 "risk_pct": 5.54,
 "plan": {
 "done": false,
-"ret": -4.23,
-"r": -0.76,
+"ret": -4.46,
+"r": -0.81,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.39,
-"mae": -4.57
+"mae": -4.63
 },
 "full_t1": {
 "done": false,
-"ret": -4.23,
-"r": -0.76,
+"ret": -4.46,
+"r": -0.81,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.39,
-"mae": -4.57
+"mae": -4.63
 },
 "full_t2": {
 "done": false,
-"ret": -4.23,
-"r": -0.76,
+"ret": -4.46,
+"r": -0.81,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
 "mfe": 3.39,
-"mae": -4.57
+"mae": -4.63
 }
 },
 "safer": {
@@ -13775,33 +13775,33 @@
 "risk_pct": 8.33,
 "plan": {
 "done": false,
-"ret": -7.06,
-"r": -0.85,
+"ret": -7.29,
+"r": -0.87,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.0,
-"mae": -7.39
+"mae": -7.45
 },
 "full_t1": {
 "done": false,
-"ret": -7.06,
-"r": -0.85,
+"ret": -7.29,
+"r": -0.87,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.0,
-"mae": -7.39
+"mae": -7.45
 },
 "full_t2": {
 "done": false,
-"ret": -7.06,
-"r": -0.85,
+"ret": -7.29,
+"r": -0.87,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
 "mfe": 0.0,
-"mae": -7.39
+"mae": -7.45
 }
 }
 },
@@ -13863,8 +13863,8 @@
 "risk_pct": 2.64,
 "plan": {
 "done": false,
-"ret": 0.17,
-"r": 0.06,
+"ret": -0.13,
+"r": -0.05,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13873,8 +13873,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": 0.17,
-"r": 0.06,
+"ret": -0.13,
+"r": -0.05,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13883,8 +13883,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": 0.17,
-"r": 0.06,
+"ret": -0.13,
+"r": -0.05,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -13902,8 +13902,8 @@
 "risk_pct": 5.32,
 "plan": {
 "done": false,
-"ret": -2.59,
-"r": -0.49,
+"ret": -2.87,
+"r": -0.54,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -13912,8 +13912,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -2.59,
-"r": -0.49,
+"ret": -2.87,
+"r": -0.54,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -13922,8 +13922,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -2.59,
-"r": -0.49,
+"ret": -2.87,
+"r": -0.54,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -14081,8 +14081,8 @@
 "risk_pct": 2.12,
 "plan": {
 "done": false,
-"ret": -0.62,
-"r": -0.29,
+"ret": -0.47,
+"r": -0.22,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -14091,8 +14091,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -0.62,
-"r": -0.29,
+"ret": -0.47,
+"r": -0.22,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -14101,8 +14101,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -0.62,
-"r": -0.29,
+"ret": -0.47,
+"r": -0.22,
 "bars": 2,
 "exit": "open",
 "exit_date": null,
@@ -14941,8 +14941,8 @@
 "risk_pct": 2.62,
 "plan": {
 "done": false,
-"ret": -1.62,
-"r": -0.62,
+"ret": -1.65,
+"r": -0.63,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -14951,8 +14951,8 @@
 },
 "full_t1": {
 "done": false,
-"ret": -1.62,
-"r": -0.62,
+"ret": -1.65,
+"r": -0.63,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -14961,8 +14961,8 @@
 },
 "full_t2": {
 "done": false,
-"ret": -1.62,
-"r": -0.62,
+"ret": -1.65,
+"r": -0.63,
 "bars": 1,
 "exit": "open",
 "exit_date": null,
@@ -15010,7 +15010,7 @@
 }
 }
 },
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16019,8 +16019,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 1.4,
-"r": 0.94,
+"ret": 1.08,
+"r": 0.72,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-19",
@@ -16031,43 +16031,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 0.94,
-"ret": 1.4,
+"r": 0.72,
+"ret": 1.08,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.94,
-"ret": 1.4,
+"r": 0.72,
+"ret": 1.08,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.58,
-"ret": 1.4,
+"r": 0.45,
+"ret": 1.08,
 "done": false,
 "exit": "open",
 "risk": 2.4
 },
 "s1t1": {
-"r": 0.58,
-"ret": 1.4,
+"r": 0.45,
+"ret": 1.08,
 "done": false,
 "exit": "open",
 "risk": 2.4
 },
 "s2t0": {
-"r": 0.94,
-"ret": 1.4,
+"r": 0.72,
+"ret": 1.08,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.94,
-"ret": 1.4,
+"r": 0.72,
+"ret": 1.08,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -16123,7 +16123,7 @@
 "earnings_days": 51,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": false,
 "last_reason": "level ahead is not strong enough for an early heads-up (needs a major swing, double top/bottom, or two levels together)"
 },
@@ -16169,7 +16169,7 @@
 "earnings_days": 55,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16215,7 +16215,7 @@
 "earnings_days": 54,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16262,7 +16262,7 @@
 "earnings_days": 49,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:24-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16312,7 +16312,7 @@
 "earnings_days": 43,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16361,7 +16361,7 @@
 "earnings_days": 46,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16410,7 +16410,7 @@
 "earnings_days": 45,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16459,7 +16459,7 @@
 "earnings_days": 70,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16508,9 +16508,9 @@
 "earnings_days": 55,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
-"valid_at_last_scan": true,
-"last_reason": ""
+"last_seen": "2026-11-19T15:54-05:00",
+"valid_at_last_scan": false,
+"last_reason": "no tail yet and not pushing strongly enough for an early heads-up; time count 6 (needs 7)"
 },
 {
 "key": "ETN|daily|bullish|2026-11-19",
@@ -16557,7 +16557,7 @@
 "earnings_days": 53,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16604,7 +16604,7 @@
 "earnings_days": 45,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16653,7 +16653,7 @@
 "earnings_days": 44,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16702,7 +16702,7 @@
 "earnings_days": 59,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16749,7 +16749,7 @@
 "earnings_days": 10,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16798,7 +16798,7 @@
 "earnings_days": 54,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16847,9 +16847,9 @@
 "earnings_days": 49,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:00-05:00",
-"valid_at_last_scan": true,
-"last_reason": ""
+"last_seen": "2026-11-19T15:54-05:00",
+"valid_at_last_scan": false,
+"last_reason": "no tail yet and not pushing strongly enough for an early heads-up"
 },
 {
 "key": "MTB|daily|bullish|2026-11-19",
@@ -16896,7 +16896,7 @@
 "earnings_days": 43,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16945,7 +16945,7 @@
 "earnings_days": 57,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -16994,7 +16994,7 @@
 "earnings_days": 46,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -17041,7 +17041,7 @@
 "earnings_days": 49,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": false,
 "last_reason": "no tail yet and not pushing strongly enough for an early heads-up"
 },
@@ -17087,7 +17087,7 @@
 "earnings_days": 44,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -17134,7 +17134,7 @@
 "earnings_days": 60,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -17183,7 +17183,7 @@
 "earnings_days": 40,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -17229,7 +17229,7 @@
 "earnings_days": 54,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -17275,7 +17275,7 @@
 "earnings_days": 54,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -17321,7 +17321,7 @@
 "earnings_days": 41,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -17367,7 +17367,7 @@
 "earnings_days": 63,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -17459,7 +17459,7 @@
 "earnings_days": 40,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -17505,7 +17505,7 @@
 "earnings_days": 44,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -17551,7 +17551,7 @@
 "earnings_days": 47,
 "status": "pending",
 "outcome": {},
-"last_seen": "2026-11-19T15:37-05:00",
+"last_seen": "2026-11-19T15:54-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
