@@ -15212,55 +15212,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 0.72,
-"r": 0.48,
+"ret": 0.82,
+"r": 0.54,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-19",
 "added": false,
 "targets_hit": 0,
-"mfe": 0.75,
+"mfe": 1.44,
 "mae": -0.33
 },
 "variants": {
 "s0t0": {
-"r": 0.48,
-"ret": 0.72,
+"r": 0.54,
+"ret": 0.82,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.48,
-"ret": 0.72,
+"r": 0.54,
+"ret": 0.82,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.3,
-"ret": 0.72,
+"r": 0.34,
+"ret": 0.82,
 "done": false,
 "exit": "open",
 "risk": 2.4
 },
 "s1t1": {
-"r": 0.3,
-"ret": 0.72,
+"r": 0.34,
+"ret": 0.82,
 "done": false,
 "exit": "open",
 "risk": 2.4
 },
 "s2t0": {
-"r": 0.48,
-"ret": 0.72,
+"r": 0.54,
+"ret": 0.82,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.48,
-"ret": 0.72,
+"r": 0.54,
+"ret": 0.82,
 "done": false,
 "exit": "open",
 "risk": 1.5
