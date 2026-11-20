@@ -16019,55 +16019,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 2.92,
-"r": 1.94,
+"ret": 3.25,
+"r": 2.17,
 "bars": 2,
 "exit": "open",
 "exit_date": "2026-11-20",
 "added": false,
 "targets_hit": 0,
-"mfe": 3.09,
+"mfe": 3.68,
 "mae": -0.33
 },
 "variants": {
 "s0t0": {
-"r": 1.94,
-"ret": 2.92,
+"r": 2.17,
+"ret": 3.25,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 1.72,
-"ret": 2.59,
+"r": 1.86,
+"ret": 2.79,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 1.21,
-"ret": 2.92,
+"r": 1.35,
+"ret": 3.25,
 "done": false,
 "exit": "open",
 "risk": 2.4
 },
 "s1t1": {
-"r": 1.08,
-"ret": 2.59,
+"r": 1.16,
+"ret": 2.79,
 "done": false,
 "exit": "open",
 "risk": 2.4
 },
 "s2t0": {
-"r": 1.94,
-"ret": 2.92,
+"r": 2.17,
+"ret": 3.25,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 1.72,
-"ret": 2.59,
+"r": 1.86,
+"ret": 2.79,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -19229,55 +19229,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 1.16,
-"r": 0.77,
+"ret": 1.44,
+"r": 0.96,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-20",
 "added": false,
 "targets_hit": 0,
-"mfe": 1.28,
+"mfe": 1.57,
 "mae": -1.21
 },
 "variants": {
 "s0t0": {
-"r": 0.77,
-"ret": 1.16,
+"r": 0.96,
+"ret": 1.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.77,
-"ret": 1.16,
+"r": 0.96,
+"ret": 1.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.48,
-"ret": 1.16,
+"r": 0.59,
+"ret": 1.44,
 "done": false,
 "exit": "open",
 "risk": 2.44
 },
 "s1t1": {
-"r": 0.48,
-"ret": 1.16,
+"r": 0.59,
+"ret": 1.44,
 "done": false,
 "exit": "open",
 "risk": 2.44
 },
 "s2t0": {
-"r": 0.77,
-"ret": 1.16,
+"r": 0.96,
+"ret": 1.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.77,
-"ret": 1.16,
+"r": 0.96,
+"ret": 1.44,
 "done": false,
 "exit": "open",
 "risk": 1.5
