@@ -16019,11 +16019,11 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": 1.2,
-"r": 0.8,
-"bars": 1,
+"ret": 1.17,
+"r": 0.78,
+"bars": 2,
 "exit": "open",
-"exit_date": "2026-11-19",
+"exit_date": "2026-11-20",
 "added": false,
 "targets_hit": 0,
 "mfe": 1.92,
@@ -16031,43 +16031,43 @@
 },
 "variants": {
 "s0t0": {
-"r": 0.8,
-"ret": 1.2,
+"r": 0.78,
+"ret": 1.17,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": 0.8,
-"ret": 1.2,
+"r": 0.78,
+"ret": 1.17,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": 0.5,
-"ret": 1.2,
+"r": 0.49,
+"ret": 1.17,
 "done": false,
 "exit": "open",
 "risk": 2.4
 },
 "s1t1": {
-"r": 0.5,
-"ret": 1.2,
+"r": 0.49,
+"ret": 1.17,
 "done": false,
 "exit": "open",
 "risk": 2.4
 },
 "s2t0": {
-"r": 0.8,
-"ret": 1.2,
+"r": 0.78,
+"ret": 1.17,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": 0.8,
-"ret": 1.2,
+"r": 0.78,
+"ret": 1.17,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -17600,5 +17600,120 @@
 "last_seen": "2026-11-19T15:00-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
+},
+{
+"key": "SYY|daily|bearish|2026-11-20|bot_5m_watch",
+"id": "SYY-2026-11-20-short-bot_5m_watch",
+"ticker": "SYY",
+"timeframe": "daily",
+"strategy": "bot_5m_watch",
+"direction": "bearish",
+"side": "short",
+"rev_date": "2026-11-20",
+"signal_date": "2026-11-20",
+"first_seen": "2026-11-20T09:50",
+"entry_time": "09:50",
+"sweep_time": "09:45",
+"stage": "sweep5m",
+"stages_seen": [
+"sweep5m"
+],
+"scan_price": 79.38,
+"entry": 79.38,
+"stop": 80.5707,
+"risk_pct": 1.5,
+"atr": 1.8599,
+"level": 79.4883,
+"level_label": "Major pivot zone (3 touches, 2.9x vol)",
+"level_group": "Volume zone",
+"confluence": 3,
+"count": 5,
+"chase_pct": 0.14,
+"spy_up": false,
+"size": 0.0,
+"journal": false,
+"keys": [
+"stage_sweep5m",
+"liq_major_pivot_zone"
+],
+"factors": [
+"Trend down (50-day average)",
+"5-bar pullback",
+"Major pivot zone (3 touches, 2.9x vol) @ 79.49 with 3 levels together",
+"5-min stop run to 79.79 at 09:45, back below the line at 09:50"
+],
+"idea": "SELL ~79.38 at 09:50: 5-min swept major pivot zone (3 touches, 2.9x vol) 79.49 (low of the run 79.79) and reclaimed it; stop 80.57 (1.5% risk). Watch only (shorts are paused).",
+"valid_at_last_scan": true,
+"last_reason": "",
+"status": "open",
+"outcome": {
+"bot_5m_watch": {
+"entry_rule": "intraday at 09:50 ET",
+"triggered": true,
+"entry": 79.38,
+"entry_date": "2026-11-20",
+"why": "entered at 09:50",
+"risk_pct": 1.5,
+"plan": {
+"done": false,
+"ret": -1.18,
+"r": -0.79,
+"bars": 1,
+"exit": "open",
+"exit_date": "2026-11-20",
+"added": false,
+"targets_hit": 0,
+"mfe": 0.0,
+"mae": -1.18
+},
+"variants": {
+"s0t0": {
+"r": -0.79,
+"ret": -1.18,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s0t1": {
+"r": -0.79,
+"ret": -1.18,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s1t0": {
+"r": -0.49,
+"ret": -1.18,
+"done": false,
+"exit": "open",
+"risk": 2.44
+},
+"s1t1": {
+"r": -0.49,
+"ret": -1.18,
+"done": false,
+"exit": "open",
+"risk": 2.44
+},
+"s2t0": {
+"r": -0.79,
+"ret": -1.18,
+"done": false,
+"exit": "open",
+"risk": 1.5
+},
+"s2t1": {
+"r": -0.79,
+"ret": -1.18,
+"done": false,
+"exit": "open",
+"risk": 1.5
+}
+}
+}
+},
+"paper": false,
+"watch": true,
+"live": true
 }
 ]
