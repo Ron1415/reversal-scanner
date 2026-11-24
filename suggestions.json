@@ -26732,7 +26732,7 @@
 "idea": "SELL ~736.76 at 10:20: 5-min swept prior swing high 736.90 (low of the run 738.82) and reclaimed it; stop 747.81 (1.5% risk). Watch only (shorts are paused).",
 "valid_at_last_scan": true,
 "last_reason": "",
-"status": "open",
+"status": "closed",
 "outcome": {
 "bot_5m_watch": {
 "entry_rule": "intraday at 10:20 ET",
@@ -26742,58 +26742,58 @@
 "why": "entered at 10:20",
 "risk_pct": 1.5,
 "plan": {
-"done": false,
-"ret": -0.3,
-"r": -0.2,
+"done": true,
+"ret": -1.5,
+"r": -1.0,
 "bars": 1,
-"exit": "open",
+"exit": "stop",
 "exit_date": "2026-11-24",
 "added": false,
 "targets_hit": 0,
-"mfe": 0.81,
-"mae": -0.76
+"mfe": 0.92,
+"mae": -2.48
 },
 "variants": {
 "s0t0": {
-"r": -0.2,
-"ret": -0.3,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.2,
-"ret": -0.3,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.08,
-"ret": -0.3,
+"r": -0.06,
+"ret": -0.19,
 "done": false,
 "exit": "open",
 "risk": 3.52
 },
 "s1t1": {
-"r": -0.08,
-"ret": -0.3,
+"r": -0.06,
+"ret": -0.19,
 "done": false,
 "exit": "open",
 "risk": 3.52
 },
 "s2t0": {
-"r": -0.2,
-"ret": -0.3,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.2,
-"ret": -0.3,
-"done": false,
-"exit": "open",
+"r": -1.0,
+"ret": -1.5,
+"done": true,
+"exit": "stop",
 "risk": 1.5
 }
 }
