@@ -29563,7 +29563,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -29715,7 +29715,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -29806,7 +29806,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -29934,7 +29934,7 @@
 }
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -30062,7 +30062,7 @@
 }
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -30186,7 +30186,7 @@
 }
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -30310,7 +30310,7 @@
 }
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -30361,41 +30361,8 @@
 "outcome": {
 "close": {
 "entry_rule": "close of the signal bar",
-"triggered": true,
-"entry": 78.43,
-"entry_date": "2026-11-25",
-"why": "entered at the close",
-"risk_pct": 1.98,
-"plan": {
-"done": false,
-"ret": 0.0,
-"r": 0.0,
-"bars": 0,
-"exit": "open",
-"exit_date": null,
-"mfe": 0.0,
-"mae": 0.0
-},
-"full_t1": {
-"done": false,
-"ret": 0.0,
-"r": 0.0,
-"bars": 0,
-"exit": "open",
-"exit_date": null,
-"mfe": 0.0,
-"mae": 0.0
-},
-"full_t2": {
-"done": false,
-"ret": 0.0,
-"r": 0.0,
-"bars": 0,
-"exit": "open",
-"exit_date": null,
-"mfe": 0.0,
-"mae": 0.0
-}
+"triggered": false,
+"why": "not entered: setup no longer valid at the last scan (level ahead is not strong enough for an early heads-up (needs a major swing, double top/bottom, or two levels together))"
 },
 "safer": {
 "entry_rule": "break below the reversal bar (76.74) within 3 bars",
@@ -30404,9 +30371,9 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
-"valid_at_last_scan": true,
-"last_reason": ""
+"last_seen": "2026-11-26T15:37-05:00",
+"valid_at_last_scan": false,
+"last_reason": "level ahead is not strong enough for an early heads-up (needs a major swing, double top/bottom, or two levels together)"
 },
 {
 "key": "DHI|daily|bearish|2026-11-25",
@@ -30498,7 +30465,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -30589,7 +30556,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -30684,7 +30651,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -30776,7 +30743,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -30868,7 +30835,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -30960,7 +30927,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -31051,7 +31018,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 },
@@ -31143,7 +31110,7 @@
 "why": "waiting for the trigger"
 }
 },
-"last_seen": "2026-11-26T15:25-05:00",
+"last_seen": "2026-11-26T15:37-05:00",
 "valid_at_last_scan": true,
 "last_reason": ""
 }
