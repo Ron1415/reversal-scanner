@@ -31169,55 +31169,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": -0.23,
-"r": -0.15,
+"ret": -0.53,
+"r": -0.35,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-27",
 "added": false,
 "targets_hit": 0,
 "mfe": 0.08,
-"mae": -0.28
+"mae": -0.62
 },
 "variants": {
 "s0t0": {
-"r": -0.15,
-"ret": -0.23,
+"r": -0.35,
+"ret": -0.53,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.15,
-"ret": -0.23,
+"r": -0.35,
+"ret": -0.53,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.08,
-"ret": -0.23,
+"r": -0.18,
+"ret": -0.53,
 "done": false,
 "exit": "open",
 "risk": 2.97
 },
 "s1t1": {
-"r": -0.08,
-"ret": -0.23,
+"r": -0.18,
+"ret": -0.53,
 "done": false,
 "exit": "open",
 "risk": 2.97
 },
 "s2t0": {
-"r": -0.15,
-"ret": -0.23,
+"r": -0.35,
+"ret": -0.53,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.15,
-"ret": -0.23,
+"r": -0.35,
+"ret": -0.53,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -31284,55 +31284,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": -0.26,
-"r": -0.17,
+"ret": 0.01,
+"r": 0.01,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-27",
 "added": false,
 "targets_hit": 0,
 "mfe": 0.42,
-"mae": -0.53
+"mae": -0.58
 },
 "variants": {
 "s0t0": {
-"r": -0.17,
-"ret": -0.26,
+"r": 0.01,
+"ret": 0.01,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.17,
-"ret": -0.26,
+"r": 0.01,
+"ret": 0.01,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.1,
-"ret": -0.26,
+"r": 0.0,
+"ret": 0.01,
 "done": false,
 "exit": "open",
 "risk": 2.69
 },
 "s1t1": {
-"r": -0.1,
-"ret": -0.26,
+"r": 0.0,
+"ret": 0.01,
 "done": false,
 "exit": "open",
 "risk": 2.69
 },
 "s2t0": {
-"r": -0.17,
-"ret": -0.26,
+"r": 0.01,
+"ret": 0.01,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.17,
-"ret": -0.26,
+"r": 0.01,
+"ret": 0.01,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -31399,55 +31399,55 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": -0.02,
-"r": -0.01,
+"ret": -0.35,
+"r": -0.23,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-27",
 "added": false,
 "targets_hit": 0,
-"mfe": 0.0,
-"mae": -0.02
+"mfe": 0.26,
+"mae": -0.46
 },
 "variants": {
 "s0t0": {
-"r": -0.01,
-"ret": -0.02,
+"r": -0.23,
+"ret": -0.35,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.01,
-"ret": -0.02,
+"r": -0.23,
+"ret": -0.35,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.01,
-"ret": -0.02,
+"r": -0.11,
+"ret": -0.35,
 "done": false,
 "exit": "open",
 "risk": 3.28
 },
 "s1t1": {
-"r": -0.01,
-"ret": -0.02,
+"r": -0.11,
+"ret": -0.35,
 "done": false,
 "exit": "open",
 "risk": 3.28
 },
 "s2t0": {
-"r": -0.01,
-"ret": -0.02,
+"r": -0.23,
+"ret": -0.35,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.01,
-"ret": -0.02,
+"r": -0.23,
+"ret": -0.35,
 "done": false,
 "exit": "open",
 "risk": 1.5
