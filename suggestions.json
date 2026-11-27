@@ -31169,8 +31169,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": -0.39,
-"r": -0.26,
+"ret": -0.34,
+"r": -0.23,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-27",
@@ -31181,43 +31181,43 @@
 },
 "variants": {
 "s0t0": {
-"r": -0.26,
-"ret": -0.39,
+"r": -0.23,
+"ret": -0.34,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.26,
-"ret": -0.39,
+"r": -0.23,
+"ret": -0.34,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.13,
-"ret": -0.39,
+"r": -0.12,
+"ret": -0.34,
 "done": false,
 "exit": "open",
 "risk": 2.97
 },
 "s1t1": {
-"r": -0.13,
-"ret": -0.39,
+"r": -0.12,
+"ret": -0.34,
 "done": false,
 "exit": "open",
 "risk": 2.97
 },
 "s2t0": {
-"r": -0.26,
-"ret": -0.39,
+"r": -0.23,
+"ret": -0.34,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.26,
-"ret": -0.39,
+"r": -0.23,
+"ret": -0.34,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -31284,8 +31284,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": -0.06,
-"r": -0.04,
+"ret": -0.14,
+"r": -0.09,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-27",
@@ -31296,43 +31296,43 @@
 },
 "variants": {
 "s0t0": {
-"r": -0.04,
-"ret": -0.06,
+"r": -0.09,
+"ret": -0.14,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.04,
-"ret": -0.06,
+"r": -0.09,
+"ret": -0.14,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.02,
-"ret": -0.06,
+"r": -0.05,
+"ret": -0.14,
 "done": false,
 "exit": "open",
 "risk": 2.69
 },
 "s1t1": {
-"r": -0.02,
-"ret": -0.06,
+"r": -0.05,
+"ret": -0.14,
 "done": false,
 "exit": "open",
 "risk": 2.69
 },
 "s2t0": {
-"r": -0.04,
-"ret": -0.06,
+"r": -0.09,
+"ret": -0.14,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.04,
-"ret": -0.06,
+"r": -0.09,
+"ret": -0.14,
 "done": false,
 "exit": "open",
 "risk": 1.5
@@ -31399,8 +31399,8 @@
 "risk_pct": 1.5,
 "plan": {
 "done": false,
-"ret": -0.09,
-"r": -0.06,
+"ret": -0.17,
+"r": -0.11,
 "bars": 1,
 "exit": "open",
 "exit_date": "2026-11-27",
@@ -31411,43 +31411,43 @@
 },
 "variants": {
 "s0t0": {
-"r": -0.06,
-"ret": -0.09,
+"r": -0.11,
+"ret": -0.17,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s0t1": {
-"r": -0.06,
-"ret": -0.09,
+"r": -0.11,
+"ret": -0.17,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s1t0": {
-"r": -0.03,
-"ret": -0.09,
+"r": -0.05,
+"ret": -0.17,
 "done": false,
 "exit": "open",
 "risk": 3.28
 },
 "s1t1": {
-"r": -0.03,
-"ret": -0.09,
+"r": -0.05,
+"ret": -0.17,
 "done": false,
 "exit": "open",
 "risk": 3.28
 },
 "s2t0": {
-"r": -0.06,
-"ret": -0.09,
+"r": -0.11,
+"ret": -0.17,
 "done": false,
 "exit": "open",
 "risk": 1.5
 },
 "s2t1": {
-"r": -0.06,
-"ret": -0.09,
+"r": -0.11,
+"ret": -0.17,
 "done": false,
 "exit": "open",
 "risk": 1.5
